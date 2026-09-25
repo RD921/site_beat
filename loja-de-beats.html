@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Woah Colletion — Produção Musical & Beats</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="loja-de-beats.css">
+  <style>
+    .beats-hero-badge {
+      background: rgba(139, 92, 246, 0.1);
+      color: #8b5cf6;
+      border-color: rgba(139, 92, 246, 0.2);
+    }
+
+    /* Player do Lançamento em Destaque no Topo */
+    .featured-release-banner {
+      max-width: 1000px;
+      margin: 0 auto 40px;
+      padding: 0 48px;
+    }
+
+    .release-hero-box {
+      background: linear-gradient(135deg, #18181b, #27272a);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      border-radius: 20px;
+      padding: 24px 32px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      box-shadow: 0 12px 40px rgba(139, 92, 246, 0.15);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .release-hero-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .release-avatar-disc {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #be185d, #8b5cf6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+      animation: spinDisc 10s linear infinite;
+      flex-shrink: 0;
+    }
+
+    .release-avatar-disc.paused {
+      animation-play-state: paused;
+    }
+
+    @keyframes spinDisc {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .release-hero-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .release-hero-artist {
+      font-size: 13px;
+      color: #a78bfa;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .live-soundwave {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 16px;
+    }
+
+    .soundwave-bar {
+      width: 3px;
+      background: #34d399;
+      border-radius: 2px;
+      animation: soundwaveAnim 1s ease-in-out infinite alternate;
+    }
+
+    .soundwave-bar:nth-child(1) { height: 6px; animation-delay: 0.1s; }
+    .soundwave-bar:nth-child(2) { height: 14px; animation-delay: 0.3s; }
+    .soundwave-bar:nth-child(3) { height: 10px; animation-delay: 0.2s; }
+    .soundwave-bar:nth-child(4) { height: 16px; animation-delay: 0.4s; }
+
+    @keyframes soundwaveAnim {
+      0% { height: 4px; }
+      100% { height: 16px; }
+    }
+
+    .release-hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hero-play-toggle-btn {
+      background: #8b5cf6;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .hero-play-toggle-btn:hover {
+      background: #7c3aed;
+      transform: scale(1.03);
+    }
+
+    /* Cards de Músicas / Lançamentos */
+    .release-card {
+      background: #1d1d1f;
+      color: #fff;
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      transition: all 0.25s ease;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      position: relative;
+    }
+
+    .release-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 36px rgba(139, 92, 246, 0.2);
+      border-color: #8b5cf6;
+    }
+
+    .release-cover {
+      width: 100%;
+      height: 170px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #2e1065, #4c1d95, #7c3aed);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 46px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .artist-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(6px);
+      color: #fff;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    /* Cards de Beats para Venda */
+    .beat-card {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      transition: all 0.25s ease;
+      position: relative;
+    }
+
+    .beat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+      border-color: #8b5cf6;
+    }
+
+    .beat-cover {
+      width: 100%;
+      height: 160px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #1d1d1f, #2d2d30);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      position: relative;
+    }
+
+    .beat-play-btn {
+      position: absolute;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: #8b5cf6;
+      color: #fff;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(139, 92, 246, 0.4);
+      transition: all 0.2s;
+    }
+
+    .beat-play-btn:hover {
+      transform: scale(1.1);
+      background: #7c3aed;
+    }
+
+    .beat-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .beat-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #1d1d1f;
+    }
+
+    .beat-meta {
+      font-size: 12px;
+      color: #6e6e73;
+      display: flex;
+      gap: 10px;
+    }
+
+    .beat-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin: 4px 0;
+    }
+
+    .beat-price-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: auto;
+      padding-top: 12px;
+      border-top: 1px solid #f0f0f2;
+    }
+
+    .beat-price {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1d1d1f;
+    }
+
+    .buy-btn {
+      background: #1d1d1f;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .buy-btn:hover {
+      background: #8b5cf6;
+    }
+
+    @media (max-width: 768px) {
+      .featured-release-banner {
+        padding: 0 20px;
+      }
+      .release-card-square {
+        max-width: 100%;
+      }
+    }
+
+    /* Card Quadrado de Lançamento */
+    .release-card-square {
+      background: linear-gradient(135deg, #18181b, #27272a);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 12px 40px rgba(139, 92, 246, 0.15);
+      max-width: 420px;
+      margin: 0 auto;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .release-card-square:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 60px rgba(139, 92, 246, 0.25);
+    }
+    .release-cover-area {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      background: linear-gradient(135deg, #2e1065, #4c1d95, #7c3aed);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .release-cover-area img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .release-cover-img {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .release-live-badge {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(8px);
+      color: #34d399;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 5px 10px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .release-player-section {
+      padding: 20px 24px;
+      color: #fff;
+    }
+    .release-track-info {
+      margin-bottom: 16px;
+    }
+    .release-player-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+  </style>
+
+</head>
+
+<body class="beats-page-body">
+
+  <!-- =========================================================================
+       1. CABEÇALHO (HEADER DARK NEON & GLASSMORPHISM)
+       ========================================================================= -->
+  <header class="site-header-beats">
+    <div class="header-left-group">
+      <!-- Logo da Marca -->
+      <a href="loja-de-beats.html" class="brand-logo-beats" title="Woah Colletion">
+        <span class="logo-main-text">WOAH</span>
+        <span class="logo-sub-text">COLLETION</span>
+      </a>
+
+      <!-- Menu Principal -->
+      <nav class="main-nav-beats">
+        <a href="index.html" class="nav-link-beats">Início</a>
+        <a href="loja-de-beats.html" class="nav-link-beats active" id="nav-beats-btn">Beats Oficiais</a>
+        <button type="button" class="nav-link-beats" id="toggle-view-btn" onclick="togglePortfolioView()">Meu Painel</button>
+        <a href="https://wa.me/5527995055702?text=Olá!%20Preciso%20de%20suporte%20na%20Woah%20Colletion" target="_blank" class="nav-link-beats">Suporte</a>
+      </nav>
+    </div>
+
+    <!-- Campo de Pesquisa Central -->
+    <div class="header-center-search">
+      <div class="search-box-beats">
+        <span class="search-icon-beats">🔍</span>
+        <input type="text" class="search-input-beats" id="catalog-search-input" placeholder="Buscar beats, artistas, estilos..." oninput="handleSearchBeats(this.value)" aria-label="Buscar beats" />
+      </div>
+    </div>
+
+    <!-- Controles da Direita -->
+    <div class="header-right-actions">
+      <button type="button" class="header-action-btn" title="Notificações" aria-label="Notificações">
+        🔔
+        <span class="autoplay-pulsing-dot" style="position: absolute; top: 9px; right: 9px; width: 6px; height: 6px;"></span>
+      </button>
+      <button type="button" class="header-action-btn" onclick="openAuthModal()" title="Entrar na Conta" aria-label="Perfil">
+        👤
+      </button>
+      <div class="header-avatar-circle" onclick="openAuthModal()" title="Minha Conta">
+        <div class="avatar-badge-r">R</div>
+        <span class="avatar-chevron">▼</span>
+      </div>
+      <div id="nav-auth-container" style="display: none;"></div>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <!-- VIEW 1: Loja de Beats Principal (Woah Colletion) -->
+    <div id="beats-main-view">
+
+      <!-- =====================================================================
+           2. HERO PRINCIPAL (DUAL COLUMN + FOTO CINEMATOGRÁFICA DO PRODUTOR)
+           ===================================================================== -->
+      <section class="hero-section-beats">
+        <div class="hero-dual-grid">
+          <!-- Coluna da Esquerda (Conteúdo Hero) -->
+          <div class="hero-content-col">
+            <div class="hero-badge-pill">
+              <span>🎚</span> Produção Musical
+            </div>
+
+            <h1 class="hero-title-main">
+              Woah Colletion —<br>
+              <span class="hero-title-gradient">Beats & Lançamentos.</span>
+            </h1>
+
+            <p class="hero-sub-description">
+              Ouça o lançamento em reprodução automática dos nossos artistas ou explore o catálogo de instrumentais e produções exclusivas.
+            </p>
+
+            <div class="hero-btns-row">
+              <a href="#catalog-section" class="hero-btn-primary" onclick="openAndScrollSection('catalog-section'); return false;">
+                <span>🎧</span> Ver Catálogo de Beats <span style="margin-left: 4px;">›</span>
+              </a>
+              <a href="#licenses-section" class="hero-btn-secondary" onclick="openAndScrollSection('licenses-section'); return false;">
+                <span>📄</span> Ver Licenças & Preços <span style="margin-left: 4px;">›</span>
+              </a>
+              <a href="#releases-list-section" class="hero-btn-secondary" onclick="openAndScrollSection('releases-list-section'); return false;">
+                <span>🎵</span> Outros Lançamentos <span style="margin-left: 4px;">›</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Coluna da Direita (Foto de Estúdio Cinematográfica + Grafite Neon) -->
+          <div class="hero-visual-col">
+            <img src="hero-producer.jpg" alt="Produtor Musical Woah Colletion no Estúdio" class="hero-producer-image" />
+            <div class="hero-visual-vignette"></div>
+            <div class="hero-graffiti-tag">
+              <span class="graffiti-crown-icon">👑</span>
+              <span class="graffiti-quote-text">BEATS<br>QUE CONTAM<br>HISTÓRIAS</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           3. SEÇÃO EM DESTAQUE (LANÇAMENTO OFICIAL EM REPRODUÇÃO)
+           ===================================================================== -->
+      <section class="featured-section-beats">
+        <div class="featured-header-row">
+          <div class="featured-title-group">
+            <span class="featured-sub-label">EM DESTAQUE</span>
+            <h2 class="featured-main-heading">Lançamento Oficial em Reprodução</h2>
+          </div>
+
+          <div class="autoplay-indicator-badge">
+            <span>🔀</span> Reprodução automática
+            <span class="autoplay-pulsing-dot"></span>
+          </div>
+        </div>
+
+        <div class="featured-dual-grid">
+          <!-- Card Horizontal do Beat em Destaque com Player e Waveform -->
+          <div class="featured-beat-player-card">
+            <!-- Capa do Beat com Glow Roxo -->
+            <div class="featured-cover-box">
+              <img src="cover-impacto-real.jpg" alt="Capa Impacto Real" id="featured-cover-img-el" />
+            </div>
+
+            <!-- Informações e Player -->
+            <div class="featured-meta-player-wrap">
+              <div class="featured-meta-header">
+                <span class="featured-exclusive-badge">★ BEAT EXCLUSIVO</span>
+                <div class="featured-title-text" id="auto-track-title">Impacto Real</div>
+                <div class="featured-producer-text">Prod. Rodrigo Arrezzi</div>
+
+                <div class="featured-tags-pills">
+                  <span class="featured-tag-pill">Trap</span>
+                  <span class="featured-tag-pill">Hip Hop</span>
+                  <span class="featured-tag-pill">Melódico</span>
+                </div>
+              </div>
+
+              <!-- Player Integrado (Botão + Waveform) -->
+              <div class="featured-player-row">
+                <button type="button" class="featured-play-btn" id="hero-toggle-btn" onclick="toggleAutoPlay()" title="Play / Pause">
+                  <span id="hero-toggle-icon">⏸</span>
+                </button>
+
+                <div class="featured-waveform-box" id="featured-waveform-container" onclick="seekWaveform(event)" title="Clique para navegar no áudio">
+                  <canvas id="featured-waveform-canvas" class="featured-waveform-canvas"></canvas>
+                  <div class="featured-time-row" id="featured-time-text">0:45 / 3:12</div>
+                </div>
+              </div>
+
+              <!-- Especificações Técnicas com Ícones -->
+              <div class="featured-specs-row">
+                <div class="featured-spec-item">
+                  <span style="color: var(--primary-purple-bright); font-size: 14px;">〰</span>
+                  <span>BPM <strong>90</strong></span>
+                </div>
+                <div class="featured-spec-item">
+                  <span style="color: var(--neon-cyan); font-size: 14px;">🎵</span>
+                  <span>Tom <strong>Cm</strong></span>
+                </div>
+                <div class="featured-spec-item">
+                  <span style="color: var(--neon-green); font-size: 14px;">⏱</span>
+                  <span>Duração <strong>3:12</strong></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Preço e Botão Adquirir Beat -->
+            <div class="featured-action-col">
+              <div class="featured-price-tag">
+                <span>R$</span> 149,90
+              </div>
+
+              <a href="checkout.html?beat=Impacto%20Real&price=149.90" class="featured-buy-btn">
+                <span>🛒</span> Adquirir Beat
+              </a>
+            </div>
+          </div>
+
+          <!-- Painel Lateral de Benefícios (~25% da largura) -->
+          <div class="featured-benefits-panel">
+            <div class="benefit-item-card">
+              <div class="benefit-icon-wrap">🛡</div>
+              <div class="benefit-text-wrap">
+                <div class="benefit-title-text">Compra segura</div>
+                <div class="benefit-desc-text">Seus dados protegidos e criptografados.</div>
+              </div>
+            </div>
+
+            <div class="benefit-item-card">
+              <div class="benefit-icon-wrap">⚡</div>
+              <div class="benefit-text-wrap">
+                <div class="benefit-title-text">Entrega imediata</div>
+                <div class="benefit-desc-text">Receba seu beat assim que pagar.</div>
+              </div>
+            </div>
+
+            <div class="benefit-item-card">
+              <div class="benefit-icon-wrap">🎧</div>
+              <div class="benefit-text-wrap">
+                <div class="benefit-title-text">Suporte especializado</div>
+                <div class="benefit-desc-text">Estamos sempre online.</div>
+              </div>
+            </div>
+
+            <!-- Bandeiras de Pagamento -->
+            <div class="benefits-payment-brands-row">
+              <span class="brand-badge-item">PIX</span>
+              <span class="brand-badge-item">VISA</span>
+              <span class="brand-badge-item">MASTERCARD</span>
+              <span class="brand-badge-item">ELO</span>
+              <span class="brand-badge-item">BB</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           4. SEÇÃO DO CATÁLOGO DE BEATS (COM FILTROS E CARDS DARK NEON)
+           ===================================================================== -->
+      <section class="catalog-upgraded-section" id="catalog-section">
+        <div class="catalog-header-bar">
+          <div>
+            <div style="font-size: 11px; font-weight: 800; color: #a855f7; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px;">Beats Oficiais</div>
+            <div style="font-size: 24px; font-weight: 800; color: #fff;">Explore os Beats em Destaque</div>
+            <p style="font-size: 13px; color: #94a3b8; margin-top: 4px;">Clique no play para ouvir a prévia. Todos os instrumentais vêm com stems e licença comercial.</p>
+          </div>
+
+          <!-- Filtros de Gênero -->
+          <div class="catalog-filter-tabs">
+            <button type="button" class="filter-tab-pill active" onclick="filterBeatsByGenre('all', this)">Todos</button>
+            <button type="button" class="filter-tab-pill" onclick="filterBeatsByGenre('trap', this)">Trap</button>
+            <button type="button" class="filter-tab-pill" onclick="filterBeatsByGenre('drill', this)">Drill</button>
+            <button type="button" class="filter-tab-pill" onclick="filterBeatsByGenre('boombap', this)">Boombap</button>
+            <button type="button" class="filter-tab-pill" onclick="filterBeatsByGenre('rnb', this)">R&B</button>
+          </div>
+        </div>
+
+        <div class="upgraded-beats-grid" id="beats-cards-container">
+          <!-- Card 1: Impacto Real -->
+          <div class="upgraded-beat-card" data-genre="trap melódico">
+            <div class="upgraded-beat-cover">
+              <img src="cover-impacto-real.jpg" alt="Impacto Real" />
+              <button class="upgraded-play-overlay-btn" onclick="playAudio('Impacto Real (Trap/Melódico)', '90 BPM', 'C Minor', this); return false;" title="Ouvir Beat">▶</button>
+            </div>
+            <div class="upgraded-beat-info">
+              <div class="upgraded-beat-title">Impacto Real</div>
+              <div class="upgraded-beat-meta">Prod. Rodrigo Arrezzi • 90 BPM • Cm</div>
+              <div class="upgraded-beat-tags">
+                <span class="upgraded-tech-tag">Trap</span>
+                <span class="upgraded-tech-tag">808 Pesado</span>
+                <span class="upgraded-tech-tag">Melódico</span>
+              </div>
+            </div>
+            <div class="upgraded-beat-price-row">
+              <div>
+                <div class="upgraded-price-label">Exclusivo</div>
+                <div class="upgraded-price-value">R$ 149,90</div>
+              </div>
+              <a href="checkout.html?beat=Impacto%20Real&price=149.90" class="upgraded-cta-btn">Adquirir Beat</a>
+            </div>
+          </div>
+
+          <!-- Card 2: Apollo Vibes -->
+          <div class="upgraded-beat-card" data-genre="trap">
+            <div class="upgraded-beat-cover" style="background: linear-gradient(135deg, #1e1b4b, #4338ca);">
+              <div style="font-size: 48px; display: flex; align-items: center; justify-content: center; height: 100%;">🔥</div>
+              <button class="upgraded-play-overlay-btn" onclick="playAudio('Apollo Vibes (Trap Melody)', '140 BPM', 'G Minor', this); return false;" title="Ouvir Beat">▶</button>
+            </div>
+            <div class="upgraded-beat-info">
+              <div class="upgraded-beat-title">Apollo Vibes</div>
+              <div class="upgraded-beat-meta">Trap Melódico • 140 BPM • G Minor</div>
+              <div class="upgraded-beat-tags">
+                <span class="upgraded-tech-tag">Guitarras</span>
+                <span class="upgraded-tech-tag">808 Pesado</span>
+                <span class="upgraded-tech-tag">Flute</span>
+              </div>
+            </div>
+            <div class="upgraded-beat-price-row">
+              <div>
+                <div class="upgraded-price-label">A partir de</div>
+                <div class="upgraded-price-value">R$ 97,00</div>
+              </div>
+              <a href="checkout.html?beat=Apollo%20Vibes&price=97.00" class="upgraded-cta-btn">Adquirir Beat</a>
+            </div>
+          </div>
+
+          <!-- Card 3: Cyberdrill 2077 -->
+          <div class="upgraded-beat-card" data-genre="drill">
+            <div class="upgraded-beat-cover" style="background: linear-gradient(135deg, #18181b, #27272a);">
+              <div style="font-size: 48px; display: flex; align-items: center; justify-content: center; height: 100%;">⚡</div>
+              <button class="upgraded-play-overlay-btn" onclick="playAudio('Cyberdrill 2077 (Drill Hard)', '144 BPM', 'F Minor', this); return false;" title="Ouvir Beat">▶</button>
+            </div>
+            <div class="upgraded-beat-info">
+              <div class="upgraded-beat-title">Cyberdrill 2077</div>
+              <div class="upgraded-beat-meta">UK/NY Drill • 144 BPM • F Minor</div>
+              <div class="upgraded-beat-tags">
+                <span class="upgraded-tech-tag">Slides 808</span>
+                <span class="upgraded-tech-tag">Dark Synth</span>
+                <span class="upgraded-tech-tag">Hi-Hats Rápidos</span>
+              </div>
+            </div>
+            <div class="upgraded-beat-price-row">
+              <div>
+                <div class="upgraded-price-label">A partir de</div>
+                <div class="upgraded-price-value">R$ 120,00</div>
+              </div>
+              <a href="checkout.html?beat=Cyberdrill%202077&price=120.00" class="upgraded-cta-btn">Adquirir Beat</a>
+            </div>
+          </div>
+
+          <!-- Card 4: Midnight Soul -->
+          <div class="upgraded-beat-card" data-genre="boombap rnb">
+            <div class="upgraded-beat-cover" style="background: linear-gradient(135deg, #064e3b, #047857);">
+              <div style="font-size: 48px; display: flex; align-items: center; justify-content: center; height: 100%;">🌙</div>
+              <button class="upgraded-play-overlay-btn" onclick="playAudio('Midnight Soul (Boombap/R&B)', '90 BPM', 'C Major', this); return false;" title="Ouvir Beat">▶</button>
+            </div>
+            <div class="upgraded-beat-info">
+              <div class="upgraded-beat-title">Midnight Soul</div>
+              <div class="upgraded-beat-meta">Boombap / Lofi • 90 BPM • C Major</div>
+              <div class="upgraded-beat-tags">
+                <span class="upgraded-tech-tag">Rhodes Piano</span>
+                <span class="upgraded-tech-tag">Vinyl Texture</span>
+                <span class="upgraded-tech-tag">Groove Suave</span>
+              </div>
+            </div>
+            <div class="upgraded-beat-price-row">
+              <div>
+                <div class="upgraded-price-label">A partir de</div>
+                <div class="upgraded-price-value">R$ 89,00</div>
+              </div>
+              <a href="checkout.html?beat=Midnight%20Soul&price=89.00" class="upgraded-cta-btn">Adquirir Beat</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SEÇÃO: Outros Lançamentos dos Artistas (Oculto por padrão, abre no clique) -->
+      <section class="features hidden" id="releases-list-section" style="padding-top: 10px; padding-bottom: 60px;">
+        <div class="section-label" style="color: #8b5cf6;">Beats Oficiais</div>
+        <div class="section-title">Discografia & Lançamentos dos Artistas</div>
+        <p class="section-sub">Outras faixas mixadas e produzidas no nosso estúdio com os artistas parceiros.</p>
+
+        <div class="features-grid">
+          <!-- Lançamento 2 -->
+          <div class="release-card">
+            <div class="release-cover" style="background: linear-gradient(135deg, #1e1b4b, #4338ca, #6366f1);">
+              <span class="artist-badge">🎙️ Jay-Zion</span>
+              🎧
+              <button class="beat-play-btn" onclick="playAudio('Noites de Glória (Jay-Zion)', 'UK Drill / Boombap', 'Lançamento Oficial', this)">▶</button>
+            </div>
+            <div>
+              <div style="font-size: 18px; font-weight: 700;">Noites de Glória</div>
+              <div style="font-size: 12px; color: #cbd5e1; margin-top: 2px;">Artista: Jay-Zion • Prod. Max</div>
+            </div>
+            <div style="font-size: 13px; color: #94a3b8; line-height: 1.5;">Produção no estilo UK Drill com coros orquestrais e viradas de bateria dinâmicas.</div>
+            <div style="margin-top: auto; display: flex; gap: 8px; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px;">
+              <span style="font-size: 12px; color: #34d399;">● Disponível no YouTube</span>
+              <button onclick="playAudio('Noites de Glória (Jay-Zion)', 'UK Drill / Boombap', 'Lançamento Oficial', this)" class="buy-btn" style="background: #4338ca;">Ouvir Faixa</button>
+            </div>
+          </div>
+
+          <!-- Lançamento 3 -->
+          <div class="release-card">
+            <div class="release-cover" style="background: linear-gradient(135deg, #064e3b, #047857, #10b981);">
+              <span class="artist-badge">✨ Luna Star</span>
+              🌟
+              <button class="beat-play-btn" onclick="playAudio('Vibe de Verão (Luna Star)', 'R&B / Afrobeat Pop', 'Lançamento Oficial', this)">▶</button>
+            </div>
+            <div>
+              <div style="font-size: 18px; font-weight: 700;">Vibe de Verão</div>
+              <div style="font-size: 12px; color: #cbd5e1; margin-top: 2px;">Artista: Luna Star • Prod. Max</div>
+            </div>
+            <div style="font-size: 13px; color: #94a3b8; line-height: 1.5;">Afrobeat com guitarras solares e mixagem moderna que conquistou as rádios locais.</div>
+            <div style="margin-top: auto; display: flex; gap: 8px; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px;">
+              <span style="font-size: 12px; color: #34d399;">● Disponível na Apple Music</span>
+              <button onclick="playAudio('Vibe de Verão (Luna Star)', 'R&B / Afrobeat Pop', 'Lançamento Oficial', this)" class="buy-btn" style="background: #047857;">Ouvir Faixa</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SEÇÃO: Licenças (Oculto por padrão, abre no clique) -->
+      <section class="features hidden" id="licenses-section" style="padding-top: 10px; padding-bottom: 80px;">
+        <div class="section-label" style="color: #8b5cf6;">Tabela de Preços</div>
+        <div class="section-title">Escolha o Tipo de Licença</div>
+        <p class="section-sub">Transparência total para você lançar suas faixas no Spotify, Apple Music e YouTube.</p>
+
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">🎧</div>
+            <div class="feature-title">Licença Básica (MP3)</div>
+            <div class="feature-desc" style="margin-bottom: 16px;">Ideal para singles independentes e testes de público.</div>
+            <ul style="font-size: 13px; color: #6e6e73; line-height: 1.8; margin-left: 18px; margin-bottom: 20px;">
+              <li>Arquivo MP3 em alta qualidade</li>
+              <li>Até 50.000 streams de áudio</li>
+              <li>1 Vídeo no YouTube (Sem Monetização)</li>
+              <li>Distribuição digital padrão</li>
+            </ul>
+            <div style="font-size: 22px; font-weight: 700; margin-bottom: 12px;">R$ 97,00</div>
+            <a href="https://wa.me/5527995055702?text=Olá!%20Gostaria%20da%20Licença%20Básica%20de%20Beats" target="_blank" class="nav-cta" style="display:block; text-align:center; text-decoration:none;">Selecionar Básica</a>
+          </div>
+
+          <div class="feature-card" style="border-color: #8b5cf6; background: #faf9ff;">
+            <div class="feature-icon">🎚️</div>
+            <div class="feature-title" style="color: #8b5cf6;">Licença Premium (WAV + Stems)</div>
+            <div class="feature-desc" style="margin-bottom: 16px;">Para lançamentos profissionais com mixagem avançada de voz.</div>
+            <ul style="font-size: 13px; color: #6e6e73; line-height: 1.8; margin-left: 18px; margin-bottom: 20px;">
+              <li>Arquivos WAV Master + Stems (Pistas separadas)</li>
+              <li>Até 500.000 streams de áudio</li>
+              <li>Monetização em YouTube/Vídeos autorizada</li>
+              <li>Uso para shows e apresentações</li>
+            </ul>
+            <div style="font-size: 22px; font-weight: 700; color: #8b5cf6; margin-bottom: 12px;">R$ 249,00</div>
+            <a href="https://wa.me/5527995055702?text=Olá!%20Gostaria%20da%20Licença%20Premium%20de%20Beats" target="_blank" class="nav-cta" style="display:block; text-align:center; text-decoration:none; background: #8b5cf6;">Selecionar Premium</a>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">👑</div>
+            <div class="feature-title">Direito Exclusivo</div>
+            <div class="feature-desc" style="margin-bottom: 16px;">O beat se torna 100% seu e é removido da loja permanentemente.</div>
+            <ul style="font-size: 13px; color: #6e6e73; line-height: 1.8; margin-left: 18px; margin-bottom: 20px;">
+              <li>Todos os direitos autorais e de reprodução</li>
+              <li>Streams Ilimitados em todas as plataformas</li>
+              <li>Contrato de exclusividade registrado</li>
+              <li>Remoção imediata da internet</li>
+            </ul>
+            <div style="font-size: 22px; font-weight: 700; margin-bottom: 12px;">Sob Consulta</div>
+            <a href="https://wa.me/5527995055702?text=Olá!%20Gostaria%20de%20negociar%20Exclusividade%20de%20um%20Beat" target="_blank" class="nav-cta" style="display:block; text-align:center; text-decoration:none;">Falar com Produtor</a>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- VIEW 2: Portfólio Profissional do Produtor Max (Woah Colletion) -->
+    <div id="portfolio-view" class="hidden">
+      <section class="hero">
+        <div class="badge fade-up"><span class="badge-dot" style="background:#8b5cf6;"></span> Portfólio Profissional — Produção Musical</div>
+        <h1 class="fade-up delay-1">Meus Cursos &<br><span>Projetos em Destaque.</span></h1>
+        <p class="fade-up delay-2">Produtor Musical e Sound Designer especializado na criação de instrumentais para Trap, Drill, Boombap e R&B, integrando mixagem, masterização e tecnologia de ponta.</p>
+        <div class="hero-btns fade-up delay-3">
+          <button class="btn-primary" onclick="togglePortfolioTab('prod-projects-section')">Ver Projetos</button>
+          <button class="btn-secondary" onclick="togglePortfolioTab('prod-courses-section')">Ver Cursos</button>
+        </div>
+      </section>
+
+      <!-- Seção de Projetos do Max -->
+      <section class="features hidden" id="prod-projects-section">
+        <div class="section-label">Projetos</div>
+        <div class="section-title">Produções & Trabalhos Realizados</div>
+        <p class="section-sub">Músicas oficiais e projetos musicais desenvolvidos com mixagem e masterização de padrão internacional.</p>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">🎛️</div>
+            <div class="feature-title">Catálogo Woah Beats</div>
+            <div class="feature-desc">Coleção autoral de instrumentais com arranjos dinâmicos, timbres modernos e Stems individuais prontos para gravação e lançamento comercial.</div>
+            <div style="margin-top: 14px; display: flex; gap: 6px; flex-wrap: wrap;">
+              <span class="tech-badge">FL Studio</span>
+              <span class="tech-badge">Ableton Live</span>
+              <span class="tech-badge">Sound Design</span>
+            </div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🎙️</div>
+            <div class="feature-title">Produção Executiva — MC Kaio</div>
+            <div class="feature-desc">Produção musical completa do single 'Visão de Futuro', com captação, afinação de voz, mixagem e masterização distribuída no Spotify.</div>
+            <div style="margin-top: 14px; display: flex; gap: 6px; flex-wrap: wrap;">
+              <span class="tech-badge">Mixagem</span>
+              <span class="tech-badge">Mastering</span>
+              <span class="tech-badge">Loudness Pro</span>
+            </div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🎧</div>
+            <div class="feature-title">Sound Kits & Amostras Exclusivas</div>
+            <div class="feature-desc">Desenvolvimento de Drum Kits e bibliotecas de samples autorais utilizados por diversos produtores independentes da cena urbana.</div>
+            <div style="margin-top: 14px; display: flex; gap: 6px; flex-wrap: wrap;">
+              <span class="tech-badge">Drum Kits</span>
+              <span class="tech-badge">808s Tunados</span>
+              <span class="tech-badge">Presets Synth</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Seção de Cursos do Max -->
+      <section class="features hidden" id="prod-courses-section" style="padding-top: 0; padding-bottom: 80px;">
+        <div class="section-label">Educação</div>
+        <div class="section-title">Especializações & Certificações Musicais</div>
+        <p class="section-sub">Formação técnica continuada focada em engenharia de áudio e produção musical.</p>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">🎓</div>
+            <div class="feature-title">Engenharia de Áudio & Acústica</div>
+            <div class="feature-desc">Especialização em técnicas avançadas de gravação, resposta em frequência, tratamento acústico de estúdio e alinhamento de monitores.</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🎚️</div>
+            <div class="feature-title">Mixagem & Masterização com FabFilter & Waves</div>
+            <div class="feature-desc">Capacitação aprofundada em compressão multibanda, equalização dinâmica, saturação harmônica e controle de loudness para streaming.</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🎹</div>
+            <div class="feature-title">Teoria Musical & Arranjo Moderno</div>
+            <div class="feature-desc">Estudo aplicado de escalas musicais, progressões harmônicas, criação de melodias envolventes e arranjos estruturais para Trap e R&B.</div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-logo">Max — Produções & Beats</div>
+    <div class="footer-social">
+      <a href="https://www.instagram.com/rodrigo_arrezzi" target="_blank" class="social-link" title="Instagram">
+        <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" /></svg>
+        <span>Instagram</span>
+      </a>
+      <a href="https://wa.me/5527995055702" target="_blank" class="social-link" title="WhatsApp">
+        <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" /></svg>
+        <span>WhatsApp</span>
+      </a>
+      <a href="https://open.spotify.com" target="_blank" class="social-link" title="Spotify">
+        <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.48.66.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+        </svg>
+        <span>Spotify</span>
+      </a>
+      <a href="mailto:rodrigoarrezzimaciel17@gmail.com" class="social-link" title="Gmail">
+        <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 010 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z" /></svg>
+        <span>Gmail</span>
+      </a>
+    </div>
+    <div class="footer-copy">&copy; 2025 Woah Colletion. Todos os direitos reservados.</div>
+  </footer>
+
+  <!-- Balão Flutuante do Assistente Virtual Aria -->
+  <div id="chat-bubble" class="chat-bubble" onclick="toggleChatBox()">
+    <span class="chat-bubble-icon">💬</span>
+    <span class="chat-bubble-pulse"></span>
+  </div>
+
+  <div id="chat-box" class="chat-box hidden">
+    <div class="chat-box-header">
+      <div class="chat-box-avatar">🤖</div>
+      <div>
+        <div class="chat-box-name">Aria — Assistente de Produção</div>
+        <div class="chat-box-status">● Online agora</div>
+      </div>
+      <span class="chat-box-close" onclick="toggleChatBox()">&times;</span>
+    </div>
+    <div class="chat-box-body">
+      <div class="chat-msg bot">Olá! Eu sou a Aria. Bem-vindo à Woah Colletion! 🎶</div>
+      <div class="chat-msg bot">O novo lançamento de MC Kaio já está tocando! Você também pode explorar o catálogo de beats e o portfólio de produções do Max. Como posso te ajudar hoje?</div>
+    </div>
+    <div class="chat-box-footer">
+      <a href="https://wa.me/5527995055702?text=Olá!%20Gostaria%20de%20tirar%20uma%20dúvida%20sobre%20as%20músicas%20e%20beats" target="_blank" class="chat-whatsapp-btn">💬 Falar com Produtor</a>
+    </div>
+  </div>
+
+  <!-- Modal de Autenticação (Login & Cadastro) -->
+  <div id="auth-modal" class="modal-overlay hidden" onclick="closeAuthModalOnOutsideClick(event)">
+    <div class="modal-card" style="max-width: 420px;">
+      <span class="modal-close" onclick="closeAuthModal()">&times;</span>
+      
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Entrar (Login)</button>
+        <button class="auth-tab" id="tab-register" onclick="switchAuthTab('register')">Criar Conta</button>
+      </div>
+
+      <!-- Formulário de Login -->
+      <form id="auth-login-form" class="auth-form" onsubmit="handleLogin(event)">
+        <div class="auth-input-group">
+          <label for="login-email">E-mail</label>
+          <input type="email" id="login-email" class="auth-input" placeholder="seu@email.com" required>
+        </div>
+        <div class="auth-input-group">
+          <label for="login-password">Senha</label>
+          <input type="password" id="login-password" class="auth-input" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="auth-submit-btn">Acessar Conta</button>
+      </form>
+
+      <!-- Formulário de Cadastro -->
+      <form id="auth-register-form" class="auth-form hidden" onsubmit="handleRegister(event)">
+        <div class="auth-input-group">
+          <label for="reg-name">Nome Completo</label>
+          <input type="text" id="reg-name" class="auth-input" placeholder="Ex: MC / Artista" required>
+        </div>
+        <div class="auth-input-group">
+          <label for="reg-email">E-mail</label>
+          <input type="email" id="reg-email" class="auth-input" placeholder="seu@email.com" required>
+        </div>
+        <div class="auth-input-group">
+          <label for="reg-password">Criar Senha</label>
+          <input type="password" id="reg-password" class="auth-input" placeholder="Mínimo 6 caracteres" minlength="6" required>
+        </div>
+        <button type="submit" class="auth-submit-btn">Criar Minha Conta</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    // Alterna entre a Loja de Beats e a Tela Inteira de Portfólio do Max
+    function togglePortfolioView() {
+      const beatsView = document.getElementById('beats-main-view');
+      const portfolioView = document.getElementById('portfolio-view');
+      const btn = document.getElementById('toggle-view-btn');
+      const homeLink = document.getElementById('home-link');
+      const customOrderBtn = document.getElementById('custom-order-btn');
+
+      if (beatsView.classList.contains('hidden')) {
+        beatsView.classList.remove('hidden');
+        portfolioView.classList.add('hidden');
+        btn.textContent = 'Ver Portfólio';
+        btn.style.background = '#3b82f6';
+        if (homeLink) homeLink.classList.remove('hidden');
+        if (customOrderBtn) customOrderBtn.classList.remove('hidden');
+      } else {
+        beatsView.classList.add('hidden');
+        portfolioView.classList.remove('hidden');
+        btn.textContent = 'Ver Woah Colletion';
+        btn.style.background = '#1d1d1f';
+        if (homeLink) homeLink.classList.add('hidden');
+        if (customOrderBtn) customOrderBtn.classList.add('hidden');
+      }
+    }
+
+    function togglePortfolioTab(tabId) {
+      const targetSection = document.getElementById(tabId);
+      const otherTabId = tabId === 'prod-projects-section' ? 'prod-courses-section' : 'prod-projects-section';
+      const otherSection = document.getElementById(otherTabId);
+
+      if (targetSection.classList.contains('hidden')) {
+        targetSection.classList.remove('hidden');
+        otherSection.classList.add('hidden');
+        setTimeout(() => {
+          targetSection.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      } else {
+        targetSection.classList.add('hidden');
+      }
+    }
+
+    // Alterna a exibição das seções internas da Loja
+    function toggleBeatSection(sectionId) {
+      const allSections = ['catalog-section', 'licenses-section', 'releases-list-section'];
+      allSections.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (id === sectionId) {
+          if (el.classList.contains('hidden')) {
+            el.classList.remove('hidden');
+            setTimeout(() => {
+              el.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+          } else {
+            el.classList.add('hidden');
+          }
+        } else {
+          el.classList.add('hidden');
+        }
+      });
+    }
+
+    // Abre a seção e rola suavemente até ela
+    function openAndScrollSection(sectionId) {
+      const el = document.getElementById(sectionId);
+      if (!el) return;
+      el.classList.remove('hidden');
+      setTimeout(() => {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+
+    // Filtragem em tempo real na barra de busca do header
+    function handleSearchBeats(query) {
+      const q = query.trim().toLowerCase();
+      const cards = document.querySelectorAll('.upgraded-beat-card');
+      const catalogSection = document.getElementById('catalog-section');
+      if (catalogSection && catalogSection.classList.contains('hidden')) {
+        catalogSection.classList.remove('hidden');
+      }
+      cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        if (q === '' || text.includes(q)) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    // Filtragem por abas de gênero (Todos, Trap, Drill, Boombap, R&B)
+    function filterBeatsByGenre(genre, btn) {
+      document.querySelectorAll('.filter-tab-pill').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+
+      const cards = document.querySelectorAll('.upgraded-beat-card');
+      cards.forEach(card => {
+        const cardGenre = (card.dataset.genre || '').toLowerCase();
+        if (genre === 'all' || cardGenre.includes(genre.toLowerCase())) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    // Renderização do Waveform em Canvas com degradê Roxo -> Azul -> Ciano
+    const waveCanvas = document.getElementById('featured-waveform-canvas');
+    let waveCtx = waveCanvas ? waveCanvas.getContext('2d') : null;
+    let waveProgress = 0.23; // 45s de 192s
+
+    function drawWaveformBars() {
+      if (!waveCanvas || !waveCtx) return;
+      const rect = waveCanvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      waveCanvas.width = rect.width * dpr;
+      waveCanvas.height = rect.height * dpr;
+      waveCtx.scale(dpr, dpr);
+
+      const w = rect.width;
+      const h = rect.height;
+      waveCtx.clearRect(0, 0, w, h);
+
+      const barsCount = 60;
+      const barWidth = w / barsCount;
+
+      const gradient = waveCtx.createLinearGradient(0, 0, w, 0);
+      gradient.addColorStop(0, '#8b5cf6');
+      gradient.addColorStop(0.5, '#00b4d8');
+      gradient.addColorStop(1, '#38bdf8');
+
+      waveCtx.fillStyle = gradient;
+
+      for (let i = 0; i < barsCount; i++) {
+        const ratio = i / barsCount;
+        const played = ratio <= waveProgress;
+        const env = Math.sin(ratio * Math.PI);
+        const noise = (Math.sin(i * 0.48) * 0.35 + Math.cos(i * 0.85) * 0.35 + 0.5);
+        const barH = Math.max(4, h * 0.82 * env * noise);
+        const x = i * barWidth;
+        const y = (h - barH) / 2;
+
+        waveCtx.globalAlpha = played ? 1.0 : 0.25;
+        waveCtx.fillRect(x, y, barWidth - 1.5, barH);
+      }
+      waveCtx.globalAlpha = 1.0;
+    }
+
+    function seekWaveform(event) {
+      if (!waveCanvas) return;
+      const rect = waveCanvas.getBoundingClientRect();
+      waveProgress = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
+      const totalSec = 192;
+      const currentSec = Math.floor(waveProgress * totalSec);
+      const m = Math.floor(currentSec / 60);
+      const s = currentSec % 60;
+      const timeDisplay = document.getElementById('featured-time-text');
+      if (timeDisplay) {
+        timeDisplay.textContent = `${m}:${s.toString().padStart(2, '0')} / 3:12`;
+      }
+      drawWaveformBars();
+    }
+
+    // Modal de Autenticação
+    function openAuthModal() {
+      const modal = document.getElementById('auth-modal');
+      if (modal) modal.classList.remove('hidden');
+    }
+    function closeAuthModal() {
+      const modal = document.getElementById('auth-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+    function closeAuthModalOnOutsideClick(event) {
+      if (event.target.id === 'auth-modal') closeAuthModal();
+    }
+
+    // Controle do Lançamento em Destaque Automático
+    let isPlaying = true;
+    const heroBtnIcon = document.getElementById('hero-toggle-icon');
+
+    // Reprodução Automática Web Audio API
+    let audioCtx = null;
+    let synthInterval = null;
+
+    function startMusicEngine() {
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+
+        const notes = [220, 261.63, 329.63, 392.00, 329.63, 261.63];
+        let step = 0;
+        if (synthInterval) clearInterval(synthInterval);
+
+        synthInterval = setInterval(() => {
+          if (!isPlaying || !audioCtx) return;
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(notes[step % notes.length], audioCtx.currentTime);
+          
+          gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.8);
+
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.8);
+          step++;
+
+          // Atualiza suavemente a barra de progresso da waveform
+          waveProgress = (waveProgress + 0.004) % 1;
+          const totalSec = 192;
+          const currentSec = Math.floor(waveProgress * totalSec);
+          const m = Math.floor(currentSec / 60);
+          const s = currentSec % 60;
+          const timeDisplay = document.getElementById('featured-time-text');
+          if (timeDisplay) {
+            timeDisplay.textContent = `${m}:${s.toString().padStart(2, '0')} / 3:12`;
+          }
+          drawWaveformBars();
+        }, 320);
+      } catch (e) {
+        console.log("Audio autoplay aguardando interação do usuário:", e);
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      startMusicEngine();
+      drawWaveformBars();
+      window.addEventListener('resize', drawWaveformBars);
+    });
+    window.addEventListener('click', () => {
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }, { once: true });
+
+    function toggleAutoPlay() {
+      if (isPlaying) {
+        isPlaying = false;
+        if (heroBtnIcon) heroBtnIcon.textContent = '▶';
+        if (synthInterval) clearInterval(synthInterval);
+      } else {
+        isPlaying = true;
+        if (heroBtnIcon) heroBtnIcon.textContent = '⏸';
+        startMusicEngine();
+      }
+    }
+
+    // Tocar outra música da lista
+    let currentPlayingBtn = null;
+    function playAudio(name, info1, info2, btn) {
+      if (currentPlayingBtn && currentPlayingBtn !== btn) {
+        currentPlayingBtn.textContent = '▶';
+      }
+
+      if (btn.textContent === '⏸') {
+        btn.textContent = '▶';
+        toggleAutoPlay();
+        return;
+      }
+
+      btn.textContent = '⏸';
+      currentPlayingBtn = btn;
+      document.getElementById('auto-track-title').textContent = name;
+
+      isPlaying = true;
+      heroDisc.classList.remove('paused');
+      heroBtnIcon.textContent = '⏸';
+      heroBtnText.textContent = 'Pausar';
+      startMusicEngine();
+    }
+
+    /* ---- Suporte a música e foto uploadadas pelo dev via configurações ---- */
+    let uploadedAudio = null;
+
+    function applyUploadedMusic() {
+      const musicData = localStorage.getItem('featured_music_data');
+      const musicName = localStorage.getItem('featured_music_name');
+      if (!musicData) return;
+
+      // Para o sintetizador
+      isPlaying = false;
+      if (synthInterval) clearInterval(synthInterval);
+      if (audioCtx) { try { audioCtx.close(); } catch(e){} audioCtx = null; }
+
+      // Cria elemento audio
+      if (uploadedAudio) { uploadedAudio.pause(); uploadedAudio = null; }
+      uploadedAudio = new Audio(musicData);
+      uploadedAudio.loop = true;
+      uploadedAudio.volume = 0.7;
+
+      // Atualiza nome da faixa
+      if (musicName) {
+        const titleEl = document.getElementById('auto-track-title');
+        if (titleEl) titleEl.textContent = musicName;
+      }
+
+      // Toca
+      uploadedAudio.play().then(() => {
+        isPlaying = true;
+        heroDisc.classList.remove('paused');
+        heroBtnIcon.textContent = '⏸';
+        heroBtnText.textContent = 'Pausar';
+      }).catch(function(e) {
+        console.log('Aguardando interação do usuário para tocar música uploadada:', e);
+      });
+
+      // Override toggleAutoPlay para usar o áudio uploadado
+      window._useUploadedAudio = true;
+    }
+
+    // Override do toggleAutoPlay para suportar audio uploadado
+    var _origToggleAutoPlay = toggleAutoPlay;
+    window.toggleAutoPlay = function() {
+      if (uploadedAudio) {
+        if (isPlaying) {
+          isPlaying = false;
+          heroDisc.classList.add('paused');
+          heroBtnIcon.textContent = '▶';
+          heroBtnText.textContent = 'Ouvir';
+          uploadedAudio.pause();
+        } else {
+          isPlaying = true;
+          heroDisc.classList.remove('paused');
+          heroBtnIcon.textContent = '⏸';
+          heroBtnText.textContent = 'Pausar';
+          uploadedAudio.play();
+        }
+      } else {
+        _origToggleAutoPlay();
+      }
+    };
+
+    // Ao carregar, verificar se há música ou foto salva
+    window.addEventListener('DOMContentLoaded', function() {
+      // Música
+      const musicData = localStorage.getItem('featured_music_data');
+      if (musicData) {
+        setTimeout(applyUploadedMusic, 500);
+      }
+      // Foto de capa
+      const coverData = localStorage.getItem('featured_cover_data');
+      if (coverData) {
+        var coverImg = document.getElementById('release-cover-img');
+        if (coverImg) {
+          coverImg.innerHTML = '<img src="' + coverData + '" style="width:100%;height:100%;object-fit:cover;">';
+        }
+      }
+    });
+  </script>
+</body>
+
+</html>
+

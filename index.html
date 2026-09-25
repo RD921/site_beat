@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rodrigo Arrezzi — Desenvolvedor de Sistemas</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <nav>
+    <div class="logo">Rodrigo Arrezzi</div>
+    <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+      <button class="nav-cta" id="align-btn" onclick="window.open('https://wa.me/5527995055702', '_blank')"
+        style="background: #10b981;">Alinhar novos projetos</button>
+      <button class="nav-cta" id="toggle-view-btn" onclick="toggleView()" style="background: #3b82f6;">Ver Portfólio</button>
+      <div id="nav-auth-container"></div>
+    </div>
+  </nav>
+
+  <main id="main-content">
+    <!-- Portal View -->
+    <div id="ecomflow-view">
+      <section class="hero">
+        <div class="badge fade-up"><span class="badge-dot"></span> Desenvolvedor disponível para novos desafios</div>
+        <h1 class="fade-up delay-1">Rodrigo<br><span>Arrezzi.</span></h1>
+        <p class="fade-up delay-2">Desenvolvedor Full Stack, Produtor Musical e Especialista em Marketing Digital. Escolha uma área para explorar.</p>
+        <div class="hero-btns fade-up delay-3">
+          <a href="rodrigo-arrezzi/index.html" class="btn-primary" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">💻 Rodrigo Arrezzi</a>
+          <a href="woah-collection/index.html" class="btn-secondary" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">🎵 Woah Colletion (Beats)</a>
+          <a href="marketing/index.html" class="btn-secondary" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">🚀 Marketing</a>
+        </div>
+      </section>
+    </div>
+
+    <!-- Portfolio View -->
+    <div id="portfolio-view" class="hidden">
+      <section class="hero">
+        <div class="badge fade-up"><span class="badge-dot" style="background:#3b82f6;"></span> Portfólio Profissional
+        </div>
+        <h1 class="fade-up delay-1">Meus Cursos &<br><span>Projetos em Destaque.</span></h1>
+        <p class="fade-up delay-2">Desenvolvedor Full Stack especializado em criar soluções web robustas, integrando
+          inteligência artificial e automação de processos de ponta a ponta.</p>
+        <div class="hero-btns fade-up delay-3">
+          <button class="btn-primary" onclick="togglePortfolioTab('projects-section')">Ver Projetos</button>
+          <button class="btn-secondary" onclick="togglePortfolioTab('courses-section')">Ver Cursos</button>
+        </div>
+      </section>
+
+      <section class="features hidden" id="projects-section">
+        <div class="section-label">Projetos</div>
+        <div class="section-title">Aplicações Desenvolvidas</div>
+        <p class="section-sub">Projetos reais criados utilizando as mais modernas tecnologias de desenvolvimento.</p>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">🛒</div>
+            <div class="feature-title">EcomFlow</div>
+            <div class="feature-desc">Sistema de gestão de e-commerce com IA integrado, automatizando fluxos de estoque
+              e vendas em multicanais.</div>
+            <div style="margin-top: 14px; display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px;">
+              <span class="tech-badge">React</span>
+              <span class="tech-badge">Node.js</span>
+              <span class="tech-badge">Gemini AI</span>
+            </div>
+            <button class="nav-cta" onclick="openExplanation('project-ecomflow')"
+              style="font-size: 11px; padding: 6px 12px; width: 100%; margin-top: auto;">Saber mais</button>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🤖</div>
+            <div class="feature-title">Chatbot n8n Inteligente</div>
+            <div class="feature-desc">Agente virtual integrado que responde clientes e gerencia leads em tempo real
+              utilizando fluxos sem código.</div>
+            <div style="margin-top: 14px; display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px;">
+              <span class="tech-badge">n8n</span>
+              <span class="tech-badge">Webhooks</span>
+              <span class="tech-badge">REST API</span>
+            </div>
+            <button class="nav-cta" onclick="openExplanation('project-n8n')"
+              style="font-size: 11px; padding: 6px 12px; width: 100%; margin-top: auto;">Saber mais</button>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <div class="feature-title">Dashboard Multi-tenant</div>
+            <div class="feature-desc">Painel administrativo SaaS seguro, com autenticação JWT e isolamento completo de
+              banco de dados para inquilinos.</div>
+            <div style="margin-top: 14px; display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px;">
+              <span class="tech-badge">Express</span>
+              <span class="tech-badge">MySQL</span>
+              <span class="tech-badge">JWT</span>
+            </div>
+            <button class="nav-cta" onclick="openExplanation('project-saas')"
+              style="font-size: 11px; padding: 6px 12px; width: 100%; margin-top: auto;">Saber mais</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="features hidden" id="courses-section" style="padding-top: 0; padding-bottom: 80px;">
+        <div class="section-label">Educação</div>
+        <div class="section-title">Cursos & Certificações</div>
+        <p class="section-sub">Especializações contínuas focadas em engenharia de software e inovação digital.</p>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="cert-image-box">
+              <img src="certificados/certificado-arquitetura-web.jpg" alt="Certificado Arquitetura Web"
+                class="cert-image-preview"
+                onerror="this.src='https://placehold.co/600x400/f5f5f7/1d1d1f?text=Certificado+Arquitetura+Web'">
+            </div>
+            <div class="feature-icon" style="margin-top: 12px;">🎓</div>
+            <div class="feature-title">Arquitetura Web</div>
+            <div class="feature-desc" style="margin-bottom: 12px;">Imersão e aperfeiçoamento prático em Arquitetura Web
+              pela plataforma Alura, aprofundando conhecimentos na construção de arquiteturas frontend e backend
+              escaláveis, desenvolvimento e consumo de APIs RESTful, modelagem e otimização de bancos de dados
+              relacionais, integração entre serviços, segurança de aplicações, escalabilidade, desempenho, organização
+              de projetos e boas práticas empregadas no desenvolvimento de sistemas web modernos.</div>
+            <button class="nav-cta" onclick="openExplanation('cert-fullstack')"
+              style="font-size: 11px; padding: 6px 12px; width: 100%; margin-top: auto;">Ver detalhes</button>
+          </div>
+          <div class="feature-card">
+            <div class="cert-image-box">
+              <img src="certificados/certificado-introdução-a-anailise-de-dados-com-powe-bi-com-a-Suzano.jpg"
+                alt="Certificado Introdução a análise de dados com Power BI com a Suzano" class="cert-image-preview"
+                onerror="this.src='https://placehold.co/600x400/f5f5f7/1d1d1f?text=Power+BI+Suzano'">
+            </div>
+            <div class="feature-icon" style="margin-top: 12px;">🧠</div>
+            <div class="feature-title">Introdução a análise de dados com Power BI com a Suzano</div>
+            <div class="feature-desc" style="margin-bottom: 12px;">Imersão e aperfeiçoamento prático em Análise de Dados
+              com Power BI pela Suzano, aprofundando conhecimentos na coleta, tratamento e transformação de dados,
+              modelagem de informações, criação de dashboards interativos, elaboração de relatórios gerenciais,
+              utilização de visualizações estratégicas, interpretação de indicadores de desempenho (KPIs), fundamentos
+              de Business Intelligence (BI) e boas práticas na análise e apresentação de dados para apoio à tomada de
+              decisões.</div>
+            <button class="nav-cta" onclick="openExplanation('cert-ia')"
+              style="font-size: 11px; padding: 6px 12px; width: 100%; margin-top: auto;">Ver detalhes</button>
+          </div>
+          <div class="feature-card">
+            <div class="cert-image-box">
+              <img src="certificados/introdução-ao-desenvolvimento-full-stack-com-a-akad.jpg"
+                alt="Certificado Introdução ao desenvolvimento Full Stack com a Akad" class="cert-image-preview"
+                onerror="this.src='https://placehold.co/600x400/f5f5f7/1d1d1f?text=Full+Stack+Akad'">
+            </div>
+            <div class="feature-icon" style="margin-top: 12px;">⚙️</div>
+            <div class="feature-title">Introdução ao desenvolvimento Full Stack com a Akad</div>
+            <div class="feature-desc" style="margin-bottom: 12px;">Imersão e aperfeiçoamento prático em Desenvolvimento
+              Full Stack pela Akad, aprofundando conhecimentos na construção de aplicações web completas,
+              desenvolvimento de interfaces frontend responsivas, implementação de APIs e regras de negócio no backend,
+              integração entre sistemas, consumo de serviços RESTful, manipulação de bancos de dados, controle de versão
+              com Git, organização de projetos, boas práticas de programação e desenvolvimento de soluções modernas com
+              foco em desempenho, escalabilidade e manutenção.</div>
+            <button class="nav-cta" onclick="openExplanation('cert-n8n')"
+              style="font-size: 11px; padding: 6px 12px; width: 100%; margin-top: auto;">Ver detalhes</button>
+          </div>
+          <div class="feature-card">
+            <div class="cert-image-box">
+              <img src="certificados/imersão-dev-com-google-alura.jpg"
+                alt="Certificado Imersão Dev com Google Gemini – Alura + Google" class="cert-image-preview"
+                onerror="this.src='https://placehold.co/600x400/f5f5f7/1d1d1f?text=Gemini+Alura'">
+            </div>
+            <div class="feature-icon" style="margin-top: 12px;">🚀</div>
+            <div class="feature-title">Imersão Dev com Google Gemini – Alura + Google</div>
+            <div class="feature-desc" style="margin-bottom: 12px;">Imersão e aperfeiçoamento prático em desenvolvimento
+              de software com Inteligência Artificial Generativa por meio do Google Gemini, aprofundando conhecimentos
+              na utilização de IA para criação, otimização e depuração de código, engenharia de prompts (Prompt
+              Engineering), integração de APIs de IA em aplicações, desenvolvimento de soluções inteligentes, automação
+              de tarefas, prototipação rápida, resolução de problemas com apoio de modelos generativos, aplicação de
+              boas práticas no desenvolvimento assistido por IA e aumento da produtividade na construção de aplicações
+              modernas.</div>
+            <button class="nav-cta" onclick="openExplanation('cert-gemini')"
+              style="font-size: 11px; padding: 6px 12px; width: 100%; margin-top: auto;">Ver detalhes</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Modal de Autenticação (Login & Cadastro) -->
+  <div id="auth-modal" class="modal-overlay hidden" onclick="closeAuthModalOnOutsideClick(event)">
+    <div class="modal-card" style="max-width: 420px;">
+      <span class="modal-close" onclick="closeAuthModal()">&times;</span>
+      
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Entrar (Login)</button>
+        <button class="auth-tab" id="tab-register" onclick="switchAuthTab('register')">Criar Conta</button>
+      </div>
+
+      <!-- Formulário de Login -->
+      <form id="auth-login-form" class="auth-form" onsubmit="handleLogin(event)">
+        <div class="auth-input-group">
+          <label for="login-email">E-mail</label>
+          <input type="email" id="login-email" class="auth-input" placeholder="seu@email.com" required>
+        </div>
+        <div class="auth-input-group">
+          <label for="login-password">Senha</label>
+          <input type="password" id="login-password" class="auth-input" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="auth-submit-btn">Acessar Conta</button>
+      </form>
+
+      <!-- Formulário de Cadastro -->
+      <form id="auth-register-form" class="auth-form hidden" onsubmit="handleRegister(event)">
+        <div class="auth-input-group">
+          <label for="reg-name">Nome Completo</label>
+          <input type="text" id="reg-name" class="auth-input" placeholder="Ex: Rodrigo Silva" required>
+        </div>
+        <div class="auth-input-group">
+          <label for="reg-email">E-mail</label>
+          <input type="email" id="reg-email" class="auth-input" placeholder="seu@email.com" required>
+        </div>
+        <div class="auth-input-group">
+          <label for="reg-password">Criar Senha</label>
+          <input type="password" id="reg-password" class="auth-input" placeholder="Mínimo 6 caracteres" minlength="6" required>
+        </div>
+        <button type="submit" class="auth-submit-btn">Criar Minha Conta</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de Explicação (Nuvem de Informações) -->
+  <div id="explanation-modal" class="modal-overlay hidden" onclick="closeModalOnOutsideClick(event)">
+    <div class="modal-card">
+      <span class="modal-close" onclick="closeModal()">&times;</span>
+      <h3 id="modal-title" class="modal-title">Título</h3>
+      <p id="modal-desc" class="modal-desc">Descrição explicativa...</p>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-logo">Rodrigo Arrezzi</div>
+    <div class="footer-social">
+      <a href="https://www.instagram.com/rodrigo_arrezzi" target="_blank" class="social-link" title="Instagram">
+        <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor">
+          <path
+            d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+        </svg>
+        <span>Instagram</span>
+      </a>
+      <a href="https://wa.me/5527995055702" target="_blank" class="social-link" title="WhatsApp">
+        <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor">
+          <path
+            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+        </svg>
+        <span>WhatsApp</span>
+      </a>
+      <a href="https://github.com/RD921/Projeto-atualizado" target="_blank" class="social-link" title="GitHub">
+        <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor">
+          <path
+            d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+        </svg>
+        <span>GitHub</span>
+      </a>
+      <a href="mailto:rodrigoarrezzimaciel17@gmail.com" class="social-link" title="Gmail">
+        <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor">
+          <path
+            d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 010 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z" />
+        </svg>
+        <span>Gmail</span>
+      </a>
+      <a href="https://br.linkedin.com/in/rodrigo-arrezzi-730976282" target="_blank" class="social-link"
+        title="LinkedIn">
+        <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor">
+          <path
+            d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+        </svg>
+        <span>LinkedIn</span>
+      </a>
+    </div>
+    <div class="footer-copy">&copy; 2025 Rodrigo Arrezzi. Todos os direitos reservados.</div>
+  </footer>
+
+  <!-- Balão Flutuante do Assistente Virtual -->
+  <div id="chat-bubble" class="chat-bubble" onclick="toggleChatBox()">
+    <span class="chat-bubble-icon">💬</span>
+    <span class="chat-bubble-pulse"></span>
+  </div>
+
+  <div id="chat-box" class="chat-box hidden">
+    <div class="chat-box-header">
+      <div class="chat-box-avatar">🤖</div>
+      <div>
+        <div class="chat-box-name">Aria — Assistente Virtual</div>
+        <div class="chat-box-status">● Online agora</div>
+      </div>
+      <span class="chat-box-close" onclick="toggleChatBox()">&times;</span>
+    </div>
+    <div class="chat-box-body">
+      <div class="chat-msg bot">Olá! Eu sou a Aria, assistente virtual do Rodrigo. Como posso te ajudar hoje?</div>
+      <div class="chat-msg bot">Você pode me perguntar sobre projetos, cursos, ou entrar em contato diretamente pelo
+        WhatsApp.</div>
+    </div>
+    <div class="chat-box-footer">
+      <a href="https://wa.me/5527995055702" target="_blank" class="chat-whatsapp-btn">💬 Falar pelo WhatsApp</a>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>

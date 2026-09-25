@@ -1,0 +1,15 @@
+{
+  "name": "beat-store",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Beat Store — Plataforma multi-loja de venda de beats profissionais",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^6.3.5"
+  }
+}

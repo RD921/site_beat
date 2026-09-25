@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portfólio Profissional — Rodrigo Arrezzi</title>
+  <meta name="description" content="Portfólio profissional de Rodrigo Arrezzi: projetos de desenvolvimento Full Stack, sistemas, automações e certificações." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="css/portfolio.css" />
+</head>
+<body>
+
+  <nav class="port-nav">
+    <a href="../index.html" class="brand">Rodrigo Arrezzi</a>
+    <a href="../index.html" class="nav-back">← Voltar ao Início</a>
+  </nav>
+
+  <section class="port-hero">
+    <div class="port-label">💼 Portfólio Profissional</div>
+    <h1>Projetos, Sistemas<br><span>& Certificações.</span></h1>
+    <p>Aplicações desenvolvidas, automações com IA e certificações técnicas que compõem a trajetória de Rodrigo Arrezzi como desenvolvedor Full Stack.</p>
+  </section>
+
+  <div class="port-tabs">
+    <button class="tab-btn active" onclick="showTab('projects')">💻 Projetos</button>
+    <button class="tab-btn" onclick="showTab('certs')">🎓 Certificações</button>
+  </div>
+
+  <!-- PROJECTS TAB -->
+  <div class="port-grid tab-section" id="tab-projects">
+
+    <div class="port-card">
+      <div class="port-card-cover" style="background: linear-gradient(135deg,#eff6ff,#dbeafe);">🛒</div>
+      <div class="port-card-body">
+        <div class="port-card-tags"><span class="port-tag">React</span><span class="port-tag">Node.js</span><span class="port-tag">Gemini AI</span></div>
+        <div class="port-card-title">EcomFlow — SaaS de E-commerce</div>
+        <div class="port-card-desc">Sistema SaaS completo para gestão de lojas virtuais com IA integrada, automatizando fluxos de estoque e vendas em multicanais.</div>
+        <a href="https://wa.me/5527995055702?text=Olá! Gostaria de saber mais sobre o EcomFlow" target="_blank" class="port-card-btn">Ver Detalhes</a>
+      </div>
+    </div>
+
+    <div class="port-card">
+      <div class="port-card-cover" style="background: linear-gradient(135deg,#f0fdf4,#dcfce7);">🤖</div>
+      <div class="port-card-body">
+        <div class="port-card-tags"><span class="port-tag">n8n</span><span class="port-tag">Webhooks</span><span class="port-tag">REST API</span></div>
+        <div class="port-card-title">Chatbot n8n Inteligente</div>
+        <div class="port-card-desc">Agente virtual integrado que responde clientes e gerencia leads em tempo real utilizando fluxos no-code e IA generativa.</div>
+        <a href="https://wa.me/5527995055702?text=Olá! Gostaria de saber mais sobre o Chatbot n8n" target="_blank" class="port-card-btn">Ver Detalhes</a>
+      </div>
+    </div>
+
+    <div class="port-card">
+      <div class="port-card-cover" style="background: linear-gradient(135deg,#fdf4ff,#fae8ff);">📊</div>
+      <div class="port-card-body">
+        <div class="port-card-tags"><span class="port-tag">Express</span><span class="port-tag">MySQL</span><span class="port-tag">JWT</span></div>
+        <div class="port-card-title">Dashboard Multi-tenant</div>
+        <div class="port-card-desc">Painel administrativo SaaS com autenticação JWT robusta e isolamento completo de banco de dados por cliente (tenant).</div>
+        <a href="https://wa.me/5527995055702?text=Olá! Gostaria de saber mais sobre o Dashboard Multi-tenant" target="_blank" class="port-card-btn">Ver Detalhes</a>
+      </div>
+    </div>
+
+    <div class="port-card">
+      <div class="port-card-cover" style="background: linear-gradient(135deg,#fff7ed,#ffedd5);">🎵</div>
+      <div class="port-card-body">
+        <div class="port-card-tags"><span class="port-tag">HTML/CSS/JS</span><span class="port-tag">Web Audio API</span></div>
+        <div class="port-card-title">Woah Colletion — Loja de Beats</div>
+        <div class="port-card-desc">Plataforma completa de loja de beats com player de áudio, equalizador paramétrico, checkout integrado e sistema de autenticação.</div>
+        <a href="../../woah-collection/index.html" class="port-card-btn">Visitar Projeto</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CERTS TAB -->
+  <div class="port-grid tab-section hidden-section" id="tab-certs">
+
+    <div class="port-card">
+      <div class="port-card-body">
+        <img src="../images/certificates/certificado-introdução-a-anailise-de-dados-com-powe-bi-com-a-Suzano.jpg"
+          alt="Certificado Power BI Suzano" class="port-card-cert"
+          onerror="this.style.display='none'">
+        <div class="port-card-tags"><span class="port-tag">Power BI</span><span class="port-tag">BI</span><span class="port-tag">Suzano</span></div>
+        <div class="port-card-title">Análise de Dados com Power BI</div>
+        <div class="port-card-desc">Formação em coleta, tratamento e transformação de dados, dashboards interativos, KPIs e Business Intelligence aplicado.</div>
+        <a href="https://wa.me/5527995055702" target="_blank" class="port-card-btn">Entrar em Contato</a>
+      </div>
+    </div>
+
+    <div class="port-card">
+      <div class="port-card-body">
+        <img src="../images/certificates/introdução-ao-desenvolvimento-full-stack-com-a-akad.jpg"
+          alt="Certificado Full Stack Akad" class="port-card-cert"
+          onerror="this.style.display='none'">
+        <div class="port-card-tags"><span class="port-tag">Full Stack</span><span class="port-tag">HTML/CSS</span><span class="port-tag">Akad</span></div>
+        <div class="port-card-title">Desenvolvimento Full Stack — Akad</div>
+        <div class="port-card-desc">Frontend responsivo, APIs RESTful, bancos de dados, Git e melhores práticas de desenvolvimento web moderno.</div>
+        <a href="https://wa.me/5527995055702" target="_blank" class="port-card-btn">Entrar em Contato</a>
+      </div>
+    </div>
+
+    <div class="port-card">
+      <div class="port-card-body">
+        <div class="port-card-cover" style="background: linear-gradient(135deg,#eff6ff,#dbeafe); height:140px; border-radius:8px; margin-bottom:12px;">🏗️</div>
+        <div class="port-card-tags"><span class="port-tag">Arquitetura Web</span><span class="port-tag">APIs</span><span class="port-tag">Alura</span></div>
+        <div class="port-card-title">Arquitetura Web — Alura</div>
+        <div class="port-card-desc">Arquitetura cliente-servidor, APIs REST, segurança, escalabilidade, bancos relacionais e boas práticas de sistemas web modernos.</div>
+        <a href="https://wa.me/5527995055702" target="_blank" class="port-card-btn">Entrar em Contato</a>
+      </div>
+    </div>
+
+    <div class="port-card">
+      <div class="port-card-body">
+        <div class="port-card-cover" style="background: linear-gradient(135deg,#f0fdf4,#dcfce7); height:140px; border-radius:8px; margin-bottom:12px;">🚀</div>
+        <div class="port-card-tags"><span class="port-tag">Gemini AI</span><span class="port-tag">Prompt Eng</span><span class="port-tag">Google + Alura</span></div>
+        <div class="port-card-title">Imersão Dev com Google Gemini</div>
+        <div class="port-card-desc">Desenvolvimento com IA generativa, engenharia de prompts, integração de APIs de IA e automação de tarefas com Gemini.</div>
+        <a href="https://wa.me/5527995055702" target="_blank" class="port-card-btn">Entrar em Contato</a>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="port-footer">
+    <p>© 2025 Rodrigo Arrezzi · <a href="../index.html">Início</a> · <a href="../../woah-collection/index.html">Woah Colletion</a> · <a href="../../marketing/index.html">Marketing</a> · <a href="mailto:rodrigoarrezzimaciel17@gmail.com">Gmail</a></p>
+  </footer>
+
+  <script src="js/portfolio.js"></script>
+</body>
+</html>

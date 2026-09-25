@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Finalizar compra — Woah Collection (Beats & Produção Musical)</title>
+  <meta name="description" content="Finalize a compra segura do seu beat exclusivo na Woah Collection. Licença comercial oficial, entrega imediata e suporte dedicado." />
+
+  <!-- Google Fonts: Montserrat (Tipografia Oficial do Checkout) & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="checkout.css" />
+</head>
+
+<body class="checkout-body">
+
+  <!-- =========================================================================
+       4. CABEÇALHO DO CHECKOUT (CONSISTENTE COM O RESTANTE DO SITE)
+       ========================================================================= -->
+  <header class="site-header">
+    <div class="header-container">
+      <div class="header-left">
+        <!-- Logo Woah Collection -->
+        <a href="index.html" class="brand-logo-woah" title="Woah Collection">
+          <span class="logo-text-bold">WOAH</span>
+          <span class="logo-sub-text">COLLECTION</span>
+        </a>
+
+        <!-- Menu de Navegação -->
+        <nav class="main-nav">
+          <a href="index.html" class="nav-link">Início</a>
+          <a href="index.html#catalog-section" class="nav-link active" id="nav-beats-link">Beats</a>
+          <a href="index.html#licenses-section" class="nav-link">Licenças</a>
+          <a href="index.html#como-funciona" class="nav-link">Como Funciona</a>
+          <a href="https://wa.me/5527995055702" target="_blank" class="nav-link">Contato</a>
+        </nav>
+      </div>
+
+      <!-- Campo de Busca Compacto -->
+      <div class="header-center">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="search-input" placeholder="Buscar beats..." aria-label="Buscar beats" />
+        </div>
+      </div>
+
+      <!-- Ícones e Controles da Direita -->
+      <div class="header-right">
+        <!-- Carrinho com Badge -->
+        <a href="index.html" class="header-cart-btn" title="Carrinho">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          </svg>
+          <span class="header-cart-badge">2</span>
+        </a>
+
+        <!-- Botão Entrar (Desktop) -->
+        <button type="button" class="header-user-btn" onclick="window.location.href='index.html'">Entrar</button>
+
+        <!-- Menu Hamburger (Mobile) -->
+        <button type="button" class="header-hamburger-btn" id="mobile-menu-btn" aria-label="Abrir Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div class="mobile-nav-drawer" id="mobile-nav-drawer">
+      <div class="mobile-nav-inner">
+        <div class="mobile-nav-header">
+          <div class="brand-logo-woah">
+            <span class="logo-text-bold">WOAH</span>
+            <span class="logo-sub-text">COLLECTION</span>
+          </div>
+          <button type="button" class="mobile-nav-close" id="mobile-nav-close">✕</button>
+        </div>
+        <nav class="mobile-nav-links">
+          <a href="index.html" class="mobile-link">Início</a>
+          <a href="index.html#catalog-section" class="mobile-link active">Beats</a>
+          <a href="index.html#licenses-section" class="mobile-link">Licenças</a>
+          <a href="index.html#como-funciona" class="mobile-link">Como Funciona</a>
+          <a href="https://wa.me/5527995055702" target="_blank" class="mobile-link">Contato</a>
+        </nav>
+        <div class="mobile-nav-footer">
+          <button type="button" class="btn-finalize-purchase" style="height: 44px; font-size: 13px;" onclick="window.location.href='index.html'">Entrar</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- =========================================================================
+       3, 4 & 5. CONTAINER PRINCIPAL, NAVEGAÇÃO DE RETORNO & TÍTULO
+       ========================================================================= -->
+  <main class="checkout-wrapper">
+    <!-- Navegação de Retorno Discreta -->
+    <div class="back-action-bar">
+      <a href="index.html#catalog-section" class="back-link" id="btn-back-to-beats">
+        ← Voltar para Beats
+      </a>
+    </div>
+
+    <!-- Título da Página -->
+    <div class="checkout-page-title-group">
+      <h1 class="checkout-page-title">Finalizar compra</h1>
+      <p class="checkout-page-subtitle">Revise seu beat e finalize seu pedido com segurança.</p>
+    </div>
+
+    <!-- GRID PRINCIPAL: 2 Colunas no Desktop (65% / 35%, gap 24px) -->
+    <div class="checkout-grid">
+
+      <!-- =====================================================================
+           COLUNA ESQUERDA (~65%): PRODUTO, LICENÇA, ARQUIVOS, PLAYER & EQ
+           ===================================================================== -->
+      <section class="studio-column">
+
+        <!-- 6. RESUMO DO BEAT (CARD 1) -->
+        <article class="checkout-card" id="card-beat-resume">
+          <div class="checkout-card-header">
+            <h2 class="checkout-card-title">Resumo do beat</h2>
+          </div>
+
+          <div class="beat-resume-content">
+            <div class="beat-resume-left">
+              <!-- Miniatura do Beat 96x96 com badge 1x -->
+              <div class="beat-thumb-wrap">
+                <img src="images/covers/cover-impacto-real.jpg" alt="Impacto Real" class="beat-thumb-img" id="beat-cover-img" />
+                <span class="beat-thumb-qty">1x</span>
+              </div>
+
+              <!-- Metadados do Beat -->
+              <div class="beat-meta-details">
+                <div class="beat-badge-row">
+                  <span class="beat-exclusive-badge">BEAT EXCLUSIVO</span>
+                </div>
+                <h3 class="beat-title-h2" id="beat-title-display">Impacto Real</h3>
+                <div class="beat-producer-text">Prod. Rodrigo Arrezzi</div>
+
+                <!-- Tags -->
+                <div class="beat-tags-group">
+                  <span class="beat-tag-item">Trap</span>
+                  <span class="beat-tag-item">Hip Hop</span>
+                  <span class="beat-tag-item">Melódico</span>
+                </div>
+
+                <!-- Informações Técnicas -->
+                <div class="beat-specs-text">
+                  BPM: 90 &nbsp;|&nbsp; Tom: Cm &nbsp;|&nbsp; Duração: 3:12
+                </div>
+              </div>
+            </div>
+
+            <!-- Preço Destacado à Direita -->
+            <div class="beat-price-highlight" id="beat-price-display">
+              R$ 149,90
+            </div>
+          </div>
+        </article>
+
+        <!-- 7. DETALHES DA LICENÇA (CARD 2 - GRID 2x3) -->
+        <article class="checkout-card" id="card-license-details">
+          <div class="checkout-card-header">
+            <h2 class="checkout-card-title">Detalhes da licença</h2>
+            <p class="checkout-card-sub">Você receberá todos os arquivos e direitos após a confirmação de pagamento.</p>
+          </div>
+
+          <div class="license-benefits-grid">
+            <!-- 1. Arquivo WAV -->
+            <div class="license-benefit-box">
+              <div class="benefit-icon-badge">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 10v4M6 6v12M10 3v18M14 8v8M18 5v14M22 10v4"></path></svg>
+              </div>
+              <div class="benefit-info">
+                <span class="benefit-title">Arquivo WAV</span>
+                <span class="benefit-desc">Alta qualidade de áudio (sem compressão).</span>
+              </div>
+            </div>
+
+            <!-- 2. Arquivo MP3 -->
+            <div class="license-benefit-box">
+              <div class="benefit-icon-badge">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+              </div>
+              <div class="benefit-info">
+                <span class="benefit-title">Arquivo MP3</span>
+                <span class="benefit-desc">Compatibilidade total com todos os dispositivos.</span>
+              </div>
+            </div>
+
+            <!-- 3. Uso comercial -->
+            <div class="license-benefit-box">
+              <div class="benefit-icon-badge">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              </div>
+              <div class="benefit-info">
+                <span class="benefit-title">Uso comercial</span>
+                <span class="benefit-desc">Liberdade para monetizar seus projetos.</span>
+              </div>
+            </div>
+
+            <!-- 4. Beat exclusivo -->
+            <div class="license-benefit-box">
+              <div class="benefit-icon-badge">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              </div>
+              <div class="benefit-info">
+                <span class="benefit-title">Beat exclusivo</span>
+                <span class="benefit-desc">Apenas um comprador (sem revenda).</span>
+              </div>
+            </div>
+
+            <!-- 5. Entrega imediata -->
+            <div class="license-benefit-box">
+              <div class="benefit-icon-badge">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+              </div>
+              <div class="benefit-info">
+                <span class="benefit-title">Entrega imediata</span>
+                <span class="benefit-desc">Acesso liberado após o pagamento.</span>
+              </div>
+            </div>
+
+            <!-- 6. Licença digital -->
+            <div class="license-benefit-box">
+              <div class="benefit-icon-badge">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              </div>
+              <div class="benefit-info">
+                <span class="benefit-title">Licença digital</span>
+                <span class="benefit-desc">Contrato e comprovante por e-mail.</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 8. ADICIONAR MÚSICA / PERSONALIZAÇÃO (CARD 3 - OPCIONAL) -->
+        <article class="checkout-card" id="card-upload-audio">
+          <div class="checkout-card-header">
+            <h2 class="checkout-card-title">
+              Adicionar música <span class="upload-card-optional">(opcional)</span>
+            </h2>
+            <p class="checkout-card-sub">Envie uma música de referência ou arquivo para personalização.</p>
+          </div>
+
+          <!-- Área Drag and Drop de Upload (~120px) -->
+          <div class="upload-dropzone-box" id="upload-dropzone" title="Clique ou arraste seu áudio aqui">
+            <input type="file" id="audio-file-input" accept="audio/mp3,audio/wav,audio/m4a,audio/*" style="display: none;" />
+            <svg class="upload-cloud-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 16l-4-4-4 4M12 12v9"></path>
+              <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path>
+            </svg>
+            <div class="upload-primary-text">Arraste seu arquivo aqui ou clique para selecionar</div>
+            <div class="upload-sub-formats">Formatos: MP3, WAV, M4A • Máx. 50MB</div>
+            <button type="button" id="btn-load-demo" style="display: none;">Carregar Demo</button>
+          </div>
+
+          <!-- Card do Áudio Carregado (Quando selecionado) -->
+          <div class="uploaded-track-playback-card" id="track-playback-card">
+            <div class="uploaded-track-info">
+              <span class="track-file-icon">🎵</span>
+              <div>
+                <div class="uploaded-track-name" id="user-track-name">Vocal_Demo_Cm.mp3</div>
+                <div class="uploaded-track-meta" id="user-track-meta">4.8 MB • MP3</div>
+              </div>
+            </div>
+            <button type="button" class="btn-remove-uploaded-track" id="btn-remove-track" title="Remover música">✕</button>
+          </div>
+        </article>
+
+        <!-- 9. PLAYER DE ÁUDIO (CARD 4) -->
+        <article class="checkout-card" id="card-audio-player">
+          <div class="checkout-card-header">
+            <h2 class="checkout-card-title">Player de áudio</h2>
+          </div>
+
+          <div class="player-horizontal-card-inner">
+            <!-- Botão Play / Pause Circular -->
+            <button type="button" class="btn-player-play" id="transport-play-btn" title="Reproduzir / Pausar">
+              ▶
+            </button>
+
+            <!-- Título do Beat e Produtor -->
+            <div class="player-track-summary">
+              <span class="player-track-name-bold">Impacto Real</span>
+              <span class="player-track-prod-sub">Prod. Rodrigo Arrezzi</span>
+            </div>
+
+            <!-- Waveform Canvas em Tons Vermelhos -->
+            <div class="player-waveform-container" id="waveform-container" title="Navegar no áudio">
+              <canvas id="waveform-canvas" class="player-waveform-canvas"></canvas>
+              <div class="waveform-cursor" id="waveform-cursor"></div>
+              <div class="waveform-time-bubble" id="waveform-bubble">01:09</div>
+            </div>
+
+            <!-- Tempo Atual / Duração -->
+            <div class="player-time-display" id="track-time-display">
+              01:09 / 03:12
+            </div>
+
+            <!-- Controle de Volume -->
+            <div class="player-volume-group">
+              <span class="volume-icon-svg">🔊</span>
+              <input type="range" class="volume-slider-range" id="volume-slider" min="0" max="1" step="0.01" value="0.85" title="Volume Geral" />
+            </div>
+          </div>
+        </article>
+
+        <!-- 10. EQUALIZADOR PARAMÉTRICO COMPACTO (CARD 5) -->
+        <article class="checkout-card equalizer-compact-card" id="card-equalizer-section">
+          <div class="eq-compact-header-row">
+            <div>
+              <h2 class="checkout-card-title">Equalizador Paramétrico</h2>
+              <p class="checkout-card-sub">Ajuste o som antes da finalização.</p>
+            </div>
+            <button type="button" class="btn-reset-eq-compact" id="btn-reset-eq">
+              ↻ Resetar
+            </button>
+          </div>
+
+          <div class="eq-compact-body-grid">
+            <!-- Gráfico de Resposta de Frequência (~140-150px) -->
+            <div class="eq-compact-canvas-wrap">
+              <canvas id="eq-canvas"></canvas>
+            </div>
+
+            <!-- 4 Bandas Compactas (BAND 1 a 4 com FREQ, Q e GAIN) -->
+            <div class="eq-compact-bands-row">
+              <!-- BAND 1 -->
+              <div class="compact-band-box" data-band-index="0">
+                <div class="band-box-header">
+                  <span class="band-box-dot"></span>
+                  <span class="band-box-title">BAND 1</span>
+                </div>
+                <div class="band-box-params">
+                  <div class="band-param-line">
+                    <span class="param-name">FREQ</span>
+                    <span class="param-val" id="eq-b1-freq">85 Hz</span>
+                  </div>
+                  <div class="band-param-line">
+                    <span class="param-name">Q</span>
+                    <span class="param-val" id="eq-b1-q">0.7</span>
+                  </div>
+                  <div class="band-param-line">
+                    <span class="param-name">GAIN</span>
+                    <span class="param-val" id="eq-b1-gain">-2.0 dB</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- BAND 2 -->
+              <div class="compact-band-box" data-band-index="1">
+                <div class="band-box-header">
+                  <span class="band-box-dot"></span>
+                  <span class="band-box-title">BAND 2</span>
+                </div>
+                <div class="band-box-params">
+                  <div class="band-param-line">
+                    <span class="param-name">FREQ</span>
+                    <span class="param-val" id="eq-b2-freq">750 Hz</span>
+                  </div>
+                  <div class="band-param-line">
+                    <span class="param-name">Q</span>
+                    <span class="param-val" id="eq-b2-q">1.0</span>
+                  </div>
+                  <div class="band-param-line">
+                    <span class="param-name">GAIN</span>
+                    <span class="param-val" id="eq-b2-gain">+1.5 dB</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- BAND 3 -->
+              <div class="compact-band-box" data-band-index="2">
+                <div class="band-box-header">
+                  <span class="band-box-dot"></span>
+                  <span class="band-box-title">BAND 3</span>
+                </div>
+                <div class="band-box-params">
+                  <div class="band-param-line">
+                    <span class="param-name">FREQ</span>
+                    <span class="param-val" id="eq-b3-freq">4.5 kHz</span>
+                  </div>
+                  <div class="band-param-line">
+                    <span class="param-name">Q</span>
+                    <span class="param-val" id="eq-b3-q">1.0</span>
+                  </div>
+                  <div class="band-param-line">
+                    <span class="param-name">GAIN</span>
+                    <span class="param-val" id="eq-b3-gain">+2.0 dB</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- BAND 4 -->
+              <div class="compact-band-box" data-band-index="3">
+                <div class="band-box-header">
+                  <span class="band-box-dot"></span>
+                  <span class="band-box-title">BAND 4</span>
+                </div>
+                <div class="band-box-params">
+                  <div class="band-param-line">
+                    <span class="param-name">FREQ</span>
+                    <span class="param-val" id="eq-b4-freq">12.0 kHz</span>
+                  </div>
+                  <div class="band-param-line">
+                    <span class="param-name">Q</span>
+                    <span class="param-val" id="eq-b4-q">1.0</span>
+                  </div>
+                  <div class="band-param-line">
+                    <span class="param-name">GAIN</span>
+                    <span class="param-val" id="eq-b4-gain">-1.5 dB</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+      </section>
+
+      <!-- =====================================================================
+           COLUNA DIREITA (~35%): RESUMO DO PEDIDO, CUPOM, PAGAMENTO & COMPRA
+           "CAIXA DE FECHAMENTO" DE ALTA CONVERSÃO
+           ===================================================================== -->
+      <aside class="payment-sticky-card">
+
+        <!-- 11. RESUMO DO PEDIDO -->
+        <div class="order-summary-block">
+          <div class="panel-section-title">Resumo do pedido</div>
+
+          <div class="order-mini-item">
+            <img src="images/covers/cover-impacto-real.jpg" alt="Impacto Real" class="order-mini-thumb" />
+            <div class="order-mini-info">
+              <div class="order-mini-name" id="summary-beat-title-display">Impacto Real</div>
+              <div class="order-mini-prod">Prod. Rodrigo Arrezzi • 1x</div>
+            </div>
+            <div class="order-mini-price" id="summary-beat-price-display">R$ 149,90</div>
+          </div>
+
+          <!-- Linhas de Cálculo -->
+          <div class="summary-calc-rows">
+            <div class="summary-calc-row">
+              <span>Subtotal</span>
+              <span id="summary-subtotal-val">R$ 149,90</span>
+            </div>
+
+            <div class="summary-calc-row discount-row" id="summary-discount-row" style="display: none;">
+              <span>Desconto</span>
+              <span id="summary-discount-val">-R$ 0,00</span>
+            </div>
+          </div>
+
+          <!-- Total Destacado -->
+          <div class="summary-total-row">
+            <span class="total-title-text">Total</span>
+            <span class="total-price-large" id="summary-total-val">R$ 149,90</span>
+          </div>
+
+          <!-- 12. Cupom de Desconto -->
+          <div class="coupon-form-group">
+            <input type="text" class="coupon-input-field" id="coupon-code-input" placeholder="Digite o cupom" />
+            <button type="button" class="coupon-apply-btn" id="btn-apply-coupon">Aplicar</button>
+          </div>
+          <div class="coupon-feedback-msg" id="coupon-feedback"></div>
+        </div>
+
+        <!-- 13, 14 & 15. FORMA DE PAGAMENTO (PIX & CARTÃO SELECIONÁVEIS) -->
+        <div class="payment-selection-section">
+          <div>
+            <div class="panel-section-title" style="margin-bottom: 2px;">Forma de pagamento</div>
+            <p style="font-size: 11.5px; color: var(--text-tertiary); margin-bottom: 10px;">Escolha o método de pagamento.</p>
+          </div>
+
+          <!-- Opção 1: PIX (Selecionado por padrão com borda vermelha) -->
+          <div class="payment-method-card selected" id="method-pix">
+            <div class="payment-method-left">
+              <span class="method-icon-glyph">❖</span>
+              <div>
+                <div class="method-name-text">Pix</div>
+                <div class="method-desc-text">Pagamento instantâneo</div>
+              </div>
+            </div>
+            <div class="method-radio-circle"></div>
+          </div>
+
+          <!-- Opção 2: CARTÃO DE CRÉDITO -->
+          <div class="payment-method-card" id="method-card">
+            <div class="payment-method-left">
+              <span class="method-icon-glyph">💳</span>
+              <div>
+                <div class="method-name-text">Cartão de crédito</div>
+                <div class="method-desc-text">Até 12x com juros</div>
+              </div>
+            </div>
+            <div class="method-radio-circle"></div>
+          </div>
+
+          <!-- 16. CAMPOS DO CARTÃO (Exibido apenas quando Cartão estiver selecionado) -->
+          <div class="credit-card-form-box" id="card-fields-box">
+            <div class="panel-section-title" style="font-size: 13px; margin-bottom: 2px;">Dados do cartão</div>
+
+            <div>
+              <label class="form-label-small">Número do cartão</label>
+              <input type="text" class="card-text-input" id="card-number-input" placeholder="0000 0000 0000 0000" maxlength="19" />
+            </div>
+
+            <div>
+              <label class="form-label-small">Nome impresso no cartão</label>
+              <input type="text" class="card-text-input" id="card-name-input" placeholder="Nome como no cartão" />
+            </div>
+
+            <div class="form-split-dual">
+              <div>
+                <label class="form-label-small">Validade</label>
+                <input type="text" class="card-text-input" id="card-expiry-input" placeholder="MM/AA" maxlength="5" />
+              </div>
+              <div>
+                <label class="form-label-small">CVV</label>
+                <input type="password" class="card-text-input" id="card-cvv-input" placeholder="123" maxlength="4" />
+              </div>
+            </div>
+
+            <div>
+              <label class="form-label-small">Parcelamento</label>
+              <select class="card-select-input" id="card-installments-select">
+                <option value="1">1x de R$ 149,90 (sem juros)</option>
+                <option value="2">2x de R$ 74,95 (sem juros)</option>
+                <option value="3">3x de R$ 49,97 (sem juros)</option>
+                <option value="6">6x de R$ 26,45 (com juros)</option>
+                <option value="12">12x de R$ 14,35 (com juros)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- 17. COMPRA SEGURA -->
+        <div class="security-guarantee-card">
+          <div class="security-guarantee-title">
+            <span>🔒</span> Compra segura
+          </div>
+          <div class="security-guarantee-desc">
+            Seus dados de pagamento são protegidos e criptografados.
+          </div>
+          <div class="security-checklist-pills">
+            <span>✓ Pagamento seguro</span>
+            <span>✓ Dados protegidos</span>
+            <span>✓ Entrega digital imediata</span>
+          </div>
+        </div>
+
+        <!-- 18 & 19. BOTÃO FINAL DE COMPRA -->
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <button type="button" class="btn-finalize-purchase" id="btn-finalize-purchase">
+            <span>🔒</span> Finalizar compra
+          </button>
+          <div class="finalize-microcopy-sub">
+            Pagamento seguro • Entrega imediata
+          </div>
+        </div>
+
+        <!-- 20. SUPORTE -->
+        <div class="checkout-support-card">
+          <div class="support-text-block">
+            <span class="support-title-bold">Precisa de ajuda?</span>
+            <span class="support-sub-desc">Fale com nosso suporte.</span>
+          </div>
+          <a href="https://wa.me/5527995055702?text=Olá!%20Preciso%20de%20ajuda%20no%20checkout%20do%20beat%20Impacto%20Real" target="_blank" class="support-action-link">
+            Falar com suporte
+          </a>
+        </div>
+
+      </aside>
+    </div>
+  </main>
+
+  <!-- =========================================================================
+       FOOTER (MINIMALISTA, DARK, LIMPO)
+       ========================================================================= -->
+  <footer class="site-footer-beats">
+    <div class="footer-inner-flex">
+      <div class="footer-brand-col">
+        <div class="brand-logo-woah">
+          <span class="logo-text-bold">WOAH</span>
+          <span class="logo-sub-text">COLLECTION</span>
+        </div>
+        <div class="footer-tagline">Beats que inspiram.</div>
+      </div>
+
+      <div class="footer-social-links">
+        <a href="https://www.instagram.com/rodrigo_arrezzi" target="_blank" class="footer-social-icon" title="Instagram">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" /></svg>
+        </a>
+        <a href="https://wa.me/5527995055702" target="_blank" class="footer-social-icon" title="WhatsApp">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" /></svg>
+        </a>
+        <a href="https://open.spotify.com" target="_blank" class="footer-social-icon" title="Spotify">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.48.66.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+        </a>
+        <a href="mailto:rodrigoarrezzimaciel17@gmail.com" class="footer-social-icon" title="Gmail">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 010 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z" /></svg>
+        </a>
+      </div>
+
+      <div class="footer-copy-text">
+        &copy; 2025 Woah Collection. Todos os direitos reservados.
+      </div>
+    </div>
+  </footer>
+
+  <!-- =========================================================================
+       MODAL DE CONFIRMAÇÃO PIX (QR CODE & FLUXO REAL)
+       ========================================================================= -->
+  <div class="checkout-modal-backdrop" id="checkout-modal">
+    <div class="checkout-modal-box">
+      <button type="button" class="modal-close-btn" id="btn-close-modal">✕</button>
+
+      <!-- Bloco Inicial PIX -->
+      <div id="pix-modal-initial-block" style="display: flex; flex-direction: column; gap: 16px;">
+        <div style="text-align: center;">
+          <h2 style="font-size: 20px; font-weight: 800; color: #FFFFFF;">Pagamento via Pix</h2>
+          <p style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Escaneie o QR Code ou copie o código abaixo</p>
+        </div>
+
+        <div class="pix-qr-container">
+          <!-- QR Code SVG -->
+          <div class="qr-code-box">
+            <svg viewBox="0 0 100 100" shape-rendering="crispEdges">
+              <path fill="#000" d="M0 0h30v30H0zM5 5h20v20H5zM10 10h10v10H10zM70 0h30v30H70zM75 5h20v20H75zM80 10h10v10H80zM0 70h30v30H0zM5 75h20v20H5zM10 80h10v10H10zM40 10h10v10H40zM50 20h10v10H50zM20 40h10v10H20zM40 40h20v20H40zM70 40h10v20H70zM10 50h10v10H10zM80 50h10v10H80zM30 70h10v10H30zM50 70h20v10H50zM80 70h20v10H80zM40 80h10v20H40zM60 80h10v20H60zM80 90h10v10H80z" />
+            </svg>
+          </div>
+
+          <div style="font-size: 12px; color: var(--text-secondary);">
+            Tempo restante para pagamento: <strong id="pix-timer-num" style="color: var(--red-primary);">14:59</strong>
+          </div>
+
+          <div class="pix-copy-box">
+            <input type="text" class="pix-copy-input" id="pix-copia-cola-input" readonly value="00020126580014BR.GOV.BCB.PIX0136woahcollection-cobranca-892415204000053039865802BR5920WOAH COLLECTION6009SAO PAULO62070503***6304E8A2" />
+            <button type="button" class="pix-copy-btn" id="btn-copy-pix">Copiar</button>
+          </div>
+        </div>
+
+        <button type="button" class="simulate-confirm-btn" id="btn-simulate-confirm">
+          ✓ Simular Confirmação Instantânea de Pagamento
+        </button>
+      </div>
+
+      <!-- Estado de Sucesso (Liberar Download) -->
+      <div class="modal-success-state" id="pix-modal-success-block">
+        <div class="success-icon-badge">✓</div>
+        <h2 style="font-size: 22px; font-weight: 800; color: #10B981;">Pagamento Confirmado!</h2>
+        <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;">
+          Parabéns! Sua licença exclusiva para o beat <strong>Impacto Real</strong> foi emitida com sucesso.
+        </p>
+
+        <div style="background: #111420; border: 1px solid var(--border-primary); border-radius: 8px; padding: 12px; width: 100%; text-align: left; font-size: 12px; color: var(--text-secondary); display: flex; flex-direction: column; gap: 6px;">
+          <div>🔑 <strong>Chave de Autenticidade:</strong> WOAH-AUTH-89241-IMP-2026</div>
+          <div>📄 <strong>Licença:</strong> Comercial Exclusiva (WAV + Stems)</div>
+          <div>✉️ <strong>Envio:</strong> Link seguro enviado para seu e-mail</div>
+        </div>
+
+        <a href="#" onclick="alert('Download do pacote WAV Master + Stems liberado com sucesso!'); return false;" class="btn-finalize-purchase" style="background: #10B981; text-decoration: none;">
+          ⬇ Baixar Beat em Alta Definição (WAV + Stems)
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Audio Engine & Interactive Logic -->
+  <script src="checkout.js"></script>
+</body>
+</html>
