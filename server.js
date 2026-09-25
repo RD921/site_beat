@@ -17,6 +17,21 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
+// Na hospedagem (Render), os dados ficam no MongoDB Atlas: conecta primeiro e depois inicia o site
+if (process.env.MONGODB_URI && !global.__WOAH_MONGO) {
+  const store = require('./mongo-store');
+  store.preparar(process.env.MONGODB_URI).then(() => {
+    global.__WOAH_MONGO = store;
+    delete require.cache[__filename];
+    require(__filename);
+  }).catch(erro => {
+    console.error('Não foi possível conectar ao MongoDB:', erro.message);
+    process.exit(1);
+  });
+  return;
+}
+const MONGO = global.__WOAH_MONGO || null;
+
 // A hospedagem define a porta pela variável PORT; no seu computador usa 3000
 const PORTA = parseInt(process.env.PORT, 10) || 3000;
 const PASTA_SITE = __dirname;
@@ -57,7 +72,13 @@ const IMAGENS_PADRAO = { hero: '', promo: '', login: '', cadastro: '', logo: '' 
 
 fs.mkdirSync(PASTA_ARQUIVOS, { recursive: true });
 
+const chaveMongo = arquivo => path.basename(arquivo, '.json');
+
 function lerJson(arquivo, padrao) {
+  if (MONGO) {
+    const valor = MONGO.ler(chaveMongo(arquivo));
+    return valor === undefined ? padrao : valor;
+  }
   try {
     return JSON.parse(fs.readFileSync(arquivo, 'utf8'));
   } catch (e) {
@@ -68,6 +89,7 @@ function lerJson(arquivo, padrao) {
 // Salva com segurança. No Windows, o OneDrive ou o antivírus às vezes "seguram"
 // o arquivo por um instante; então tenta de novo e, se precisar, grava direto.
 function salvarJson(arquivo, dados) {
+  if (MONGO) { MONGO.salvar(chaveMongo(arquivo), dados); return; }
   const conteudo = JSON.stringify(dados, null, 2);
   const temporario = arquivo + '.tmp';
   fs.writeFileSync(temporario, conteudo, 'utf8');
@@ -89,7 +111,7 @@ let sessoes = lerJson(ARQUIVO_SESSOES, {});
 let catalogo = lerJson(ARQUIVO_CATALOGO, null) || { versao: 2, beats: [], licencas: [], imagens: IMAGENS_PADRAO };
 catalogo.beats = catalogo.beats || [];
 // Versão 2: as licenças começam vazias (a equipe cadastra as novas pelo Painel)
-if ((catalogo.versao || 1) < 2) { catalogo.licencas = []; catalogo.versao = 2; if (fs.existsSync(ARQUIVO_CATALOGO)) salvarJson(ARQUIVO_CATALOGO, catalogo); }
+if ((catalogo.versao || 1) < 2) { catalogo.licencas = []; catalogo.versao = 2; if (MONGO || fs.existsSync(ARQUIVO_CATALOGO)) salvarJson(ARQUIVO_CATALOGO, catalogo); }
 catalogo.licencas = catalogo.licencas || [];
 catalogo.imagens = Object.assign({}, IMAGENS_PADRAO, catalogo.imagens || {});
 catalogo.contato = Object.assign({}, CONTATO_PADRAO, catalogo.contato || {});
@@ -270,7 +292,9 @@ function apagarArquivoSeSemUso(url) {
   if (!url || !url.startsWith('/arquivos/')) return;
   const emUso = catalogo.beats.some(b => b.cover === url || b.audio === url) ||
     Object.values(catalogo.imagens).includes(url);
-  if (!emUso) fs.unlink(path.join(PASTA_ARQUIVOS, path.basename(url)), () => {});
+  if (emUso) return;
+  if (MONGO) MONGO.apagarArquivo(path.basename(url)).catch(() => {});
+  else fs.unlink(path.join(PASTA_ARQUIVOS, path.basename(url)), () => {});
 }
 
 /* ---------- Rotas da API ---------- */
@@ -364,7 +388,8 @@ async function tratarApi(req, res, rota) {
       const conteudo = await lerBruto(req, ehAudio ? TAMANHO_MAX_AUDIO : TAMANHO_MAX_IMAGEM);
       if (!conteudo.length) return responderJson(res, 400, { erro: 'Arquivo vazio.' });
       const arquivo = crypto.randomUUID() + (ext === '.jpeg' ? '.jpg' : ext);
-      fs.writeFileSync(path.join(PASTA_ARQUIVOS, arquivo), conteudo);
+      if (MONGO) await MONGO.salvarArquivo(arquivo, conteudo, TIPOS[path.extname(arquivo)]);
+      else fs.writeFileSync(path.join(PASTA_ARQUIVOS, arquivo), conteudo);
       return responderJson(res, 201, { url: '/arquivos/' + arquivo });
     }
 
@@ -513,11 +538,44 @@ function enviarArquivo(req, res, caminho) {
   });
 }
 
+// Mesmo que enviarArquivo, mas lendo do MongoDB (com suporte a Range para o player)
+async function enviarArquivoMongo(req, res, nome) {
+  try {
+    const info = await MONGO.infoArquivo(nome);
+    if (!info) { res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' }); return res.end('Arquivo não encontrado'); }
+    const tamanho = info.length;
+    const tipo = TIPOS[path.extname(nome).toLowerCase()] || 'application/octet-stream';
+    const cabecalhos = { 'Content-Type': tipo, 'Accept-Ranges': 'bytes', 'Access-Control-Allow-Origin': '*', 'Cache-Control': 'public, max-age=31536000, immutable' };
+    const faixa = /bytes=(\d*)-(\d*)/.exec(req.headers.range || '');
+    let fluxo;
+    if (faixa && tamanho > 0) {
+      const inicio = faixa[1] ? parseInt(faixa[1], 10) : 0;
+      const fim = faixa[2] ? Math.min(parseInt(faixa[2], 10), tamanho - 1) : tamanho - 1;
+      if (inicio >= tamanho || inicio > fim) {
+        res.writeHead(416, { 'Content-Range': `bytes */${tamanho}` });
+        return res.end();
+      }
+      res.writeHead(206, Object.assign(cabecalhos, { 'Content-Range': `bytes ${inicio}-${fim}/${tamanho}`, 'Content-Length': fim - inicio + 1 }));
+      fluxo = MONGO.lerArquivo(nome, inicio, fim);
+    } else {
+      res.writeHead(200, Object.assign(cabecalhos, { 'Content-Length': tamanho }));
+      fluxo = MONGO.lerArquivo(nome);
+    }
+    fluxo.on('error', () => res.destroy());
+    fluxo.pipe(res);
+  } catch (erro) {
+    console.error(erro);
+    if (!res.headersSent) res.writeHead(500);
+    res.end();
+  }
+}
+
 function servirArquivo(req, res, rota) {
   // Arquivos enviados pelo Painel
   if (rota.startsWith('/arquivos/')) {
     const nome = path.basename(rota);
     if (!/^[a-f0-9-]+\.[a-z0-9]+$/.test(nome)) { res.writeHead(404); return res.end(); }
+    if (MONGO) return enviarArquivoMongo(req, res, nome);
     return enviarArquivo(req, res, path.join(PASTA_ARQUIVOS, nome));
   }
 
@@ -557,7 +615,7 @@ servidor.listen(PORTA, () => {
   const devs = usuarios.filter(u => u.role === 'dev').map(u => u.email);
   console.log('');
   console.log('  Site rodando na porta ' + PORTA + (process.env.PORT ? '' : '  →  http://localhost:' + PORTA));
-  console.log('  Dados salvos em:  ' + PASTA_DADOS);
+  console.log('  Dados salvos em:  ' + (MONGO ? 'MongoDB Atlas' : PASTA_DADOS));
   console.log('  Contas dev:       ' + (devs.length ? devs.join(', ') : 'nenhuma (use: node server.js criar-dev ...)'));
   console.log('  Para desligar:    Ctrl + C');
   console.log('');
