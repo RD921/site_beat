@@ -340,6 +340,7 @@
         </button>
         <div class="account-menu" role="menu">
           <div class="account-menu-head"><strong>${esc(user.name)}</strong><span>${esc(user.email)}</span>${devBadge}</div>
+          ${user.role === 'dev' ? '<a href="admin.html" role="menuitem"><strong style="color:var(--red)">Painel</strong></a>' : ''}
           <a href="carrinho.html" role="menuitem">Meu carrinho</a>
           <a href="beats.html" role="menuitem">Explorar beats</a>
           <button type="button" role="menuitem" data-logout>Sair da conta</button>
@@ -347,6 +348,7 @@
       </div>`;
     mobile.innerHTML = `
       <div class="mobile-user"><span class="avatar">${avatar}</span><div><strong>${esc(user.name)}</strong><span>${esc(user.email)}</span>${devBadge}</div></div>
+      ${user.role === 'dev' ? '<a href="admin.html" class="btn btn-primary btn-block">Painel</a>' : ''}
       <a href="carrinho.html" class="btn btn-outline btn-block">Meu carrinho</a>
       <button type="button" class="btn btn-ghost btn-block" data-logout>Sair da conta</button>`;
 
@@ -397,8 +399,27 @@
     master: null,
     chordTimer: null,
     lastTick: 0,
-    raf: null
+    raf: null,
+    audio: null        // <audio> usado quando o beat tem arquivo de áudio real
   };
+
+  function audioEl() {
+    if (!player.audio) {
+      player.audio = new Audio();
+      player.audio.preload = 'metadata';
+      player.audio.addEventListener('ended', () => { player.progress = 0; pause(); });
+      player.audio.addEventListener('error', () => {
+        if (player.beat && player.beat.audio) toast('Não foi possível tocar o áudio deste beat.');
+      });
+    }
+    return player.audio;
+  }
+
+  // Duração real (arquivo de áudio) ou a informada no cadastro
+  function totalSeconds(b) {
+    if (b && b.audio && player.audio && player.beat && player.beat.id === b.id && isFinite(player.audio.duration)) return player.audio.duration;
+    return toSeconds(b && b.duration) || 180;
+  }
 
   const CHORDS = [
     [146.83, 220, 261.63], // Dm
@@ -509,15 +530,15 @@
     $$('[data-time]').forEach(el => {
       const b = beatById(el.dataset.time);
       if (!b) return;
-      const total = toSeconds(b.duration);
+      const total = totalSeconds(b);
       const cur = beat && beat.id === b.id ? player.progress * total : 0;
-      el.textContent = fmtTime(cur) + ' / ' + b.duration;
+      el.textContent = fmtTime(cur) + ' / ' + (b.duration && b.duration !== '0:00' ? b.duration : fmtTime(total));
     });
     drawAllWaves();
   }
 
   function renderPlayerBar() {
-    if (['login', 'criar-conta', 'checkout'].includes(page)) return;
+    if (['login', 'criar-conta', 'checkout', 'admin'].includes(page)) return;
     const bar = document.createElement('aside');
     bar.className = 'player-bar';
     bar.setAttribute('aria-label', 'Player');
@@ -547,6 +568,7 @@
     $('[data-pb-volume]', bar).addEventListener('input', e => {
       player.volume = parseFloat(e.target.value);
       if (player.master) player.master.gain.value = player.volume;
+      if (player.audio) player.audio.volume = player.volume;
     });
     const wave = $('[data-pb-wave]', bar);
     wave.addEventListener('click', e => seek(e, wave));
@@ -561,7 +583,7 @@
     $('[data-pb-cover]', bar).src = b.cover;
     $('[data-pb-cover]', bar).alt = b.title;
     $('[data-pb-title]', bar).textContent = b.title;
-    $('[data-pb-meta]', bar).textContent = b.producer + ' • ' + b.genre;
+    $('[data-pb-meta]', bar).textContent = [b.producer, b.genre].filter(Boolean).join(' • ');
     $('[data-pb-price]', bar).textContent = fmt(b.price);
     const wave = $('[data-pb-wave]', bar);
     wave.dataset.wave = b.id;
@@ -577,6 +599,7 @@
       togglePlay(id);
     }
     player.progress = ratio;
+    if (player.beat && player.beat.audio && isFinite(audioEl().duration)) audioEl().currentTime = ratio * audioEl().duration;
     updatePlayerUI();
   }
 
@@ -584,8 +607,12 @@
     if (!player.playing) return;
     const dt = player.lastTick ? (ts - player.lastTick) / 1000 : 0;
     player.lastTick = ts;
-    const total = toSeconds(player.beat.duration) || 180;
-    player.progress += dt / total;
+    if (player.beat.audio) {
+      const a = audioEl();
+      if (isFinite(a.duration) && a.duration > 0) player.progress = a.currentTime / a.duration;
+    } else {
+      player.progress += dt / totalSeconds(player.beat);
+    }
     if (player.progress >= 1) {
       player.progress = 0;
       pause();
@@ -598,7 +625,18 @@
   function play() {
     player.playing = true;
     player.lastTick = 0;
-    startSynth();
+    if (player.beat.audio) {
+      const a = audioEl();
+      if (a.dataset.beat !== player.beat.id) {
+        a.src = player.beat.audio;
+        a.dataset.beat = player.beat.id;
+        a.addEventListener('loadedmetadata', () => { a.currentTime = player.progress * a.duration; }, { once: true });
+      }
+      a.volume = player.volume;
+      a.play().catch(() => {});
+    } else {
+      startSynth();
+    }
     cancelAnimationFrame(player.raf);
     player.raf = requestAnimationFrame(loop);
     updatePlayerUI();
@@ -607,6 +645,7 @@
   function pause() {
     player.playing = false;
     stopSynth();
+    if (player.audio) player.audio.pause();
     cancelAnimationFrame(player.raf);
     updatePlayerUI();
   }
@@ -618,6 +657,7 @@
       player.playing ? pause() : play();
       return;
     }
+    if (player.playing) pause();
     player.beat = beat;
     player.progress = 0;
     syncPlayerBar();
@@ -636,7 +676,7 @@
         </div>
         <div class="beat-body">
           <h3 class="beat-title">${esc(b.title)}</h3>
-          <div class="beat-meta"><span class="genre">${esc(b.genre)}</span> • ${b.duration}</div>
+          <div class="beat-meta"><span class="genre">${esc(b.genre)}</span>${b.duration && b.duration !== '0:00' ? ' • ' + esc(b.duration) : ''}</div>
           <div class="beat-foot">
             <span class="beat-price">${fmt(b.price)}</span>
             <div class="beat-actions auth-only">
@@ -671,13 +711,22 @@
   function initHome() {
     const grid = $('#featured-grid');
     if (grid) {
-      const featured = WOAH_BEATS.filter(b => b.featured).slice(0, 4);
+      let featured = WOAH_BEATS.filter(b => b.featured);
+      if (!featured.length) featured = WOAH_BEATS;
+      featured = featured.slice(0, 4);
       const promo = grid.querySelector('.promo-card');
-      grid.insertAdjacentHTML('afterbegin', featured.map(beatCardHTML).join(''));
+      grid.querySelectorAll('.beat-card, .soon-card').forEach(el => el.remove());
+      const html = featured.length
+        ? featured.map(beatCardHTML).join('')
+        : '<div class="soon-card"><strong>Novos beats em breve</strong><span>Estamos preparando o catálogo. Volte logo para ouvir os lançamentos.</span></div>';
+      grid.insertAdjacentHTML('afterbegin', html);
+      grid.classList.toggle('is-empty', !featured.length);
       if (promo) grid.appendChild(promo);
     }
     const hl = WOAH_BEATS.find(b => b.highlight) || WOAH_BEATS[0];
     const box = $('#highlight-player');
+    const section = box && box.closest('section');
+    if (section) section.classList.toggle('hidden', !hl);
     if (box && hl) {
       box.innerHTML = `
         <div class="feature-left">
@@ -688,7 +737,7 @@
           <button type="button" class="round-play" data-play="${hl.id}" aria-label="Ouvir ${esc(hl.title)}">${ICON.play}</button>
           <div class="wave-wrap">
             <canvas class="wave-canvas" data-wave="${hl.id}" aria-label="Linha do tempo do beat"></canvas>
-            <span class="time-label" data-time="${hl.id}">0:00 / ${hl.duration}</span>
+            <span class="time-label" data-time="${hl.id}">0:00 / ${esc(hl.duration)}</span>
           </div>
         </div>
         <div class="feature-right">
@@ -755,6 +804,10 @@
     if (!list.length) {
       grid.classList.add('hidden');
       $('#catalog-empty').classList.remove('hidden');
+      const vazio = !WOAH_BEATS.length;
+      $('#catalog-empty h3').textContent = vazio ? 'Novos beats em breve' : 'Nenhum beat encontrado';
+      $('#catalog-empty p').textContent = vazio ? 'Estamos preparando o catálogo. Volte logo para ouvir os lançamentos.' : 'Tente outra busca ou limpe os filtros.';
+      $('#clear-all').classList.toggle('hidden', vazio);
     } else {
       grid.classList.remove('hidden');
       $('#catalog-empty').classList.add('hidden');
@@ -842,16 +895,14 @@
      ====================================================================== */
   function initLicencas() {
     const beat = beatById(params.get('beat')) || WOAH_BEATS.find(b => b.highlight) || WOAH_BEATS[0];
-    const forBox = $('#license-for');
-    if (forBox) {
-      forBox.innerHTML = `<img src="${beat.cover}" alt=""><span>Licença para o beat <strong>${esc(beat.title)}</strong> · <a href="beats.html" class="link-arrow">trocar beat</a></span>`;
-    }
     const grid = $('#license-grid');
     grid.innerHTML = WOAH_LICENSES.map(l => {
       const price = l.price == null ? 'Sob consulta' : fmt(l.price);
       const btn = l.exclusive
-        ? `<a href="${waLink('Olá! Gostaria de consultar a licença exclusiva do beat ' + beat.title)}" target="_blank" rel="noopener" class="btn btn-outline btn-block">${esc(l.cta)}</a>`
-        : `<button type="button" class="btn ${l.popular ? 'btn-primary' : 'btn-outline'} btn-block" data-buy="${beat.id}" data-license="${l.id}">${esc(l.cta)}</button>`;
+        ? `<a href="${waLink('Olá! Gostaria de consultar a licença exclusiva' + (beat ? ' do beat ' + beat.title : ''))}" target="_blank" rel="noopener" class="btn btn-outline btn-block">${esc(l.cta)}</a>`
+        : beat
+          ? `<button type="button" class="btn ${l.popular ? 'btn-primary' : 'btn-outline'} btn-block" data-buy="${beat.id}" data-license="${l.id}">${esc(l.cta)}</button>`
+          : `<a href="beats.html" class="btn ${l.popular ? 'btn-primary' : 'btn-outline'} btn-block">Escolher um beat</a>`;
       return `
         <article class="license-card${l.popular ? ' popular' : ''}${l.exclusive ? ' exclusive' : ''}">
           ${l.popular ? '<span class="license-flag">Mais popular</span>' : ''}
@@ -859,7 +910,7 @@
           <h2 class="license-name">${esc(l.name)}</h2>
           <p class="license-desc">${esc(l.description)}</p>
           <div class="license-price">${price}</div>
-          <ul class="check-list">${l.features.map(f => `<li>${ICON.check}<span>${esc(f)}</span></li>`).join('')}</ul>
+          <ul class="check-list">${(l.features || []).map(f => `<li>${ICON.check}<span>${esc(f)}</span></li>`).join('')}</ul>
           ${btn}
         </article>`;
     }).join('');
@@ -940,7 +991,7 @@
         const data = await api('/api/login', { method: 'POST', body: { email, password } });
         setSession(data.token, data.user);
         showMsg(form, 'Bem-vindo de volta, ' + data.user.name.split(' ')[0] + '!', 'success');
-        setTimeout(() => location.replace(authNext()), 500);
+        setTimeout(() => location.replace(data.user.role === 'dev' ? 'admin.html' : authNext()), 500);
       } catch (err) {
         showMsg(form, err.message, 'error');
         setBusy(form, false);
@@ -998,7 +1049,7 @@
           ${items.map(b => `
             <div class="cart-item">
               <img src="${b.cover}" alt="Capa do beat ${esc(b.title)}">
-              <div class="cart-item-info"><strong>${esc(b.title)}</strong><small>${esc(b.producer)} • ${esc(b.genre)} • ${b.duration}</small></div>
+              <div class="cart-item-info"><strong>${esc(b.title)}</strong><small>${[b.producer, b.genre, b.duration !== '0:00' ? b.duration : ''].filter(Boolean).map(esc).join(' • ')}</small></div>
               <span class="cart-item-price">${fmt(b.price)}</span>
               <button type="button" class="icon-btn remove-btn" data-remove="${b.id}" aria-label="Remover ${esc(b.title)}">${ICON.trash}</button>
             </div>`).join('')}
@@ -1049,12 +1100,52 @@
      INICIALIZAÇÃO
      ====================================================================== */
   // Expõe o necessário para o checkout
-  window.WOAH = { getUser, getCart, clearCart, beatById, requireLogin, fmt, esc };
+  /* ---------- Catálogo (beats, licenças e imagens vindos do Painel) ---------- */
+  const assetUrl = u => (u && u.startsWith('/arquivos/') ? API_URL + u : u);
+
+  function applyCatalog(data) {
+    if (!data) return;
+    if (Array.isArray(data.beats)) {
+      WOAH_BEATS.length = 0;
+      data.beats.forEach(b => WOAH_BEATS.push(Object.assign({}, b, {
+        cover: assetUrl(b.cover) || WOAH_DEFAULT_COVER,
+        audio: assetUrl(b.audio) || '',
+        genre: b.genre || '',
+        tags: b.tags && b.tags.length ? b.tags : (b.genre ? [b.genre] : [])
+      })));
+    }
+    if (Array.isArray(data.licencas) && data.licencas.length) {
+      WOAH_LICENSES.length = 0;
+      data.licencas.forEach(l => WOAH_LICENSES.push(l));
+    }
+    if (data.imagens) {
+      Object.keys(data.imagens).forEach(k => { if (data.imagens[k]) WOAH_IMAGES[k] = assetUrl(data.imagens[k]); });
+    }
+  }
+
+  function applySiteImages() {
+    $$('[data-site-img]').forEach(img => {
+      const src = WOAH_IMAGES[img.dataset.siteImg];
+      if (src && img.getAttribute('src') !== src) img.src = src;
+    });
+  }
+
+  async function loadCatalog() {
+    try {
+      const res = await fetch(API_URL + '/api/catalogo', { cache: 'no-store' });
+      if (res.ok) applyCatalog(await res.json());
+    } catch (e) { /* servidor desligado: usa o padrão */ }
+    applySiteImages();
+  }
+
+  const ready = loadCatalog();
+  window.WOAH = { getUser, getCart, clearCart, beatById, requireLogin, fmt, esc, api, ready, applyCatalog, assetUrl, toast };
 
   renderHeader();
   renderFooter();
   renderPlayerBar();
   refreshAuthUI();
+  applySiteImages();
 
   const inits = {
     home: initHome,
@@ -1065,11 +1156,12 @@
     carrinho: initCarrinho,
     contato: initContato
   };
-  if (inits[page]) inits[page]();
-
-  updateCartUI();
-  updatePlayerUI();
   checkSession();
+  ready.then(() => {
+    if (inits[page]) inits[page]();
+    updateCartUI();
+    updatePlayerUI();
+  });
 
   let resizeTimer;
   window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(drawAllWaves, 100); });

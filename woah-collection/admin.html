@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <title>Painel — WOAH COLLECTION</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,600;0,700;0,800;0,900;1,900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/woah.css">
+</head>
+<body data-page="admin">
+
+  <div id="site-header"></div>
+
+  <main>
+    <section class="page-head">
+      <div class="container">
+        <span class="eyebrow">Área da equipe</span>
+        <h1 class="page-title" style="margin-top:12px">Painel</h1>
+        <p class="page-sub">Adicione beats, troque imagens e ajuste as licenças. As mudanças aparecem no site na hora.</p>
+
+        <!-- Sem permissão -->
+        <div class="empty-state hidden" id="admin-denied" style="margin-top:32px">
+          <h3>Acesso restrito</h3>
+          <p>Esta área é só para a equipe da Woah Collection.</p>
+          <a href="index.html" class="btn btn-outline">Voltar para o início</a>
+        </div>
+
+        <div id="admin-app" class="hidden">
+          <div class="admin-tabs" role="tablist">
+            <button type="button" class="admin-tab active" role="tab" data-tab="beats">Beats</button>
+            <button type="button" class="admin-tab" role="tab" data-tab="imagens">Imagens do site</button>
+            <button type="button" class="admin-tab" role="tab" data-tab="licencas">Licenças</button>
+          </div>
+
+          <!-- ABA: BEATS -->
+          <section class="admin-panel" data-panel="beats">
+            <div class="admin-toolbar">
+              <span class="result-count" id="beats-count"></span>
+              <button type="button" class="btn btn-primary btn-sm" id="new-beat">+ Novo beat</button>
+            </div>
+            <div class="admin-list" id="beats-list"></div>
+          </section>
+
+          <!-- ABA: IMAGENS -->
+          <section class="admin-panel hidden" data-panel="imagens">
+            <p class="muted" style="margin-bottom:20px">Formatos: JPG, PNG ou WEBP (até 10 MB). Prefira imagens horizontais para o topo da página.</p>
+            <div class="images-grid" id="images-grid"></div>
+          </section>
+
+          <!-- ABA: LICENÇAS -->
+          <section class="admin-panel hidden" data-panel="licencas">
+            <div class="license-edit-grid" id="licenses-form"></div>
+            <div class="admin-save-row">
+              <span class="muted" id="licenses-status"></span>
+              <button type="button" class="btn btn-primary" id="save-licenses">Salvar licenças</button>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Formulário de beat (novo / editar) -->
+  <div class="modal" id="beat-modal" role="dialog" aria-modal="true" aria-labelledby="beat-modal-title">
+    <div class="modal-card admin-modal">
+      <div class="modal-head">
+        <h3 id="beat-modal-title">Novo beat</h3>
+        <button type="button" class="icon-btn" aria-label="Fechar" data-close-beat>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <form id="beat-form" novalidate>
+        <div class="form-msg" role="alert"></div>
+
+        <div class="media-row">
+          <div class="media-box">
+            <span class="filter-label">Capa</span>
+            <div class="cover-preview" id="cover-preview"></div>
+            <div class="media-actions">
+              <label class="btn btn-outline btn-sm">Escolher imagem<input type="file" accept="image/*" id="cover-input" hidden></label>
+              <button type="button" class="btn btn-ghost btn-sm" id="cover-remove">Remover</button>
+            </div>
+            <small class="upload-status" id="cover-status"></small>
+          </div>
+          <div class="media-box">
+            <span class="filter-label">Áudio do beat</span>
+            <div class="audio-preview" id="audio-preview">Nenhum áudio enviado</div>
+            <div class="media-actions">
+              <label class="btn btn-outline btn-sm">Escolher áudio<input type="file" accept="audio/*,.mp3,.wav,.m4a,.ogg" id="audio-input" hidden></label>
+              <button type="button" class="btn btn-ghost btn-sm" id="audio-remove">Remover</button>
+            </div>
+            <small class="upload-status" id="audio-status">MP3, WAV, M4A ou OGG • até 80 MB</small>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="field span-2">
+            <label for="f-title">Nome do beat *</label>
+            <input class="input" id="f-title" name="title" maxlength="80" placeholder="Ex: Impacto Real" required>
+          </div>
+          <div class="field">
+            <label for="f-price">Preço (R$) *</label>
+            <input class="input" id="f-price" name="price" inputmode="decimal" placeholder="Ex: 49,90" required>
+          </div>
+          <div class="field">
+            <label for="f-genre">Gênero</label>
+            <input class="input" id="f-genre" name="genre" maxlength="40" placeholder="Ex: Trap" list="genre-list">
+            <datalist id="genre-list"></datalist>
+          </div>
+          <div class="field">
+            <label for="f-producer">Produtor</label>
+            <input class="input" id="f-producer" name="producer" maxlength="80" placeholder="Prod. Rodrigo Arrezzi">
+          </div>
+          <div class="field">
+            <label for="f-tags">Tags (separe por vírgula)</label>
+            <input class="input" id="f-tags" name="tags" placeholder="Ex: Trap, Hip Hop, Melódico">
+          </div>
+          <div class="field">
+            <label for="f-duration">Duração (m:ss)</label>
+            <input class="input" id="f-duration" name="duration" placeholder="Ex: 3:12" maxlength="5">
+          </div>
+          <div class="field">
+            <label for="f-bpm">BPM</label>
+            <input class="input" id="f-bpm" name="bpm" inputmode="numeric" placeholder="Ex: 90">
+          </div>
+          <div class="field">
+            <label for="f-key">Tom</label>
+            <input class="input" id="f-key" name="key" maxlength="10" placeholder="Ex: Cm">
+          </div>
+        </div>
+
+        <div class="check-row">
+          <label class="check"><input type="checkbox" name="featured"> Mostrar em "Destaques" na página inicial</label>
+          <label class="check"><input type="checkbox" name="highlight"> Usar como "Beat em destaque" (player da página inicial)</label>
+        </div>
+
+        <div class="modal-foot">
+          <button type="button" class="btn btn-outline" data-close-beat>Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="save-beat">Salvar beat</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="site-footer"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

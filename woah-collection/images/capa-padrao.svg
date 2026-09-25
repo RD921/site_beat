@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <defs>
+    <radialGradient id="g" cx="50%" cy="40%" r="70%">
+      <stop offset="0" stop-color="#2a0a12"/>
+      <stop offset="1" stop-color="#0a0a0a"/>
+    </radialGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#g)"/>
+  <g fill="#E91E3F" opacity=".85">
+    <rect x="110" y="190" width="10" height="40" rx="3"/>
+    <rect x="130" y="170" width="10" height="80" rx="3"/>
+    <rect x="150" y="150" width="10" height="120" rx="3"/>
+    <rect x="170" y="175" width="10" height="70" rx="3"/>
+    <rect x="190" y="140" width="10" height="140" rx="3"/>
+    <rect x="210" y="165" width="10" height="90" rx="3"/>
+    <rect x="230" y="150" width="10" height="120" rx="3"/>
+    <rect x="250" y="180" width="10" height="60" rx="3"/>
+    <rect x="270" y="195" width="10" height="30" rx="3"/>
+  </g>
+  <text x="200" y="330" text-anchor="middle" font-family="Montserrat, Arial, sans-serif" font-size="30" font-weight="900" font-style="italic" fill="#F5F5F5">WOAH</text>
+  <text x="200" y="352" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" letter-spacing="6" fill="#A5A5A5">COLLECTION</text>
+</svg>

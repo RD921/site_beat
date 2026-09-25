@@ -51,6 +51,8 @@
 
   // Audio Buffers
   let beatAudioBuffer = null;
+  let loopLength = 10.66;      // duração do loop sintetizado (troca quando há áudio real)
+  let realAudioLoading = false;
   let userAudioBuffer = null;
 
   // =========================================================================
@@ -102,6 +104,25 @@
     // Generate Audio Buffers
     generateRealisticTrapBeatBuffer();
     generateRealisticDemoVocalBuffer();
+    loadRealBeatAudio();
+  }
+
+  // Se o beat tem arquivo de áudio (enviado pelo Painel), usa ele no lugar do som sintetizado
+  function loadRealBeatAudio() {
+    if (!order.audioUrl || realAudioLoading) return;
+    realAudioLoading = true;
+    fetch(order.audioUrl)
+      .then(r => { if (!r.ok) throw new Error('audio'); return r.arrayBuffer(); })
+      .then(data => new Promise((resolve, reject) => audioCtx.decodeAudioData(data, resolve, reject)))
+      .then(buffer => {
+        beatAudioBuffer = buffer;
+        loopLength = buffer.duration;
+        state.displayDuration = buffer.duration;
+        startOffsetTime = 0;
+        if (state.isPlaying) playAudio();
+        updatePlaybackProgressUI();
+      })
+      .catch(() => { realAudioLoading = false; });
   }
 
   // Realistic Trap Beat Generation (808 Sub, Crisp Hihat Rolls, Trap Snare & Cm Melody)
@@ -819,7 +840,7 @@
     const timeDisplay = document.getElementById('track-time-display');
 
     const totalSeconds = state.displayDuration;
-    const currentProgress = (state.currentTime % 10.66) / 10.66; // loop progress
+    const currentProgress = (state.currentTime % loopLength) / loopLength; // loop progress
     const simulatedElapsed = (currentProgress * totalSeconds);
 
     if (cursor) cursor.style.left = `${currentProgress * 100}%`;
@@ -1220,7 +1241,7 @@
   // =========================================================================
   // 9b. DADOS DO PEDIDO (beat, licença ou carrinho vindos da URL)
   // =========================================================================
-  const order = { items: [], license: null, fromCart: false };
+  const order = { items: [], license: null, fromCart: false, audioUrl: '' };
 
   function money(n) {
     return 'R$ ' + Number(n).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -1256,12 +1277,13 @@
       const key = (params.get('beat') || '').toLowerCase();
       let beat = beats.find(b => b.id === key) || beats.find(b => b.title.toLowerCase() === key);
       if (!beat) beat = beats.find(b => b.highlight) || beats[0];
-      if (!beat) return true;
+      if (!beat) { window.location.replace('beats.html'); return false; }
       order.items = [beat];
       order.license = licenses.find(l => l.id === params.get('license') && l.price != null) || null;
     }
 
     const first = order.items[0];
+    order.audioUrl = first.audio || '';
     const total = order.license ? order.license.price : order.items.reduce((sum, b) => sum + b.price, 0);
     state.basePrice = total;
     state.displayDuration = toSecs(first.duration) || 192;
@@ -1270,7 +1292,7 @@
     const resume = document.getElementById('beat-resume');
     if (resume) {
       resume.innerHTML = order.items.map(b => {
-        const specs = [b.bpm ? 'BPM ' + b.bpm : '', b.key ? 'Tom ' + b.key : '', 'Duração ' + b.duration].filter(Boolean).join(' • ');
+        const specs = [b.bpm ? 'BPM ' + b.bpm : '', b.key ? 'Tom ' + b.key : '', (b.duration && b.duration !== '0:00' ? 'Duração ' + b.duration : '')].filter(Boolean).join(' • ');
         const tags = (b.tags || [b.genre]).map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('');
         const price = order.license ? order.license.price : b.price;
         return `
@@ -1339,7 +1361,8 @@
   // =========================================================================
   // 10. DOM READY BOOTSTRAP
   // =========================================================================
-  function boot() {
+  async function boot() {
+    if (window.WOAH && window.WOAH.ready) await window.WOAH.ready;
     // Precisa estar logado para comprar
     if (window.WOAH && !window.WOAH.requireLogin()) return;
     if (!loadOrder()) return;

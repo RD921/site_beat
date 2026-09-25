@@ -1,129 +1,46 @@
 /* ==========================================================================
-   WOAH COLLECTION — CATÁLOGO DE BEATS E LICENÇAS
-   Para adicionar um beat novo, copie um bloco { ... } e mude os dados.
-   Para mudar preço de licença, altere em WOAH_LICENSES.
+   WOAH COLLECTION — DADOS DO SITE
+   Os beats, as licenças e as imagens agora são editados pelo Painel
+   (entre com uma conta de desenvolvedor). Eles ficam salvos em
+   dados/catalogo.json pelo servidor. Os valores abaixo são só o padrão,
+   usados enquanto o servidor não responde.
    ========================================================================== */
 
-const WOAH_BEATS = [
-  {
-    id: 'midnight-flow',
-    title: 'Midnight Flow',
-    producer: 'Prod. Rodrigo Arrezzi',
-    genre: 'Trap',
-    duration: '3:24',
-    price: 49.90,
-    cover: 'images/covers/cover-midnight-flow.jpg',
-    featured: true
-  },
-  {
-    id: 'satans-vibes',
-    title: "Satan's Vibes",
-    producer: 'Prod. Rodrigo Arrezzi',
-    genre: 'Drill',
-    duration: '2:12',
-    price: 49.90,
-    cover: 'images/covers/cover-satans-vibes.jpg',
-    featured: true
-  },
-  {
-    id: 'real-talk',
-    title: 'Real Talk',
-    producer: 'Prod. Rodrigo Arrezzi',
-    genre: 'Boom Bap',
-    duration: '2:50',
-    price: 49.90,
-    cover: 'images/covers/cover-real-talk.jpg',
-    featured: true
-  },
-  {
-    id: 'night-drive',
-    title: 'Night Drive',
-    producer: 'Prod. Rodrigo Arrezzi',
-    genre: 'Phonk',
-    duration: '3:05',
-    price: 49.90,
-    cover: 'images/covers/cover-night-drive.jpg',
-    featured: true
-  },
-  {
-    id: 'lost-thoughts',
-    title: 'Lost Thoughts',
-    producer: 'Prod. Rodrigo Arrezzi',
-    genre: 'R&B',
-    duration: '3:45',
-    price: 69.90,
-    cover: 'images/covers/cover-impacto-real.jpg'
-  },
-  {
-    id: 'dark-side',
-    title: 'Dark Side',
-    producer: 'Prod. Rodrigo Arrezzi',
-    genre: 'Trap',
-    duration: '2:40',
-    price: 49.90,
-    cover: 'images/covers/cover-midnight-flow.jpg'
-  },
-  {
-    id: 'impacto-real',
-    title: 'Impacto Real',
-    producer: 'Prod. Rodrigo Arrezzi',
-    genre: 'Trap Melódico',
-    tags: ['Trap', 'Hip Hop', 'Melódico'],
-    duration: '3:12',
-    bpm: 90,
-    key: 'Cm',
-    price: 149.90,
-    cover: 'images/covers/cover-impacto-real.jpg',
-    highlight: true
-  }
-];
+// Preenchido automaticamente com os beats cadastrados no Painel
+const WOAH_BEATS = [];
 
+// Licenças padrão (o Painel pode alterar nomes, preços e itens)
 const WOAH_LICENSES = [
   {
-    id: 'basica',
-    label: 'Básica',
-    name: 'Licença MP3',
+    id: 'basica', label: 'Básica', name: 'Licença MP3', price: 97.00,
     description: 'Ideal para singles independentes, prévias e testes de audiência.',
-    price: 97.00,
-    features: [
-      'Arquivo MP3 320kbps Master',
-      'Até 50.000 reproduções',
-      'Distribuição digital padrão',
-      '1 vídeo musical não monetizado'
-    ],
+    features: ['Arquivo MP3 320kbps Master', 'Até 50.000 reproduções', 'Distribuição digital padrão', '1 vídeo musical não monetizado'],
     cta: 'Selecionar licença'
   },
   {
-    id: 'premium',
-    label: 'Premium',
-    name: 'Premium (WAV + Stems)',
+    id: 'premium', label: 'Premium', name: 'Premium (WAV + Stems)', price: 149.90, popular: true,
     description: 'Para lançamentos profissionais com mixagem detalhada de voz e instrumentos.',
-    price: 149.90,
-    popular: true,
-    features: [
-      'Arquivo WAV 24-bit + MP3 320kbps',
-      'Stems (pistas separadas de áudio)',
-      'Até 500.000 reproduções',
-      'Monetização autorizada no YouTube'
-    ],
+    features: ['Arquivo WAV 24-bit + MP3 320kbps', 'Stems (pistas separadas de áudio)', 'Até 500.000 reproduções', 'Monetização autorizada no YouTube'],
     cta: 'Adquirir Premium'
   },
   {
-    id: 'exclusiva',
-    label: 'Exclusividade total',
-    name: 'Direito Exclusivo',
+    id: 'exclusiva', label: 'Exclusividade total', name: 'Direito Exclusivo', price: null, exclusive: true,
     description: 'O beat é seu exclusivamente e retirado permanentemente da loja.',
-    price: null, // sob consulta
-    exclusive: true,
-    features: [
-      'Todos os direitos autorais e masters',
-      'Streams ilimitados no Spotify e Apple',
-      'Contrato jurídico de exclusividade',
-      'Remoção permanente do catálogo'
-    ],
+    features: ['Todos os direitos autorais e masters', 'Streams ilimitados no Spotify e Apple', 'Contrato jurídico de exclusividade', 'Remoção permanente do catálogo'],
     cta: 'Falar com o produtor'
   }
 ];
+
+// Imagens padrão do site (o Painel pode trocar cada uma)
+const WOAH_IMAGES = {
+  hero: 'images/artists/promo-studio.jpg',
+  promo: 'images/artists/hero-producer.jpg',
+  login: 'images/artists/hero-producer.jpg',
+  cadastro: 'images/artists/promo-studio.jpg'
+};
+
+// Capa usada quando o beat ainda não tem imagem
+const WOAH_DEFAULT_COVER = 'images/capa-padrao.svg';
 
 const WOAH_CONTACT = {
   whatsapp: '5527995055702',
