@@ -1326,7 +1326,7 @@
     fillInstallments(total);
 
     // Licença
-    const licenseName = order.license ? order.license.name : 'Premium (WAV + Stems)';
+    const licenseName = order.license ? order.license.name : 'padrão';
     const ln = document.getElementById('license-name-display');
     if (ln) ln.textContent = licenseName;
     const sl = document.getElementById('success-license-name');

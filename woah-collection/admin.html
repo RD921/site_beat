@@ -19,7 +19,7 @@
       <div class="container">
         <span class="eyebrow">Área da equipe</span>
         <h1 class="page-title" style="margin-top:12px">Painel</h1>
-        <p class="page-sub">Adicione beats, troque imagens e ajuste as licenças. As mudanças aparecem no site na hora.</p>
+        <p class="page-sub">Adicione beats, troque imagens, licenças e contatos. As mudanças aparecem no site na hora.</p>
 
         <!-- Sem permissão -->
         <div class="empty-state hidden" id="admin-denied" style="margin-top:32px">
@@ -33,6 +33,7 @@
             <button type="button" class="admin-tab active" role="tab" data-tab="beats">Beats</button>
             <button type="button" class="admin-tab" role="tab" data-tab="imagens">Imagens do site</button>
             <button type="button" class="admin-tab" role="tab" data-tab="licencas">Licenças</button>
+            <button type="button" class="admin-tab" role="tab" data-tab="contato">Contato e redes</button>
           </div>
 
           <!-- ABA: BEATS -->
@@ -52,11 +53,50 @@
 
           <!-- ABA: LICENÇAS -->
           <section class="admin-panel hidden" data-panel="licencas">
+            <div class="admin-toolbar">
+              <span class="result-count" id="licenses-count"></span>
+              <button type="button" class="btn btn-outline btn-sm" id="new-license">+ Nova licença</button>
+            </div>
             <div class="license-edit-grid" id="licenses-form"></div>
             <div class="admin-save-row">
               <span class="muted" id="licenses-status"></span>
               <button type="button" class="btn btn-primary" id="save-licenses">Salvar licenças</button>
             </div>
+          </section>
+
+          <!-- ABA: CONTATO E REDES -->
+          <section class="admin-panel hidden" data-panel="contato">
+            <form class="contact-edit" id="contact-edit-form" novalidate>
+              <div class="form-msg" role="alert"></div>
+              <div class="form-grid">
+                <div class="field">
+                  <label for="c-whatsapp">WhatsApp (com DDI e DDD)</label>
+                  <input class="input" id="c-whatsapp" name="whatsapp" inputmode="tel" placeholder="Ex: 5527999999999">
+                  <small class="upload-status">Usado nos botões de WhatsApp, suporte e “Esqueceu sua senha?”.</small>
+                </div>
+                <div class="field">
+                  <label for="c-telefone">Telefone de contato</label>
+                  <input class="input" id="c-telefone" name="telefone" inputmode="tel" placeholder="Ex: (27) 99999-9999">
+                  <small class="upload-status">Aparece na página Contato. Deixe vazio para esconder.</small>
+                </div>
+                <div class="field">
+                  <label for="c-email">E-mail de contato</label>
+                  <input class="input" id="c-email" name="email" type="email" placeholder="contato@exemplo.com">
+                </div>
+                <div class="field">
+                  <label for="c-instagram">Link do Instagram</label>
+                  <input class="input" id="c-instagram" name="instagram" placeholder="https://www.instagram.com/seu_perfil">
+                </div>
+                <div class="field span-2">
+                  <label for="c-spotify">Link do Spotify</label>
+                  <input class="input" id="c-spotify" name="spotify" placeholder="https://open.spotify.com/artist/...">
+                </div>
+              </div>
+              <p class="muted" style="margin-top:16px;font-size:13px">Campos vazios somem do site (rodapé e página Contato).</p>
+              <div class="admin-save-row">
+                <button type="submit" class="btn btn-primary">Salvar contatos</button>
+              </div>
+            </form>
           </section>
         </div>
       </div>

@@ -1219,3 +1219,10 @@ body.has-player .toast-stack { bottom: 100px; }
   .admin-price { margin-left: 80px; }
   .admin-actions { margin-left: auto; }
 }
+
+.license-edit .field { margin-top: 14px; }
+.license-edit .check { margin-top: 14px; }
+.license-edit-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+.license-edit-head strong { font-size: 15px; }
+.contact-edit { max-width: 860px; padding: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); }
+.contact-edit .upload-status { margin-top: 2px; }

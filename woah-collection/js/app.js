@@ -20,7 +20,9 @@
   const beatById = id => WOAH_BEATS.find(b => b.id === id);
   const toSeconds = t => { const [m, s] = String(t || '0:00').split(':').map(Number); return (m || 0) * 60 + (s || 0); };
   const fmtTime = sec => Math.floor(sec / 60) + ':' + String(Math.floor(sec % 60)).padStart(2, '0');
-  const waLink = text => 'https://wa.me/' + WOAH_CONTACT.whatsapp + (text ? '?text=' + encodeURIComponent(text) : '');
+  const waLink = text => WOAH_CONTACT.whatsapp
+    ? 'https://wa.me/' + WOAH_CONTACT.whatsapp + (text ? '?text=' + encodeURIComponent(text) : '')
+    : 'contato.html';
 
   // Aceita só caminhos internos (evita redirecionar para outro site)
   function safeNext(value, fallback) {
@@ -371,10 +373,10 @@
         <div class="container footer-inner">
           <div class="footer-brand">${logoHTML()}<p>Beats que inspiram.</p></div>
           <div class="footer-social">
-            <a href="${WOAH_CONTACT.instagram}" target="_blank" rel="noopener" aria-label="Instagram">${ICON.instagram}</a>
-            <a href="${waLink()}" target="_blank" rel="noopener" aria-label="WhatsApp">${ICON.whatsapp}</a>
-            <a href="${WOAH_CONTACT.spotify}" target="_blank" rel="noopener" aria-label="Spotify">${ICON.spotify}</a>
-            <a href="mailto:${WOAH_CONTACT.email}" aria-label="E-mail">${ICON.mail}</a>
+            ${WOAH_CONTACT.instagram ? `<a href="${esc(WOAH_CONTACT.instagram)}" target="_blank" rel="noopener" aria-label="Instagram">${ICON.instagram}</a>` : ''}
+            ${WOAH_CONTACT.whatsapp ? `<a href="${esc(waLink())}" target="_blank" rel="noopener" aria-label="WhatsApp">${ICON.whatsapp}</a>` : ''}
+            ${WOAH_CONTACT.spotify ? `<a href="${esc(WOAH_CONTACT.spotify)}" target="_blank" rel="noopener" aria-label="Spotify">${ICON.spotify}</a>` : ''}
+            ${WOAH_CONTACT.email ? `<a href="mailto:${esc(WOAH_CONTACT.email)}" aria-label="E-mail">${ICON.mail}</a>` : ''}
           </div>
         </div>
       </footer>`;
@@ -896,6 +898,15 @@
   function initLicencas() {
     const beat = beatById(params.get('beat')) || WOAH_BEATS.find(b => b.highlight) || WOAH_BEATS[0];
     const grid = $('#license-grid');
+    if (!WOAH_LICENSES.length) {
+      grid.innerHTML = `
+        <div class="empty-state" style="grid-column:1/-1">
+          <h3>Novas licenças em breve</h3>
+          <p>Estamos preparando os planos de licença. Enquanto isso, fale com a gente para negociar o seu beat.</p>
+          <a href="contato.html" class="btn btn-outline">Falar com o suporte</a>
+        </div>`;
+      return;
+    }
     grid.innerHTML = WOAH_LICENSES.map(l => {
       const price = l.price == null ? 'Sob consulta' : fmt(l.price);
       const btn = l.exclusive
@@ -1079,7 +1090,23 @@
      PÁGINA: CONTATO
      ====================================================================== */
   function initContato() {
-    $$('[data-wa]').forEach(a => { a.href = waLink(a.dataset.wa); });
+    const c = WOAH_CONTACT;
+    const phoneDigits = String(c.telefone || '').replace(/\D/g, '');
+    const items = [
+      c.whatsapp && { href: waLink('Olá! Gostaria de falar com a Woah Collection.'), ext: true, icon: ICON.whatsapp, title: 'WhatsApp', text: 'Resposta rápida em horário comercial.' },
+      c.telefone && { href: 'tel:+' + (phoneDigits.length <= 11 ? '55' + phoneDigits : phoneDigits), icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>', title: 'Telefone', text: c.telefone },
+      c.email && { href: 'mailto:' + c.email, icon: ICON.mail, title: 'E-mail', text: c.email },
+      c.instagram && { href: c.instagram, ext: true, icon: ICON.instagram, title: 'Instagram', text: '@' + (c.instagram.replace(/\/+$/, '').split('/').pop() || 'instagram') },
+      c.spotify && { href: c.spotify, ext: true, icon: ICON.spotify, title: 'Spotify', text: 'Ouça nossos lançamentos' }
+    ].filter(Boolean);
+    const list = $('#contact-list');
+    if (list) {
+      list.innerHTML = items.map(i => `
+        <a class="info-card" href="${esc(i.href)}"${i.ext ? ' target="_blank" rel="noopener"' : ''}>
+          <span class="stat-icon">${i.icon}</span>
+          <div><h3>${esc(i.title)}</h3><p>${esc(i.text)}</p></div>
+        </a>`).join('');
+    }
     const form = $('#contact-form');
     if (!form) return;
     const user = getUser();
@@ -1091,8 +1118,12 @@
       const message = form.message.value.trim();
       if (!name || !message) { showMsg(form, 'Preencha seu nome e a mensagem.', 'error'); return; }
       const text = `Olá! Sou ${name}.${subject ? ' Assunto: ' + subject + '.' : ''}\n\n${message}`;
-      window.open(waLink(text), '_blank', 'noopener');
-      showMsg(form, 'Abrimos o WhatsApp com a sua mensagem. É só enviar!', 'success');
+      if (WOAH_CONTACT.whatsapp) {
+        window.open(waLink(text), '_blank', 'noopener');
+        showMsg(form, 'Abrimos o WhatsApp com a sua mensagem. É só enviar!', 'success');
+      } else if (WOAH_CONTACT.email) {
+        location.href = 'mailto:' + WOAH_CONTACT.email + '?subject=' + encodeURIComponent(subject || 'Contato pelo site') + '&body=' + encodeURIComponent(text);
+      }
     });
   }
 
@@ -1114,10 +1145,11 @@
         tags: b.tags && b.tags.length ? b.tags : (b.genre ? [b.genre] : [])
       })));
     }
-    if (Array.isArray(data.licencas) && data.licencas.length) {
+    if (Array.isArray(data.licencas)) {
       WOAH_LICENSES.length = 0;
       data.licencas.forEach(l => WOAH_LICENSES.push(l));
     }
+    if (data.contato) Object.assign(WOAH_CONTACT, data.contato);
     if (data.imagens) {
       Object.keys(data.imagens).forEach(k => { if (data.imagens[k]) WOAH_IMAGES[k] = assetUrl(data.imagens[k]); });
     }
@@ -1158,6 +1190,7 @@
   };
   checkSession();
   ready.then(() => {
+    renderFooter();
     if (inits[page]) inits[page]();
     updateCartUI();
     updatePlayerUI();

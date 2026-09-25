@@ -39,27 +39,14 @@ const TAMANHO_MAX_AUDIO = 80 * 1024 * 1024;     // 80 MB
 const EXT_IMAGEM = ['.jpg', '.jpeg', '.png', '.webp', '.gif'];
 const EXT_AUDIO = ['.mp3', '.wav', '.m4a', '.ogg'];
 
-// Licenças iniciais (podem ser alteradas pelo Painel)
-const LICENCAS_PADRAO = [
-  {
-    id: 'basica', label: 'Básica', name: 'Licença MP3', price: 97.00,
-    description: 'Ideal para singles independentes, prévias e testes de audiência.',
-    features: ['Arquivo MP3 320kbps Master', 'Até 50.000 reproduções', 'Distribuição digital padrão', '1 vídeo musical não monetizado'],
-    cta: 'Selecionar licença'
-  },
-  {
-    id: 'premium', label: 'Premium', name: 'Premium (WAV + Stems)', price: 149.90, popular: true,
-    description: 'Para lançamentos profissionais com mixagem detalhada de voz e instrumentos.',
-    features: ['Arquivo WAV 24-bit + MP3 320kbps', 'Stems (pistas separadas de áudio)', 'Até 500.000 reproduções', 'Monetização autorizada no YouTube'],
-    cta: 'Adquirir Premium'
-  },
-  {
-    id: 'exclusiva', label: 'Exclusividade total', name: 'Direito Exclusivo', price: null, exclusive: true,
-    description: 'O beat é seu exclusivamente e retirado permanentemente da loja.',
-    features: ['Todos os direitos autorais e masters', 'Streams ilimitados no Spotify e Apple', 'Contrato jurídico de exclusividade', 'Remoção permanente do catálogo'],
-    cta: 'Falar com o produtor'
-  }
-];
+// Contato e redes sociais (editáveis pelo Painel)
+const CONTATO_PADRAO = {
+  whatsapp: '5527995055702',
+  telefone: '',
+  email: 'rodrigoarrezzimaciel17@gmail.com',
+  instagram: 'https://www.instagram.com/rodrigo_arrezzi',
+  spotify: ''
+};
 
 // Imagens do site que podem ser trocadas pelo Painel (vazio = imagem padrão)
 const IMAGENS_PADRAO = { hero: '', promo: '', login: '', cadastro: '' };
@@ -97,10 +84,13 @@ function salvarJson(arquivo, dados) {
 
 let usuarios = lerJson(ARQUIVO_USUARIOS, []);
 let sessoes = lerJson(ARQUIVO_SESSOES, {});
-let catalogo = lerJson(ARQUIVO_CATALOGO, null) || { beats: [], licencas: LICENCAS_PADRAO, imagens: IMAGENS_PADRAO };
+let catalogo = lerJson(ARQUIVO_CATALOGO, null) || { versao: 2, beats: [], licencas: [], imagens: IMAGENS_PADRAO };
 catalogo.beats = catalogo.beats || [];
-catalogo.licencas = catalogo.licencas || LICENCAS_PADRAO;
+// Versão 2: as licenças começam vazias (a equipe cadastra as novas pelo Painel)
+if ((catalogo.versao || 1) < 2) { catalogo.licencas = []; catalogo.versao = 2; if (fs.existsSync(ARQUIVO_CATALOGO)) salvarJson(ARQUIVO_CATALOGO, catalogo); }
+catalogo.licencas = catalogo.licencas || [];
 catalogo.imagens = Object.assign({}, IMAGENS_PADRAO, catalogo.imagens || {});
+catalogo.contato = Object.assign({}, CONTATO_PADRAO, catalogo.contato || {});
 
 const salvarCatalogo = () => salvarJson(ARQUIVO_CATALOGO, catalogo);
 
@@ -403,22 +393,45 @@ async function tratarApi(req, res, rota) {
       return responderJson(res, 200, { catalogo });
     }
 
-    // Licenças
+    // Licenças (lista completa: criar, editar, remover)
     if (rota === '/api/admin/licencas' && req.method === 'PUT') {
       const corpo = await lerCorpo(req);
       if (!Array.isArray(corpo.licencas)) return responderJson(res, 400, { erro: 'Dados inválidos.' });
-      catalogo.licencas = catalogo.licencas.map(atual => {
-        const nova = corpo.licencas.find(l => l.id === atual.id);
-        if (!nova) return atual;
-        return Object.assign({}, atual, {
-          name: texto(nova.name, 60) || atual.name,
-          label: texto(nova.label, 40) || atual.label,
-          description: texto(nova.description, 240),
-          price: atual.exclusive ? null : (numero(nova.price) ?? atual.price),
-          features: (Array.isArray(nova.features) ? nova.features : []).map(f => texto(f, 80)).filter(Boolean).slice(0, 8),
-          cta: texto(nova.cta, 40) || atual.cta
-        });
+      const lista = corpo.licencas.slice(0, 12).map(l => {
+        const consulta = !!l.exclusive;
+        return {
+          id: /^[a-z0-9-]{1,40}$/.test(String(l.id || '')) ? l.id : crypto.randomUUID().slice(0, 8),
+          label: texto(l.label, 40),
+          name: texto(l.name, 60),
+          description: texto(l.description, 240),
+          price: consulta ? null : numero(l.price),
+          exclusive: consulta,
+          popular: !!l.popular,
+          features: (Array.isArray(l.features) ? l.features : []).map(f => texto(f, 80)).filter(Boolean).slice(0, 10),
+          cta: texto(l.cta, 40) || (consulta ? 'Falar com o produtor' : 'Selecionar licença')
+        };
       });
+      const semNome = lista.find(l => !l.name);
+      if (semNome) return responderJson(res, 400, { erro: 'Toda licença precisa de um nome.' });
+      const semPreco = lista.find(l => !l.exclusive && l.price == null);
+      if (semPreco) return responderJson(res, 400, { erro: `Informe o preço da licença "${semPreco.name}" ou marque "Sob consulta".` });
+      catalogo.licencas = lista;
+      salvarCatalogo();
+      return responderJson(res, 200, { catalogo });
+    }
+
+    // Contato e redes sociais
+    if (rota === '/api/admin/contato' && req.method === 'PUT') {
+      const corpo = await lerCorpo(req);
+      const link = v => { const t = texto(v, 200); return t === '' || /^https?:\/\/[^\s]+$/i.test(t) ? t : null; };
+      const whatsapp = texto(corpo.whatsapp, 20).replace(/\D/g, '');
+      const email = texto(corpo.email, 120);
+      const instagram = link(corpo.instagram);
+      const spotify = link(corpo.spotify);
+      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return responderJson(res, 400, { erro: 'E-mail de contato inválido.' });
+      if (whatsapp && (whatsapp.length < 10 || whatsapp.length > 15)) return responderJson(res, 400, { erro: 'WhatsApp inválido. Use DDI + DDD + número, ex: 5527999999999.' });
+      if (instagram === null || spotify === null) return responderJson(res, 400, { erro: 'Os links precisam começar com https://' });
+      catalogo.contato = { whatsapp, telefone: texto(corpo.telefone, 30), email, instagram, spotify };
       salvarCatalogo();
       return responderJson(res, 200, { catalogo });
     }

@@ -51,6 +51,7 @@
     renderBeats();
     renderImages();
     renderLicenses();
+    renderContact();
   }
 
   /* ---------- Abas ---------- */
@@ -129,7 +130,7 @@
     form = { cover: beat ? beat.cover : '', audio: beat ? beat.audio : '' };
     if (beat) {
       beatForm.title.value = beat.title;
-      beatForm.price.value = String(beat.price).replace('.', ',');
+      beatForm.price.value = Number(beat.price).toFixed(2).replace('.', ',');
       beatForm.genre.value = beat.genre || '';
       beatForm.producer.value = beat.producer || '';
       beatForm.tags.value = (beat.tags || []).join(', ');
@@ -284,63 +285,149 @@
   });
 
   /* ---------- Licenças ---------- */
+  let licenseDraft = [];
+
   function renderLicenses() {
-    $('#licenses-form').innerHTML = data.licencas.map(l => `
-      <div class="license-edit" data-license-id="${esc(l.id)}">
-        <div class="field">
-          <label>Etiqueta</label>
-          <input class="input" data-f="label" value="${esc(l.label)}" maxlength="40">
+    licenseDraft = JSON.parse(JSON.stringify(data.licencas || []));
+    drawLicenses();
+  }
+
+  function drawLicenses() {
+    $('#licenses-count').innerHTML = `<strong>${licenseDraft.length}</strong> ${licenseDraft.length === 1 ? 'licença' : 'licenças'}`;
+    const box = $('#licenses-form');
+    if (!licenseDraft.length) {
+      box.innerHTML = `
+        <div class="empty-state" style="grid-column:1/-1">
+          <h3>Nenhuma licença cadastrada</h3>
+          <p>Clique em “+ Nova licença” para criar os planos que aparecem na página Licenças.</p>
+        </div>`;
+      return;
+    }
+    box.innerHTML = licenseDraft.map((l, i) => `
+      <div class="license-edit" data-index="${i}">
+        <div class="license-edit-head">
+          <strong>Licença ${i + 1}</strong>
+          <button type="button" class="btn btn-ghost btn-sm danger" data-remove-license="${i}">Remover</button>
         </div>
         <div class="field">
-          <label>Nome da licença</label>
-          <input class="input" data-f="name" value="${esc(l.name)}" maxlength="60">
+          <label>Nome da licença *</label>
+          <input class="input" data-f="name" value="${esc(l.name || '')}" maxlength="60" placeholder="Ex: Licença MP3">
+        </div>
+        <div class="field">
+          <label>Etiqueta (texto pequeno acima do nome)</label>
+          <input class="input" data-f="label" value="${esc(l.label || '')}" maxlength="40" placeholder="Ex: Básica">
         </div>
         <div class="field">
           <label>Preço (R$)</label>
-          ${l.exclusive
-            ? '<input class="input" value="Sob consulta" disabled>'
-            : `<input class="input" data-f="price" value="${esc(String(l.price).replace('.', ','))}" inputmode="decimal">`}
+          <input class="input" data-f="price" value="${l.exclusive || l.price == null ? '' : esc(Number(l.price).toFixed(2).replace('.', ','))}" inputmode="decimal" placeholder="Ex: 97,00" ${l.exclusive ? 'disabled' : ''}>
         </div>
+        <label class="check"><input type="checkbox" data-f="exclusive" ${l.exclusive ? 'checked' : ''}> Sob consulta (botão abre o WhatsApp)</label>
+        <label class="check" style="margin-top:8px"><input type="checkbox" data-f="popular" ${l.popular ? 'checked' : ''}> Destacar como “Mais popular”</label>
         <div class="field">
           <label>Descrição</label>
-          <textarea class="input" data-f="description" rows="3" maxlength="240">${esc(l.description)}</textarea>
+          <textarea class="input" data-f="description" rows="3" maxlength="240" placeholder="Para quem é essa licença?">${esc(l.description || '')}</textarea>
         </div>
         <div class="field">
           <label>Itens inclusos (um por linha)</label>
-          <textarea class="input" data-f="features" rows="5">${esc((l.features || []).join('\n'))}</textarea>
+          <textarea class="input" data-f="features" rows="5" placeholder="Arquivo MP3 320kbps&#10;Até 50.000 reproduções">${esc((l.features || []).join('\n'))}</textarea>
         </div>
         <div class="field">
           <label>Texto do botão</label>
-          <input class="input" data-f="cta" value="${esc(l.cta)}" maxlength="40">
+          <input class="input" data-f="cta" value="${esc(l.cta || '')}" maxlength="40" placeholder="Ex: Selecionar licença">
         </div>
       </div>`).join('');
   }
 
-  $('#save-licenses').addEventListener('click', async () => {
-    const status = $('#licenses-status');
-    const licencas = $$('[data-license-id]').map(card => {
-      const get = f => { const el = $(`[data-f="${f}"]`, card); return el ? el.value : undefined; };
-      const price = get('price');
-      return {
-        id: card.dataset.licenseId,
-        label: get('label'),
-        name: get('name'),
-        description: get('description'),
-        price: price === undefined ? null : price.replace(/\./g, '').replace(',', '.'),
-        features: get('features').split('\n'),
-        cta: get('cta')
-      };
+  // Guarda o que está digitado antes de redesenhar
+  function readLicenses() {
+    $$('[data-index]', $('#licenses-form')).forEach(card => {
+      const l = licenseDraft[+card.dataset.index];
+      const get = f => $(`[data-f="${f}"]`, card);
+      l.name = get('name').value;
+      l.label = get('label').value;
+      l.exclusive = get('exclusive').checked;
+      l.popular = get('popular').checked;
+      l.price = l.exclusive ? null : get('price').value.replace(/\./g, '').replace(',', '.');
+      l.description = get('description').value;
+      l.features = get('features').value.split('\n');
+      l.cta = get('cta').value;
     });
+  }
+
+  $('#new-license').addEventListener('click', () => {
+    readLicenses();
+    licenseDraft.push({ name: '', label: '', price: '', description: '', features: [], cta: '' });
+    drawLicenses();
+    const cards = $$('.license-edit');
+    const last = cards[cards.length - 1];
+    last.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    $('[data-f="name"]', last).focus();
+    $('#licenses-status').textContent = 'Não esqueça de salvar.';
+  });
+
+  $('#licenses-form').addEventListener('click', e => {
+    const rm = e.target.closest('[data-remove-license]');
+    if (!rm) return;
+    readLicenses();
+    const l = licenseDraft[+rm.dataset.removeLicense];
+    if (!confirm(`Remover a licença "${l.name || 'sem nome'}"?`)) return;
+    licenseDraft.splice(+rm.dataset.removeLicense, 1);
+    drawLicenses();
+    $('#licenses-status').textContent = 'Não esqueça de salvar.';
+  });
+
+  $('#licenses-form').addEventListener('change', e => {
+    if (e.target.matches('[data-f="exclusive"]')) {
+      const price = $('[data-f="price"]', e.target.closest('.license-edit'));
+      price.disabled = e.target.checked;
+      if (e.target.checked) price.value = '';
+    }
+  });
+
+  $('#save-licenses').addEventListener('click', async () => {
+    readLicenses();
+    const status = $('#licenses-status');
     const btn = $('#save-licenses');
     btn.disabled = true;
     status.textContent = 'Salvando...';
     try {
-      const res = await W.api('/api/admin/licencas', { method: 'PUT', body: { licencas } });
+      const res = await W.api('/api/admin/licencas', { method: 'PUT', body: { licencas: licenseDraft } });
       refresh(res.catalogo);
       status.textContent = 'Licenças salvas.';
       W.toast('Licenças atualizadas no site.');
     } catch (err) {
       status.textContent = err.message;
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  /* ---------- Contato e redes ---------- */
+  const contactForm = $('#contact-edit-form');
+
+  function renderContact() {
+    const c = data.contato || {};
+    ['whatsapp', 'telefone', 'email', 'instagram', 'spotify'].forEach(k => { contactForm[k].value = c[k] || ''; });
+  }
+
+  contactForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    const body = {};
+    ['whatsapp', 'telefone', 'email', 'instagram', 'spotify'].forEach(k => { body[k] = contactForm[k].value.trim(); });
+    // Aceita link sem https:// e completa
+    ['instagram', 'spotify'].forEach(k => { if (body[k] && !/^https?:\/\//i.test(body[k])) body[k] = 'https://' + body[k]; });
+    const msg = $('.form-msg', contactForm);
+    const btn = $('button[type="submit"]', contactForm);
+    btn.disabled = true;
+    try {
+      const res = await W.api('/api/admin/contato', { method: 'PUT', body });
+      refresh(res.catalogo);
+      msg.textContent = 'Contatos salvos. O rodapé e a página Contato já foram atualizados.';
+      msg.className = 'form-msg success';
+      W.toast('Contatos atualizados no site.');
+    } catch (err) {
+      msg.textContent = err.message;
+      msg.className = 'form-msg error';
     } finally {
       btn.disabled = false;
     }
@@ -371,6 +458,7 @@
     renderBeats();
     renderImages();
     renderLicenses();
+    renderContact();
   }
 
   start();
