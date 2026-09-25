@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Beats — WOAH COLLECTION</title>
+  <meta name="description" content="Explore o catálogo de beats da Woah Collection e encontre o som perfeito para o seu projeto." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,600;0,700;0,800;0,900;1,900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/woah.css">
+</head>
+<body data-page="beats">
+
+  <div id="site-header"></div>
+
+  <main>
+    <section class="page-head" id="catalog-top">
+      <div class="container">
+        <h1 class="page-title">Explore os Beats</h1>
+        <p class="page-sub">Encontre o som perfeito para o seu projeto.</p>
+
+        <div class="toolbar">
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            <span class="result-count" id="result-count" aria-live="polite"></span>
+            <div class="chip-row" id="active-chips"></div>
+          </div>
+          <button type="button" class="btn btn-outline btn-sm" id="open-filters">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+            Filtros <span class="filter-count hidden" id="filter-count">0</span>
+          </button>
+        </div>
+
+        <div class="beats-grid" id="catalog-grid"></div>
+
+        <div class="empty-state hidden" id="catalog-empty">
+          <h3>Nenhum beat encontrado</h3>
+          <p>Tente outra busca ou limpe os filtros.</p>
+          <button type="button" class="btn btn-outline" id="clear-all">Limpar busca e filtros</button>
+        </div>
+
+        <nav class="pagination hidden" id="pagination" aria-label="Páginas do catálogo"></nav>
+      </div>
+    </section>
+  </main>
+
+  <!-- Filtros (abre pelo botão "Filtros") -->
+  <div class="modal" id="filters-modal" role="dialog" aria-modal="true" aria-labelledby="filters-title">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3 id="filters-title">Filtros</h3>
+        <button type="button" class="icon-btn" aria-label="Fechar" data-filters-close>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Gênero</span>
+        <div class="option-row" id="opt-genre"></div>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Preço</span>
+        <div class="option-row" id="opt-price"></div>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Ordenar por</span>
+        <div class="option-row" id="opt-sort"></div>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn btn-outline" id="clear-filters">Limpar</button>
+        <button type="button" class="btn btn-primary" id="apply-filters">Aplicar filtros</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="site-footer"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

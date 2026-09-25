@@ -16,12 +16,13 @@
     duration: 192, // 3:12 in seconds
     volume: 0.85,
     mixMode: 'mix', // 'beat', 'user', 'mix'
-    userTrackLoaded: true,
+    userTrackLoaded: false,
     userFileName: 'MinhaMusica.mp3',
     userFileSize: '5.2 MB • MP3',
     couponCode: '',
     discount: 0,
     basePrice: 149.90,
+    displayDuration: 192, // duração mostrada no player (vem do beat)
     selectedPaymentMethod: 'pix',
     
     // Equalizer Band Defaults (Reference Specs)
@@ -310,8 +311,10 @@
   function updatePlayPauseUI() {
     const playBtn = document.getElementById('transport-play-btn');
     const heroPlayBtn = document.getElementById('hero-play-btn');
-    const playIcon = state.isPlaying ? '❚❚' : '▶';
-    
+    const playIcon = state.isPlaying
+      ? '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="5.5" y="4" width="4.5" height="16" rx="1.2"/><rect x="14" y="4" width="4.5" height="16" rx="1.2"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5z"/></svg>';
+
     if (playBtn) playBtn.innerHTML = playIcon;
     if (heroPlayBtn) heroPlayBtn.innerHTML = playIcon;
   }
@@ -815,7 +818,7 @@
     const bubble = document.getElementById('waveform-bubble');
     const timeDisplay = document.getElementById('track-time-display');
 
-    const totalSeconds = 192; // 3:12
+    const totalSeconds = state.displayDuration;
     const currentProgress = (state.currentTime % 10.66) / 10.66; // loop progress
     const simulatedElapsed = (currentProgress * totalSeconds);
 
@@ -825,7 +828,7 @@
       bubble.textContent = formatTime(simulatedElapsed);
     }
     if (timeDisplay) {
-      timeDisplay.textContent = `${formatTime(simulatedElapsed)} / 03:12`;
+      timeDisplay.textContent = `${formatTime(simulatedElapsed)} / ${formatTime(totalSeconds)}`;
     }
   }
 
@@ -947,6 +950,8 @@
         state.selectedPaymentMethod = 'pix';
         pixChoice.classList.add('selected');
         cardChoice.classList.remove('selected');
+        pixChoice.setAttribute('aria-checked', 'true');
+        cardChoice.setAttribute('aria-checked', 'false');
         if (cardFields) cardFields.classList.remove('active');
       });
 
@@ -954,6 +959,8 @@
         state.selectedPaymentMethod = 'card';
         cardChoice.classList.add('selected');
         pixChoice.classList.remove('selected');
+        cardChoice.setAttribute('aria-checked', 'true');
+        pixChoice.setAttribute('aria-checked', 'false');
         if (cardFields) cardFields.classList.add('active');
       });
     }
@@ -982,8 +989,10 @@
     function showCouponFeedback(msg, isSuccess) {
       if (!couponFeedback) return;
       couponFeedback.textContent = msg;
-      couponFeedback.className = 'coupon-feedback ' + (isSuccess ? 'success' : 'error');
+      couponFeedback.className = 'coupon-feedback-msg ' + (isSuccess ? 'success' : 'error');
     }
+
+    updatePriceSummary();
 
     function updatePriceSummary() {
       const discountRow = document.getElementById('summary-discount-row');
@@ -991,16 +1000,10 @@
       const totalVal = document.getElementById('summary-total-val');
       const finalPrice = Math.max(0, state.basePrice - state.discount);
 
-      if (state.discount > 0) {
-        if (discountRow) discountRow.style.display = 'flex';
-        if (discountVal) discountVal.textContent = `-R$ ${state.discount.toFixed(2).replace('.', ',')}`;
-      } else {
-        if (discountRow) discountRow.style.display = 'none';
-      }
-
-      if (totalVal) {
-        totalVal.textContent = `R$ ${finalPrice.toFixed(2).replace('.', ',')}`;
-      }
+      if (discountRow) discountRow.classList.toggle('has-discount', state.discount > 0);
+      if (discountVal) discountVal.textContent = state.discount > 0 ? '-' + money(state.discount) : money(0);
+      if (totalVal) totalVal.textContent = money(finalPrice);
+      fillInstallments(finalPrice);
     }
 
     // Card Input Masking
@@ -1024,13 +1027,24 @@
 
     // Finalize purchase button action
     if (finalizeBtn) {
+      const originalLabel = finalizeBtn.innerHTML;
       finalizeBtn.addEventListener('click', () => {
+        if (state.selectedPaymentMethod === 'card') {
+          const num = (document.getElementById('card-number-input').value || '').replace(/\D/g, '');
+          const name = (document.getElementById('card-name-input').value || '').trim();
+          const exp = document.getElementById('card-expiry-input').value || '';
+          const cvv = document.getElementById('card-cvv-input').value || '';
+          if (num.length < 13 || !name || !/^\d{2}\/\d{2}$/.test(exp) || cvv.length < 3) {
+            alert('Preencha os dados do cartão para continuar.');
+            return;
+          }
+        }
         finalizeBtn.classList.add('loading');
-        finalizeBtn.innerHTML = 'Processando...';
+        finalizeBtn.textContent = 'Processando...';
 
         setTimeout(() => {
           finalizeBtn.classList.remove('loading');
-          finalizeBtn.innerHTML = '🔒 Finalizar compra';
+          finalizeBtn.innerHTML = originalLabel;
           openCheckoutModal();
         }, 600);
       });
@@ -1038,58 +1052,73 @@
   }
 
   // Checkout Modal (PIX QR Code & Confirmation)
+  let pixInterval = null;
+  let modalBound = false;
+
+  function showPaymentSuccess() {
+    const initialBlock = document.getElementById('pix-modal-initial-block');
+    const successBlock = document.getElementById('pix-modal-success-block');
+    if (initialBlock) initialBlock.style.display = 'none';
+    if (successBlock) successBlock.style.display = 'flex';
+    clearInterval(pixInterval);
+    if (order.fromCart && window.WOAH) window.WOAH.clearCart();
+  }
+
   function openCheckoutModal() {
     const modalBackdrop = document.getElementById('checkout-modal');
     if (!modalBackdrop) return;
-    modalBackdrop.classList.add('active');
-
-    // Countdown Timer 15:00
-    let timerSeconds = 15 * 60;
-    const timerDisplay = document.getElementById('pix-timer-num');
-    const interval = setInterval(() => {
-      timerSeconds--;
-      if (timerSeconds <= 0) {
-        clearInterval(interval);
-      }
-      const m = Math.floor(timerSeconds / 60);
-      const s = timerSeconds % 60;
-      if (timerDisplay) {
-        timerDisplay.textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-      }
-    }, 1000);
-
-    // Copy Pix Code Button
-    const copyBtn = document.getElementById('btn-copy-pix');
-    const copyInput = document.getElementById('pix-copia-cola-input');
-    if (copyBtn && copyInput) {
-      copyBtn.addEventListener('click', () => {
-        copyInput.select();
-        navigator.clipboard.writeText(copyInput.value);
-        copyBtn.textContent = 'Copiado!';
-        setTimeout(() => { copyBtn.textContent = 'Copiar'; }, 2000);
-      });
-    }
-
-    // Simulate Payment Confirmation
-    const simBtn = document.getElementById('btn-simulate-confirm');
     const initialBlock = document.getElementById('pix-modal-initial-block');
     const successBlock = document.getElementById('pix-modal-success-block');
 
-    if (simBtn) {
-      simBtn.addEventListener('click', () => {
-        if (initialBlock) initialBlock.style.display = 'none';
-        if (successBlock) successBlock.style.display = 'flex';
+    if (!modalBound) {
+      modalBound = true;
+      const copyBtn = document.getElementById('btn-copy-pix');
+      const copyInput = document.getElementById('pix-copia-cola-input');
+      if (copyBtn && copyInput) {
+        copyBtn.addEventListener('click', () => {
+          copyInput.select();
+          if (navigator.clipboard) navigator.clipboard.writeText(copyInput.value).catch(() => {});
+          copyBtn.textContent = 'Copiado!';
+          setTimeout(() => { copyBtn.textContent = 'Copiar'; }, 2000);
+        });
+      }
+      const simBtn = document.getElementById('btn-simulate-confirm');
+      if (simBtn) simBtn.addEventListener('click', showPaymentSuccess);
+
+      const close = () => { modalBackdrop.classList.remove('active'); clearInterval(pixInterval); };
+      const closeBtn = document.getElementById('btn-close-modal');
+      if (closeBtn) closeBtn.addEventListener('click', close);
+      modalBackdrop.addEventListener('click', e => { if (e.target === modalBackdrop) close(); });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+
+      const dl = document.getElementById('btn-download');
+      if (dl) dl.addEventListener('click', e => {
+        e.preventDefault();
+        alert('Download liberado! O link dos arquivos também foi enviado para o seu e-mail.');
       });
     }
 
-    // Close Modal Button
-    const closeBtn = document.getElementById('btn-close-modal');
-    if (closeBtn) {
-      closeBtn.addEventListener('click', () => {
-        modalBackdrop.classList.remove('active');
-        clearInterval(interval);
-      });
+    modalBackdrop.classList.add('active');
+
+    // Cartão: aprovação direta • Pix: QR Code com contagem regressiva
+    if (state.selectedPaymentMethod === 'card') {
+      showPaymentSuccess();
+      return;
     }
+    if (initialBlock) initialBlock.style.display = 'flex';
+    if (successBlock) successBlock.style.display = 'none';
+
+    let timerSeconds = 15 * 60;
+    const timerDisplay = document.getElementById('pix-timer-num');
+    clearInterval(pixInterval);
+    const tick = () => {
+      const m = Math.floor(timerSeconds / 60);
+      const sec = timerSeconds % 60;
+      if (timerDisplay) timerDisplay.textContent = `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+      if (timerSeconds-- <= 0) clearInterval(pixInterval);
+    };
+    tick();
+    pixInterval = setInterval(tick, 1000);
   }
 
   // =========================================================================
@@ -1186,37 +1215,135 @@
       drawWaveform();
     });
 
-    // Parse URL Parameters (support dynamic beat loading from loja-de-beats.html)
-    const urlParams = new URLSearchParams(window.location.search);
-    const beatName = urlParams.get('beat');
-    const beatPrice = urlParams.get('price');
-    if (beatName) {
-      const titleEl = document.getElementById('beat-title-display');
-      const summaryTitle = document.getElementById('summary-beat-title-display');
-      if (titleEl) titleEl.textContent = beatName;
-      if (summaryTitle) summaryTitle.textContent = beatName;
+  }
+
+  // =========================================================================
+  // 9b. DADOS DO PEDIDO (beat, licença ou carrinho vindos da URL)
+  // =========================================================================
+  const order = { items: [], license: null, fromCart: false };
+
+  function money(n) {
+    return 'R$ ' + Number(n).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function escapeHtml(v) {
+    return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+
+  function fillInstallments(total) {
+    const select = document.getElementById('card-installments-select');
+    if (!select) return;
+    const current = select.value || '1';
+    const rows = [[1, 0], [2, 0], [3, 0], [6, 0.0299], [12, 0.0299]];
+    select.innerHTML = rows.map(([n, rate]) => {
+      const value = rate ? (total * rate) / (1 - Math.pow(1 + rate, -n)) : total / n;
+      return `<option value="${n}">${n}x de ${money(value)} ${rate ? '(com juros)' : '(sem juros)'}</option>`;
+    }).join('');
+    select.value = current;
+  }
+
+  function loadOrder() {
+    const params = new URLSearchParams(window.location.search);
+    const W = window.WOAH;
+    const beats = typeof WOAH_BEATS !== 'undefined' ? WOAH_BEATS : [];
+    const licenses = typeof WOAH_LICENSES !== 'undefined' ? WOAH_LICENSES : [];
+
+    if (params.get('cart') === '1' && W) {
+      order.fromCart = true;
+      order.items = W.getCart().map(W.beatById).filter(Boolean);
+      if (!order.items.length) { window.location.replace('carrinho.html'); return false; }
+    } else {
+      const key = (params.get('beat') || '').toLowerCase();
+      let beat = beats.find(b => b.id === key) || beats.find(b => b.title.toLowerCase() === key);
+      if (!beat) beat = beats.find(b => b.highlight) || beats[0];
+      if (!beat) return true;
+      order.items = [beat];
+      order.license = licenses.find(l => l.id === params.get('license') && l.price != null) || null;
     }
-    if (beatPrice) {
-      const num = parseFloat(beatPrice);
-      if (!isNaN(num)) {
-        state.basePrice = num;
-        const priceEl = document.getElementById('beat-price-display');
-        const summaryPrice = document.getElementById('summary-beat-price-display');
-        const subtotal = document.getElementById('summary-subtotal-val');
-        const total = document.getElementById('summary-total-val');
-        const formatted = `R$ ${num.toFixed(2).replace('.', ',')}`;
-        if (priceEl) priceEl.textContent = formatted;
-        if (summaryPrice) summaryPrice.textContent = formatted;
-        if (subtotal) subtotal.textContent = formatted;
-        if (total) total.textContent = formatted;
-      }
+
+    const first = order.items[0];
+    const total = order.license ? order.license.price : order.items.reduce((sum, b) => sum + b.price, 0);
+    state.basePrice = total;
+    state.displayDuration = toSecs(first.duration) || 192;
+
+    // Resumo do beat
+    const resume = document.getElementById('beat-resume');
+    if (resume) {
+      resume.innerHTML = order.items.map(b => {
+        const specs = [b.bpm ? 'BPM ' + b.bpm : '', b.key ? 'Tom ' + b.key : '', 'Duração ' + b.duration].filter(Boolean).join(' • ');
+        const tags = (b.tags || [b.genre]).map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('');
+        const price = order.license ? order.license.price : b.price;
+        return `
+          <div class="beat-resume">
+            <img src="${b.cover}" alt="Capa do beat ${escapeHtml(b.title)}">
+            <div class="beat-resume-info">
+              <h3>${escapeHtml(b.title)}</h3>
+              <span class="muted">${escapeHtml(b.producer)}</span>
+              <div class="tags">${tags}</div>
+              <span class="specs">${specs}</span>
+            </div>
+            <div class="beat-resume-price">${money(price)}</div>
+          </div>`;
+      }).join('');
     }
+
+    // Resumo do pedido
+    const summary = document.getElementById('summary-items');
+    if (summary) {
+      summary.innerHTML = order.items.map(b => `
+        <div class="order-item">
+          <img src="${b.cover}" alt="">
+          <div><strong>${escapeHtml(b.title)}</strong><span>${escapeHtml(b.producer)}</span></div>
+          <span class="order-price">${money(order.license ? order.license.price : b.price)}</span>
+        </div>`).join('');
+    }
+    const subtotal = document.getElementById('summary-subtotal-val');
+    const totalEl = document.getElementById('summary-total-val');
+    if (subtotal) subtotal.textContent = money(total);
+    if (totalEl) totalEl.textContent = money(total);
+    fillInstallments(total);
+
+    // Licença
+    const licenseName = order.license ? order.license.name : 'Premium (WAV + Stems)';
+    const ln = document.getElementById('license-name-display');
+    if (ln) ln.textContent = licenseName;
+    const sl = document.getElementById('success-license-name');
+    if (sl) sl.textContent = licenseName;
+    const change = document.getElementById('change-license-link');
+    if (change) {
+      if (order.fromCart) change.remove();
+      else change.href = 'licencas.html?beat=' + encodeURIComponent(first.id);
+    }
+
+    // Player e textos
+    const names = order.items.map(b => b.title);
+    const pn = document.getElementById('player-track-name');
+    if (pn) pn.textContent = first.title;
+    const sb = document.getElementById('success-beat-name');
+    if (sb) sb.textContent = names.length > 1 ? names.length + ' beats (' + names.join(', ') + ')' : first.title;
+    const back = document.getElementById('btn-back-to-beats');
+    if (back && order.fromCart) { back.href = 'carrinho.html'; back.lastChild.textContent = ' Voltar para o carrinho'; }
+    const support = document.getElementById('support-link');
+    if (support && typeof WOAH_CONTACT !== 'undefined') {
+      support.href = 'https://wa.me/' + WOAH_CONTACT.whatsapp + '?text=' + encodeURIComponent('Olá! Preciso de ajuda no checkout do beat ' + names.join(', '));
+    }
+    document.title = 'Finalizar compra — ' + (names.length > 1 ? names.length + ' beats' : first.title) + ' | WOAH COLLECTION';
+    return true;
+  }
+
+  function toSecs(t) {
+    const parts = String(t || '').split(':').map(Number);
+    return parts.length === 2 ? parts[0] * 60 + parts[1] : 0;
   }
 
   // =========================================================================
   // 10. DOM READY BOOTSTRAP
   // =========================================================================
-  window.addEventListener('DOMContentLoaded', () => {
+  function boot() {
+    // Precisa estar logado para comprar
+    if (window.WOAH && !window.WOAH.requireLogin()) return;
+    if (!loadOrder()) return;
+    updatePlayPauseUI();
     initDOMBindings();
     initFileUpload();
     initPaymentSystem();
@@ -1228,6 +1355,10 @@
     resizeCanvas();
     drawWaveform();
     startAnimationLoop();
-  });
+    updatePlaybackProgressUI();
+  }
+
+  if (document.readyState === 'loading') window.addEventListener('DOMContentLoaded', boot);
+  else boot();
 
 })();

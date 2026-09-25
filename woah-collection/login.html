@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Entrar — WOAH COLLECTION</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,600;0,700;0,800;0,900;1,900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/woah.css">
+</head>
+<body data-page="login">
+
+  <div id="site-header"></div>
+
+  <main class="auth-page">
+    <div class="auth-card">
+      <div class="auth-banner">
+        <img src="images/artists/hero-producer.jpg" alt="">
+        <span class="logo"><span class="logo-word">WOAH</span><span class="logo-sub">COLLECTION</span></span>
+      </div>
+      <div class="auth-body">
+        <h1>Acesse sua conta</h1>
+        <p class="auth-sub">Entre para continuar sua jornada.</p>
+
+        <form id="login-form" novalidate>
+          <div class="form-msg" role="alert"></div>
+          <div class="field">
+            <label for="login-email">E-mail</label>
+            <input class="input" id="login-email" name="email" type="email" placeholder="seu@email.com" autocomplete="email" required>
+          </div>
+          <div class="field">
+            <label for="login-password">Senha</label>
+            <div class="input-wrap">
+              <input class="input" id="login-password" name="password" type="password" placeholder="Sua senha" autocomplete="current-password" required>
+              <button type="button" class="toggle-pass" aria-label="Mostrar senha"></button>
+            </div>
+          </div>
+          <div class="auth-row"><a href="#" id="forgot-link" target="_blank" rel="noopener">Esqueceu sua senha?</a></div>
+          <button type="submit" class="btn btn-primary btn-lg btn-block auth-submit">Entrar</button>
+        </form>
+
+        <p class="auth-switch">Não tem uma conta? <a href="criar-conta.html" data-keep-next>Criar conta</a></p>
+      </div>
+    </div>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

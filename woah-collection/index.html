@@ -1,785 +1,102 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>WOAH COLLECTION — Plataforma Oficial de Beats & Produção Musical</title>
-  <meta name="description" content="Beats exclusivos e profissionais para Trap, Drill, Boom Bap e R&B. Qualidade de estúdio, entrega imediata e compra 100% segura na Woah Collection." />
-  
-  <!-- Google Fonts: Inter -->
+  <title>WOAH COLLECTION — Beats que inspiram</title>
+  <meta name="description" content="Beats exclusivos e profissionais para Trap, Drill, Boom Bap e R&B. Qualidade de estúdio, compra segura e entrega imediata." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-
-  <!-- Design System & Beats Styles -->
-  <link rel="stylesheet" href="css/design-system.css">
-  <link rel="stylesheet" href="css/beats.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,600;0,700;0,800;0,900;1,900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/woah.css">
 </head>
+<body data-page="home">
 
-<body class="beats-page-body">
+  <div id="site-header"></div>
 
-  <!-- =========================================================================
-       07 & 08 — CABEÇALHO HORIZONTAL (HEADER DESKTOP & MOBILE)
-       ========================================================================= -->
-  <header class="site-header-beats">
-    <div class="site-container header-inner">
-      <div class="header-left-group">
-        <!-- Logo Woah Collection -->
-        <a href="index.html" class="brand-logo-woah" title="Woah Collection">
-          <div class="logo-title-row">
-            <span class="logo-text-bold">WOAH</span>
-          </div>
-          <span class="logo-sub-text">COLLECTION</span>
-        </a>
-
-        <!-- Menu Desktop -->
-        <nav class="main-nav-beats">
-          <a href="index.html" class="nav-link-beats active" id="nav-link-home">Início</a>
-          <a href="#catalog-section" class="nav-link-beats" id="nav-link-beats" onclick="scrollToSection('catalog-section'); return false;">Beats</a>
-          <a href="#licenses-section" class="nav-link-beats" id="nav-link-licenses" onclick="scrollToSection('licenses-section'); return false;">Licenças</a>
-          <a href="#como-funciona" class="nav-link-beats" onclick="openHowItWorks(); return false;">Como Funciona</a>
-          <a href="https://wa.me/5527995055702?text=Olá!%20Gostaria%20de%20falar%20com%20a%20Woah%20Collection" target="_blank" class="nav-link-beats">Contato</a>
-        </nav>
-      </div>
-
-      <!-- Campo de Busca Desktop -->
-      <div class="header-center-search">
-        <div class="search-box-beats">
-          <span class="search-icon-beats">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-          </span>
-          <input type="text" class="search-input-beats" id="header-search-input" placeholder="Buscar beats..." oninput="handleSearchBeats(this.value)" aria-label="Buscar beats" />
-        </div>
-      </div>
-
-      <!-- Controles da Direita -->
-      <div class="header-right-actions">
-        <!-- Botão Carrinho com Badge -->
-        <button type="button" class="header-cart-btn" onclick="toggleCartDrawer()" title="Carrinho de Compras" aria-label="Carrinho">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="9" cy="21" r="1"></circle>
-            <circle cx="20" cy="21" r="1"></circle>
-            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-          </svg>
-          <span class="header-cart-badge" id="cart-count-badge">1</span>
-        </button>
-
-        <!-- Botão Entrar ou Container de Perfil Logado -->
-        <div id="nav-auth-container">
-          <button type="button" class="btn-header-login" onclick="openAuthModal('login')">Entrar</button>
-        </div>
-
-        <!-- Botão Menu Mobile Hamburger -->
-        <button type="button" class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Abrir Menu">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <!-- Mobile Slide Navigation Drawer -->
-  <div class="mobile-nav-drawer" id="mobile-nav-drawer">
-    <a href="index.html" class="nav-link-beats active" onclick="toggleMobileMenu()">Início</a>
-    <a href="#catalog-section" class="nav-link-beats" onclick="toggleMobileMenu(); scrollToSection('catalog-section');">Beats</a>
-    <a href="#licenses-section" class="nav-link-beats" onclick="toggleMobileMenu(); scrollToSection('licenses-section');">Licenças</a>
-    <a href="#como-funciona" class="nav-link-beats" onclick="toggleMobileMenu(); openHowItWorks();">Como Funciona</a>
-    <a href="https://wa.me/5527995055702" target="_blank" class="nav-link-beats">Contato</a>
-    <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid #1C1C1C;">
-      <button type="button" class="btn-primary" style="width: 100%;" onclick="toggleMobileMenu(); openAuthModal('login');">Entrar na Conta</button>
-    </div>
-  </div>
-
-  <main id="main-content">
-    <!-- =========================================================================
-         09 & 10 — HOME / HERO SECTION (DUAL COLUMN + CINEMATIC STUDIO IMAGE)
-         ========================================================================= -->
-    <section class="hero-section-beats">
-      <div class="site-container">
-        <div class="hero-dual-grid">
-          <!-- Coluna Esquerda (~45%) -->
-          <div class="hero-content-col">
-            <div class="hero-badge-label">
-              BEATS QUE INSPIRAM
-            </div>
-
-            <h1 class="hero-title-main">
-              Sua Música,<br>
-              <span class="title-red">Sem Limites</span>
-            </h1>
-
-            <p class="hero-sub-description">
-              Beats exclusivos, prontos para transformar suas ideias em hits. Qualidade profissional, compra segura e entrega imediata.
-            </p>
-
-            <div class="hero-btns-row">
-              <a href="#catalog-section" class="btn-primary" onclick="scrollToSection('catalog-section'); return false;">
-                Explorar Beats →
-              </a>
-              <button type="button" class="btn-secondary" onclick="openHowItWorks();">
-                Como Funciona
-              </button>
-            </div>
-          </div>
-
-          <!-- Coluna Direita (~55% - Foto Cinematográfica de Estúdio com Iluminação Vermelha) -->
-          <div class="hero-visual-col">
-            <img src="images/artists/promo-studio.jpg" alt="Estúdio de Produção Musical Woah Collection" class="hero-producer-image" onerror="this.src='images/artists/hero-producer.jpg'" />
-            <div class="hero-visual-vignette"></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- =========================================================================
-         11 — BARRA DE BENEFÍCIOS (FAIXA HORIZONTAL 4 COLUNAS)
-         ========================================================================= -->
-    <section class="benefits-bar-section">
-      <div class="site-container">
-        <div class="benefits-bar-container">
-          <!-- Item 1 -->
-          <div class="benefit-col-item">
-            <div class="benefit-icon-wrap">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
-            </div>
-            <div class="benefit-text-wrap">
-              <span class="benefit-stat-title">+500</span>
-              <span class="benefit-stat-sub">Beats Disponíveis</span>
-            </div>
-          </div>
-
-          <!-- Item 2 -->
-          <div class="benefit-col-item">
-            <div class="benefit-icon-wrap">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-            </div>
-            <div class="benefit-text-wrap">
-              <span class="benefit-stat-title">100%</span>
-              <span class="benefit-stat-sub">Original</span>
-            </div>
-          </div>
-
-          <!-- Item 3 -->
-          <div class="benefit-col-item">
-            <div class="benefit-icon-wrap">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-            </div>
-            <div class="benefit-text-wrap">
-              <span class="benefit-stat-title">ENTREGA</span>
-              <span class="benefit-stat-sub">Imediata</span>
-            </div>
-          </div>
-
-          <!-- Item 4 -->
-          <div class="benefit-col-item">
-            <div class="benefit-icon-wrap">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
-            </div>
-            <div class="benefit-text-wrap">
-              <span class="benefit-stat-title">SUPORTE</span>
-              <span class="benefit-stat-sub">Dedicado</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- =========================================================================
-         12, 13 & 14 — DESTAQUES (4 CARDS DE BEATS + 1 CARD PROMOCIONAL)
-         ========================================================================= -->
-    <section class="destaques-section" id="destaques-section">
-      <div class="site-container">
-        <div class="section-header-flex">
+  <main>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-grid">
           <div>
-            <h2 class="section-main-title">Destaques</h2>
-            <p class="section-sub-title">Beats selecionados especialmente para você.</p>
+            <span class="eyebrow">Beats que inspiram</span>
+            <h1 class="hero-title">Sua Música,<br><span class="text-red">Sem Limites</span></h1>
+            <p class="hero-text">Beats exclusivos, prontos para transformar suas ideias em hits. Qualidade profissional, compra segura e entrega imediata.</p>
+            <div class="hero-actions">
+              <a href="beats.html" class="btn btn-primary btn-lg">Explorar Beats →</a>
+              <a href="como-funciona.html" class="btn btn-outline btn-lg">Como Funciona</a>
+            </div>
           </div>
-          <a href="#catalog-section" class="destaques-view-all-link" onclick="scrollToSection('catalog-section'); return false;">
-            Ver todos os beats →
-          </a>
-        </div>
-
-        <div class="destaques-grid">
-          <!-- Card 1: Midnight Flow -->
-          <article class="beat-card-destaque" data-beat-id="1">
-            <div class="beat-card-cover-wrap">
-              <img src="images/covers/cover-midnight-flow.jpg" alt="Beat Midnight Flow" class="beat-card-cover-img" />
-              <button type="button" class="beat-play-overlay-btn" onclick="playSelectedTrack('Midnight Flow', 'Prod. Rodrigo Arrezzi', 'Trap • 3:24', '49.90', 'images/covers/cover-midnight-flow.jpg', this)" title="Ouvir Midnight Flow">
-                ▶
-              </button>
-            </div>
-            <div class="beat-card-body">
-              <h3 class="beat-card-title">Midnight Flow</h3>
-              <div class="beat-card-meta">Trap • 3:24</div>
-              <div class="beat-card-footer">
-                <span class="beat-card-price">R$ 49,90</span>
-                <button type="button" class="beat-card-cart-btn" onclick="addToCart('Midnight Flow', 49.90, 'images/covers/cover-midnight-flow.jpg')" title="Adicionar ao carrinho">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-                </button>
-              </div>
-            </div>
-          </article>
-
-          <!-- Card 2: Satan's Vibes -->
-          <article class="beat-card-destaque" data-beat-id="2">
-            <div class="beat-card-cover-wrap">
-              <img src="images/covers/cover-satans-vibes.jpg" alt="Beat Satan's Vibes" class="beat-card-cover-img" />
-              <button type="button" class="beat-play-overlay-btn" onclick="playSelectedTrack('Satan\'s Vibes', 'Prod. Rodrigo Arrezzi', 'Drill • 2:12', '49.90', 'images/covers/cover-satans-vibes.jpg', this)" title="Ouvir Satan's Vibes">
-                ▶
-              </button>
-            </div>
-            <div class="beat-card-body">
-              <h3 class="beat-card-title">Satan's Vibes</h3>
-              <div class="beat-card-meta">Drill • 2:12</div>
-              <div class="beat-card-footer">
-                <span class="beat-card-price">R$ 49,90</span>
-                <button type="button" class="beat-card-cart-btn" onclick="addToCart('Satan\'s Vibes', 49.90, 'images/covers/cover-satans-vibes.jpg')" title="Adicionar ao carrinho">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-                </button>
-              </div>
-            </div>
-          </article>
-
-          <!-- Card 3: Real Talk -->
-          <article class="beat-card-destaque" data-beat-id="3">
-            <div class="beat-card-cover-wrap">
-              <img src="images/covers/cover-real-talk.jpg" alt="Beat Real Talk" class="beat-card-cover-img" />
-              <button type="button" class="beat-play-overlay-btn" onclick="playSelectedTrack('Real Talk', 'Prod. Rodrigo Arrezzi', 'Boom Bap • 2:50', '49.90', 'images/covers/cover-real-talk.jpg', this)" title="Ouvir Real Talk">
-                ▶
-              </button>
-            </div>
-            <div class="beat-card-body">
-              <h3 class="beat-card-title">Real Talk</h3>
-              <div class="beat-card-meta">Boom Bap • 2:50</div>
-              <div class="beat-card-footer">
-                <span class="beat-card-price">R$ 49,90</span>
-                <button type="button" class="beat-card-cart-btn" onclick="addToCart('Real Talk', 49.90, 'images/covers/cover-real-talk.jpg')" title="Adicionar ao carrinho">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-                </button>
-              </div>
-            </div>
-          </article>
-
-          <!-- Card 4: Night Drive -->
-          <article class="beat-card-destaque" data-beat-id="4">
-            <div class="beat-card-cover-wrap">
-              <img src="images/covers/cover-night-drive.jpg" alt="Beat Night Drive" class="beat-card-cover-img" />
-              <button type="button" class="beat-play-overlay-btn" onclick="playSelectedTrack('Night Drive', 'Prod. Rodrigo Arrezzi', 'Phonk • 3:05', '49.90', 'images/covers/cover-night-drive.jpg', this)" title="Ouvir Night Drive">
-                ▶
-              </button>
-            </div>
-            <div class="beat-card-body">
-              <h3 class="beat-card-title">Night Drive</h3>
-              <div class="beat-card-meta">Phonk • 3:05</div>
-              <div class="beat-card-footer">
-                <span class="beat-card-price">R$ 49,90</span>
-                <button type="button" class="beat-card-cart-btn" onclick="addToCart('Night Drive', 49.90, 'images/covers/cover-night-drive.jpg')" title="Adicionar ao carrinho">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-                </button>
-              </div>
-            </div>
-          </article>
-
-          <!-- Card 5: Card Promocional (Transforme sua ideia em realidade) -->
-          <article class="promo-card-destaque">
-            <img src="images/artists/promo-studio.jpg" alt="Produção de Beats" class="promo-card-bg" />
-            <div class="promo-card-content">
-              <div>
-                <h3 class="promo-card-heading">
-                  TRANSFORME<br>
-                  sua ideia em<br>
-                  <span class="promo-red">realidade</span>
-                </h3>
-                <p class="promo-card-desc">
-                  Beats prontos para gravação com qualidade profissional, compra segura e entrega imediata.
-                </p>
-              </div>
-              <a href="checkout.html?beat=Impacto%20Real&price=149.90" class="promo-card-btn">
-                Adquirir Beat →
-              </a>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- =========================================================================
-         16 — CATÁLOGO DE BEATS (EXPLORE OS BEATS COM FILTROS & SIDEBAR)
-         ========================================================================= -->
-    <section class="catalog-section-main" id="catalog-section">
-      <div class="site-container">
-        <div class="catalog-header-area">
-          <div class="section-badge-label">Catálogo Exclusivo</div>
-          <h2 class="section-main-title">Explore os Beats</h2>
-          <p class="section-sub-title">Encontre o som perfeito para o seu projeto.</p>
-
-          <!-- Grande Campo de Busca do Catálogo -->
-          <div class="catalog-big-search">
-            <span class="search-icon">🔍</span>
-            <input type="text" id="catalog-search-field" placeholder="Buscar beats, artistas, estilos..." oninput="handleCatalogSearch(this.value)" />
-          </div>
-
-          <!-- Filtros Horizontais com Scroll (Gêneros) -->
-          <div class="catalog-genre-pills">
-            <button type="button" class="genre-pill-btn active" onclick="filterByGenre('todos', this)">Todos</button>
-            <button type="button" class="genre-pill-btn" onclick="filterByGenre('trap', this)">Trap</button>
-            <button type="button" class="genre-pill-btn" onclick="filterByGenre('drill', this)">Drill</button>
-            <button type="button" class="genre-pill-btn" onclick="filterByGenre('boom bap', this)">Boom Bap</button>
-            <button type="button" class="genre-pill-btn" onclick="filterByGenre('r&b', this)">R&B</button>
-            <button type="button" class="genre-pill-btn" onclick="filterByGenre('hip hop', this)">Hip Hop</button>
-            <button type="button" class="genre-pill-btn" onclick="filterByGenre('lo-fi', this)">Lo-fi</button>
-            <button type="button" class="genre-pill-btn" onclick="filterByGenre('afrobeat', this)">Afrobeat</button>
-            <button type="button" class="genre-pill-btn" onclick="filterByGenre('funk', this)">Funk</button>
+          <div class="hero-media">
+            <img src="images/artists/promo-studio.jpg" alt="Estúdio de produção musical da Woah Collection" onerror="this.src='images/artists/hero-producer.jpg'">
           </div>
         </div>
 
-        <!-- Estrutura: Sidebar + Grid -->
-        <div class="catalog-body-layout">
-          <!-- Sidebar Filtros Desktop -->
-          <aside class="catalog-sidebar">
-            <!-- Grupo: Gênero -->
-            <div>
-              <div class="sidebar-group-title">Gênero</div>
-              <label class="sidebar-check-item">
-                <span><input type="checkbox" checked onchange="toggleFilterTag('Trap')"> Trap</span>
-                <span class="sidebar-count-badge">120</span>
-              </label>
-              <label class="sidebar-check-item">
-                <span><input type="checkbox" checked onchange="toggleFilterTag('Drill')"> Drill</span>
-                <span class="sidebar-count-badge">45</span>
-              </label>
-              <label class="sidebar-check-item">
-                <span><input type="checkbox" checked onchange="toggleFilterTag('Boom Bap')"> Boom Bap</span>
-                <span class="sidebar-count-badge">64</span>
-              </label>
-              <label class="sidebar-check-item">
-                <span><input type="checkbox" checked onchange="toggleFilterTag('R&B')"> R&B</span>
-                <span class="sidebar-count-badge">38</span>
-              </label>
-              <label class="sidebar-check-item">
-                <span><input type="checkbox" checked onchange="toggleFilterTag('Hip Hop')"> Hip Hop</span>
-                <span class="sidebar-count-badge">152</span>
-              </label>
-              <label class="sidebar-check-item">
-                <span><input type="checkbox" checked onchange="toggleFilterTag('Lo-fi')"> Lo-fi</span>
-                <span class="sidebar-count-badge">27</span>
-              </label>
-            </div>
-
-            <!-- Grupo: Preço -->
-            <div>
-              <div class="sidebar-group-title">Preço</div>
-              <label class="sidebar-check-item">
-                <span><input type="radio" name="price-range" checked onchange="filterByPriceRange('all')"> Todos os Preços</span>
-              </label>
-              <label class="sidebar-check-item">
-                <span><input type="radio" name="price-range" onchange="filterByPriceRange('under-50')"> Até R$ 50</span>
-              </label>
-              <label class="sidebar-check-item">
-                <span><input type="radio" name="price-range" onchange="filterByPriceRange('50-100')"> R$ 50 - R$ 100</span>
-              </label>
-              <label class="sidebar-check-item">
-                <span><input type="radio" name="price-range" onchange="filterByPriceRange('100-150')"> R$ 100 - R$ 150</span>
-              </label>
-              <label class="sidebar-check-item">
-                <span><input type="radio" name="price-range" onchange="filterByPriceRange('above-150')"> Acima de R$ 150</span>
-              </label>
-            </div>
-
-            <!-- Grupo: Ordenar -->
-            <div>
-              <div class="sidebar-group-title">Ordenar por</div>
-              <label class="sidebar-check-item">
-                <span><input type="radio" name="sort-order" checked onchange="sortBeats('popular')"> Mais vendidos</span>
-              </label>
-              <label class="sidebar-check-item">
-                <span><input type="radio" name="sort-order" onchange="sortBeats('recent')"> Mais recentes</span>
-              </label>
-              <label class="sidebar-check-item">
-                <span><input type="radio" name="sort-order" onchange="sortBeats('price-asc')"> Menor preço</span>
-              </label>
-              <label class="sidebar-check-item">
-                <span><input type="radio" name="sort-order" onchange="sortBeats('price-desc')"> Maior preço</span>
-              </label>
-            </div>
-          </aside>
-
-          <!-- Grid dos Beats do Catálogo -->
-          <div class="catalog-grid-area">
-            <div class="catalog-beats-grid" id="catalog-beats-container">
-              <!-- Item: Midnight Flow -->
-              <div class="catalog-beat-card" data-genre="trap" data-price="49.90">
-                <div class="card-thumb-wrap">
-                  <img src="images/covers/cover-midnight-flow.jpg" alt="Midnight Flow" class="card-thumb-img" />
-                  <button type="button" class="beat-play-overlay-btn" onclick="playSelectedTrack('Midnight Flow', 'Prod. Rodrigo Arrezzi', 'Trap • 3:24', '49.90', 'images/covers/cover-midnight-flow.jpg', this)">▶</button>
-                </div>
-                <div class="card-content">
-                  <div class="card-title">Midnight Flow</div>
-                  <div class="card-sub">Trap • 3:24</div>
-                  <div class="card-actions-row">
-                    <span class="card-price">R$ 49,90</span>
-                    <button type="button" class="btn-add-cart" onclick="addToCart('Midnight Flow', 49.90, 'images/covers/cover-midnight-flow.jpg')">Adicionar 🛒</button>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Item: Satan's Vibes -->
-              <div class="catalog-beat-card" data-genre="drill" data-price="49.90">
-                <div class="card-thumb-wrap">
-                  <img src="images/covers/cover-satans-vibes.jpg" alt="Satan's Vibes" class="card-thumb-img" />
-                  <button type="button" class="beat-play-overlay-btn" onclick="playSelectedTrack('Satan\'s Vibes', 'Prod. Rodrigo Arrezzi', 'Drill • 2:12', '49.90', 'images/covers/cover-satans-vibes.jpg', this)">▶</button>
-                </div>
-                <div class="card-content">
-                  <div class="card-title">Satan's Vibes</div>
-                  <div class="card-sub">Drill • 2:12</div>
-                  <div class="card-actions-row">
-                    <span class="card-price">R$ 49,90</span>
-                    <button type="button" class="btn-add-cart" onclick="addToCart('Satan\'s Vibes', 49.90, 'images/covers/cover-satans-vibes.jpg')">Adicionar 🛒</button>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Item: Real Talk -->
-              <div class="catalog-beat-card" data-genre="boom bap" data-price="49.90">
-                <div class="card-thumb-wrap">
-                  <img src="images/covers/cover-real-talk.jpg" alt="Real Talk" class="card-thumb-img" />
-                  <button type="button" class="beat-play-overlay-btn" onclick="playSelectedTrack('Real Talk', 'Prod. Rodrigo Arrezzi', 'Boom Bap • 2:50', '49.90', 'images/covers/cover-real-talk.jpg', this)">▶</button>
-                </div>
-                <div class="card-content">
-                  <div class="card-title">Real Talk</div>
-                  <div class="card-sub">Boom Bap • 2:50</div>
-                  <div class="card-actions-row">
-                    <span class="card-price">R$ 49,90</span>
-                    <button type="button" class="btn-add-cart" onclick="addToCart('Real Talk', 49.90, 'images/covers/cover-real-talk.jpg')">Adicionar 🛒</button>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Item: Night Drive -->
-              <div class="catalog-beat-card" data-genre="phonk" data-price="49.90">
-                <div class="card-thumb-wrap">
-                  <img src="images/covers/cover-night-drive.jpg" alt="Night Drive" class="card-thumb-img" />
-                  <button type="button" class="beat-play-overlay-btn" onclick="playSelectedTrack('Night Drive', 'Prod. Rodrigo Arrezzi', 'Phonk • 3:05', '49.90', 'images/covers/cover-night-drive.jpg', this)">▶</button>
-                </div>
-                <div class="card-content">
-                  <div class="card-title">Night Drive</div>
-                  <div class="card-sub">Phonk • 3:05</div>
-                  <div class="card-actions-row">
-                    <span class="card-price">R$ 49,90</span>
-                    <button type="button" class="btn-add-cart" onclick="addToCart('Night Drive', 49.90, 'images/covers/cover-night-drive.jpg')">Adicionar 🛒</button>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Item: Lost Thoughts -->
-              <div class="catalog-beat-card" data-genre="r&b" data-price="69.90">
-                <div class="card-thumb-wrap">
-                  <img src="images/covers/cover-impacto-real.jpg" alt="Lost Thoughts" class="card-thumb-img" />
-                  <button type="button" class="beat-play-overlay-btn" onclick="playSelectedTrack('Lost Thoughts', 'Prod. Rodrigo Arrezzi', 'R&B • 3:45', '69.90', 'images/covers/cover-impacto-real.jpg', this)">▶</button>
-                </div>
-                <div class="card-content">
-                  <div class="card-title">Lost Thoughts</div>
-                  <div class="card-sub">R&B • 3:45</div>
-                  <div class="card-actions-row">
-                    <span class="card-price">R$ 69,90</span>
-                    <button type="button" class="btn-add-cart" onclick="addToCart('Lost Thoughts', 69.90, 'images/covers/cover-impacto-real.jpg')">Adicionar 🛒</button>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Item: Dark Side -->
-              <div class="catalog-beat-card" data-genre="trap" data-price="49.90">
-                <div class="card-thumb-wrap">
-                  <img src="images/covers/cover-midnight-flow.jpg" alt="Dark Side" class="card-thumb-img" />
-                  <button type="button" class="beat-play-overlay-btn" onclick="playSelectedTrack('Dark Side', 'Prod. Rodrigo Arrezzi', 'Trap • 2:40', '49.90', 'images/covers/cover-midnight-flow.jpg', this)">▶</button>
-                </div>
-                <div class="card-content">
-                  <div class="card-title">Dark Side</div>
-                  <div class="card-sub">Trap • 2:40</div>
-                  <div class="card-actions-row">
-                    <span class="card-price">R$ 49,90</span>
-                    <button type="button" class="btn-add-cart" onclick="addToCart('Dark Side', 49.90, 'images/covers/cover-midnight-flow.jpg')">Adicionar 🛒</button>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Item: Impacto Real -->
-              <div class="catalog-beat-card" data-genre="trap melódico" data-price="149.90">
-                <div class="card-thumb-wrap">
-                  <img src="images/covers/cover-impacto-real.jpg" alt="Impacto Real" class="card-thumb-img" />
-                  <button type="button" class="beat-play-overlay-btn" onclick="playSelectedTrack('Impacto Real', 'Prod. Rodrigo Arrezzi', 'Trap • Hip Hop • Melódico', '149.90', 'images/covers/cover-impacto-real.jpg', this)">▶</button>
-                </div>
-                <div class="card-content">
-                  <div class="card-title">Impacto Real</div>
-                  <div class="card-sub">Trap Melódico • 3:12</div>
-                  <div class="card-actions-row">
-                    <span class="card-price">R$ 149,90</span>
-                    <button type="button" class="btn-add-cart" onclick="addToCart('Impacto Real', 149.90, 'images/covers/cover-impacto-real.jpg')">Adicionar 🛒</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Paginação do Catálogo -->
-            <div class="catalog-pagination">
-              <button type="button" class="page-btn">‹</button>
-              <button type="button" class="page-btn active">1</button>
-              <button type="button" class="page-btn">2</button>
-              <button type="button" class="page-btn">3</button>
-              <button type="button" class="page-btn">4</button>
-              <button type="button" class="page-btn">›</button>
-            </div>
+        <!-- INDICADORES -->
+        <div class="stats">
+          <div class="stat">
+            <span class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m10 8 6 4-6 4V8z"/></svg></span>
+            <div><strong>+500</strong><span>Beats disponíveis</span></div>
+          </div>
+          <div class="stat">
+            <span class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+            <div><strong>100%</strong><span>Original</span></div>
+          </div>
+          <div class="stat">
+            <span class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>
+            <div><strong>Entrega</strong><span>Imediata</span></div>
+          </div>
+          <div class="stat">
+            <span class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg></span>
+            <div><strong>Suporte</strong><span>Dedicado</span></div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- =========================================================================
-         LICENÇAS & PREÇOS SECTION
-         ========================================================================= -->
-    <section class="destaques-section" id="licenses-section">
-      <div class="site-container">
-        <div class="section-header-flex">
+    <!-- DESTAQUES -->
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
           <div>
-            <div class="section-badge-label">Licenciamento Comercial</div>
-            <h2 class="section-main-title">Licenças de Uso</h2>
-            <p class="section-sub-title">Escolha o plano perfeito para lançar sua música em todas as plataformas.</p>
+            <h2 class="section-title">Destaques</h2>
+            <p class="section-sub">Beats selecionados especialmente para você.</p>
           </div>
+          <a href="beats.html" class="link-arrow">Ver todos os beats →</a>
         </div>
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-top: 24px;">
-          <!-- Licença Básica -->
-          <div class="woah-card" style="padding: 28px; display: flex; flex-direction: column;">
-            <div style="font-size: 13px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 6px;">Básica</div>
-            <div style="font-size: 20px; font-weight: 800; color: #FFFFFF; margin-bottom: 8px;">Licença MP3</div>
-            <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px;">Ideal para singles independentes, prévias e testes de audiência.</p>
-            <div style="font-size: 28px; font-weight: 800; color: #FFFFFF; margin-bottom: 20px;">R$ 97,00</div>
-            <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 13px; color: var(--text-secondary); margin-bottom: 24px;">
-              <li>✓ Arquivo MP3 320kbps Master</li>
-              <li>✓ Até 50.000 reproduções</li>
-              <li>✓ Distribuição digital padrão</li>
-              <li>✓ 1 Vídeo musical não monetizado</li>
-            </ul>
-            <a href="checkout.html?beat=Impacto%20Real&license=basica&price=97.00" class="btn-secondary" style="margin-top: auto; text-align: center;">Selecionar Licença</a>
-          </div>
+        <div class="beats-grid with-promo" id="featured-grid">
+          <article class="promo-card">
+            <img src="images/artists/hero-producer.jpg" alt="" loading="lazy">
+            <div class="promo-content">
+              <span class="eyebrow">Transforme</span>
+              <h3>sua ideia em <span class="text-red">realidade</span></h3>
+              <p>Beats prontos para gravação, com qualidade profissional e entrega imediata.</p>
+              <a href="licencas.html" class="btn btn-primary btn-sm" style="align-self:flex-start">Ver licenças →</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
 
-          <!-- Licença Premium (Destaque) -->
-          <div class="woah-card" style="padding: 28px; display: flex; flex-direction: column; border-color: var(--red-primary); background: #121212;">
-            <div style="font-size: 13px; font-weight: 700; color: var(--red-primary); text-transform: uppercase; margin-bottom: 6px;">Mais Popular</div>
-            <div style="font-size: 20px; font-weight: 800; color: #FFFFFF; margin-bottom: 8px;">Premium (WAV + Stems)</div>
-            <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px;">Para lançamentos profissionais com mixagem detalhada de voz e instrumentos.</p>
-            <div style="font-size: 28px; font-weight: 800; color: var(--red-primary); margin-bottom: 20px;">R$ 149,90</div>
-            <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 13px; color: var(--text-secondary); margin-bottom: 24px;">
-              <li>✓ Arquivo WAV 24-bit + MP3 320kbps</li>
-              <li>✓ Stems (Pistas separadas de áudio)</li>
-              <li>✓ Até 500.000 reproduções</li>
-              <li>✓ Monetização autorizada em YouTube</li>
-            </ul>
-            <a href="checkout.html?beat=Impacto%20Real&price=149.90" class="btn-primary" style="margin-top: auto; text-align: center;">Adquirir Premium</a>
-          </div>
-
-          <!-- Licença Exclusiva -->
-          <div class="woah-card" style="padding: 28px; display: flex; flex-direction: column;">
-            <div style="font-size: 13px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 6px;">Exclusividade Total</div>
-            <div style="font-size: 20px; font-weight: 800; color: #FFFFFF; margin-bottom: 8px;">Direito Exclusivo</div>
-            <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px;">O beat é seu exclusivamente e retirado permanentemente da loja.</p>
-            <div style="font-size: 28px; font-weight: 800; color: #FFFFFF; margin-bottom: 20px;">Sob Consulta</div>
-            <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 13px; color: var(--text-secondary); margin-bottom: 24px;">
-              <li>✓ Todos os direitos autorais e masters</li>
-              <li>✓ Streams ilimitados no Spotify e Apple</li>
-              <li>✓ Contrato jurídico de exclusividade</li>
-              <li>✓ Remoção permanente do catálogo</li>
-            </ul>
-            <a href="https://wa.me/5527995055702?text=Olá!%20Gostaria%20de%20consultar%20a%20licença%20exclusiva" target="_blank" class="btn-secondary" style="margin-top: auto; text-align: center;">Falar com o Produtor</a>
+    <!-- BEAT EM DESTAQUE -->
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">Beat em destaque</h2>
+            <p class="section-sub">Dê o play e sinta a vibe antes de comprar.</p>
           </div>
         </div>
+        <div class="feature-player" id="highlight-player"></div>
       </div>
     </section>
   </main>
 
-  <!-- =========================================================================
-       15 — PLAYER HORIZONTAL PREMIUM (STICKY BOTTOM BAR)
-       ========================================================================= -->
-  <aside class="bottom-audio-player" id="bottom-audio-player">
-    <div class="site-container player-inner-flex">
-      <!-- Player Esquerda: Capa & Informações -->
-      <div class="player-meta-left">
-        <div class="player-cover-box">
-          <img src="images/covers/cover-impacto-real.jpg" alt="Impacto Real" id="player-cover-img" />
-        </div>
-        <div class="player-info-text">
-          <span class="player-track-name" id="player-track-title">Impacto Real</span>
-          <span class="player-track-producer" id="player-track-producer">Prod. Rodrigo Arrezzi</span>
-          <span class="player-track-genre" id="player-track-genre">Trap • Hip Hop • Melódico</span>
-        </div>
-      </div>
+  <div id="site-footer"></div>
 
-      <!-- Player Centro: Play / Pause, Waveform e Tempo -->
-      <div class="player-center-controls">
-        <button type="button" class="player-play-btn" id="player-main-play-btn" onclick="toggleBottomPlayerAudio()" title="Play / Pause">
-          <span id="player-play-icon">⏸</span>
-        </button>
-
-        <div class="player-waveform-wrap" onclick="seekBottomWaveform(event)" title="Clique para navegar no áudio">
-          <div class="waveform-canvas-box">
-            <canvas id="bottom-waveform-canvas"></canvas>
-          </div>
-          <div class="player-time-indicator" id="player-time-display">1:09 / 3:12</div>
-        </div>
-      </div>
-
-      <!-- Player Direita: Preço & Botão Adquirir Beat -->
-      <div class="player-actions-right">
-        <div class="player-price-display" id="player-price-display">R$ 149,90</div>
-        <a href="checkout.html?beat=Impacto%20Real&price=149.90" class="player-buy-btn" id="player-buy-btn-link">
-          Adquirir Beat
-        </a>
-      </div>
-    </div>
-  </aside>
-
-  <!-- =========================================================================
-       CART DRAWER (PAINEL LATERAL DESLIZANTE DO CARRINHO)
-       ========================================================================= -->
-  <div class="cart-drawer-overlay" id="cart-drawer-overlay" onclick="closeCartOnOutsideClick(event)">
-    <div class="cart-drawer-panel">
-      <div class="cart-drawer-header">
-        <div class="cart-drawer-title">Meu Carrinho</div>
-        <button type="button" class="cart-drawer-close" onclick="toggleCartDrawer()">✕</button>
-      </div>
-
-      <div class="cart-drawer-items" id="cart-drawer-items-list">
-        <!-- Item Padrão Inicial: Impacto Real -->
-        <div class="cart-item-row" data-cart-item-id="impacto-real">
-          <img src="images/covers/cover-impacto-real.jpg" alt="Impacto Real" class="cart-item-thumb" />
-          <div class="cart-item-info">
-            <div class="cart-item-name">Impacto Real</div>
-            <div class="cart-item-price">R$ 149,90</div>
-          </div>
-          <button type="button" class="cart-item-remove" onclick="removeCartItem(this)" title="Remover item">✕</button>
-        </div>
-      </div>
-
-      <div class="cart-drawer-footer">
-        <div class="cart-subtotal-row">
-          <span>Subtotal</span>
-          <span id="cart-subtotal-amount">R$ 149,90</span>
-        </div>
-        <a href="checkout.html" class="cart-checkout-btn" id="cart-checkout-action-btn">
-          Ir para o Checkout →
-        </a>
-      </div>
-    </div>
-  </div>
-
-  <!-- =========================================================================
-       24 — FOOTER (MINIMALISTA, DARK, LIMPO)
-       ========================================================================= -->
-  <footer class="site-footer-beats">
-    <div class="site-container">
-      <div class="footer-inner-flex">
-        <div class="footer-brand-col">
-          <div class="brand-logo-woah">
-            <div class="logo-title-row">
-              <span class="logo-text-bold">WOAH</span>
-            </div>
-            <span class="logo-sub-text">COLLECTION</span>
-          </div>
-          <div class="footer-tagline">Beats que inspiram.</div>
-        </div>
-
-        <div class="footer-social-links">
-          <a href="https://www.instagram.com/rodrigo_arrezzi" target="_blank" class="footer-social-icon" title="Instagram">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" /></svg>
-          </a>
-          <a href="https://wa.me/5527995055702" target="_blank" class="footer-social-icon" title="WhatsApp">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" /></svg>
-          </a>
-          <a href="https://open.spotify.com" target="_blank" class="footer-social-icon" title="Spotify">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.48.66.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
-          </a>
-          <a href="mailto:rodrigoarrezzimaciel17@gmail.com" class="footer-social-icon" title="Gmail">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 010 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z" /></svg>
-          </a>
-        </div>
-
-        <div class="footer-copy-text">
-          &copy; 2025 Woah Collection. Todos os direitos reservados.
-        </div>
-      </div>
-    </div>
-  </footer>
-
-  <!-- =========================================================================
-       MODAIS (AUTH & COMO FUNCIONA)
-       ========================================================================= -->
-  <!-- Modal de Autenticação -->
-  <div id="auth-modal" class="modal-overlay hidden" onclick="closeAuthModalOnOutsideClick(event)">
-    <div class="modal-card" style="max-width: 420px;">
-      <span class="modal-close" onclick="closeAuthModal()">&times;</span>
-      
-      <div class="auth-tabs">
-        <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Entrar</button>
-        <button class="auth-tab" id="tab-register" onclick="switchAuthTab('register')">Criar Conta</button>
-      </div>
-
-      <!-- Formulário de Login -->
-      <form id="auth-login-form" class="auth-form" onsubmit="handleLogin(event)">
-        <div class="auth-input-group">
-          <label for="login-email">E-mail</label>
-          <input type="email" id="login-email" class="auth-input" placeholder="seu@email.com" required>
-        </div>
-        <div class="auth-input-group">
-          <label for="login-password">Senha</label>
-          <input type="password" id="login-password" class="auth-input" placeholder="••••••••" required>
-        </div>
-        <button type="submit" class="auth-submit-btn">Acessar Conta</button>
-      </form>
-
-      <!-- Formulário de Cadastro -->
-      <form id="auth-register-form" class="auth-form hidden" onsubmit="handleRegister(event)">
-        <div class="auth-input-group">
-          <label for="reg-name">Nome Completo</label>
-          <input type="text" id="reg-name" class="auth-input" placeholder="Ex: Rodrigo" required>
-        </div>
-        <div class="auth-input-group">
-          <label for="reg-email">E-mail</label>
-          <input type="email" id="reg-email" class="auth-input" placeholder="seu@email.com" required>
-        </div>
-        <div class="auth-input-group">
-          <label for="reg-password">Criar Senha</label>
-          <input type="password" id="reg-password" class="auth-input" placeholder="Mínimo 6 caracteres" minlength="6" required>
-        </div>
-        <button type="submit" class="auth-submit-btn">Criar Minha Conta</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- Modal Como Funciona -->
-  <div id="how-modal" class="modal-overlay hidden" onclick="closeHowModalOnOutsideClick(event)">
-    <div class="modal-card" style="max-width: 540px;">
-      <span class="modal-close" onclick="closeHowModal()">&times;</span>
-      <div class="section-badge-label">Passo a Passo</div>
-      <h3 style="font-size: 22px; font-weight: 800; color: #FFFFFF; margin-bottom: 16px;">Como Funciona a Woah Collection</h3>
-      <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14px; color: var(--text-secondary); line-height: 1.6;">
-        <div>
-          <strong style="color: #FFFFFF;">1. Escolha o Beat:</strong> Navegue pelo catálogo, use os filtros por gênero e ouça as prévias com nosso player interativo.
-        </div>
-        <div>
-          <strong style="color: #FFFFFF;">2. Teste sua Voz (Opcional):</strong> No checkout, você pode arrastar sua faixa de áudio e usar nosso Equalizador Paramétrico de 4 bandas em tempo real para verificar se o beat se encaixa com o seu timbre.
-        </div>
-        <div>
-          <strong style="color: #FFFFFF;">3. Pagamento Seguro e Instantâneo:</strong> Pague via Pix ou Cartão de crédito de forma rápida e protegida.
-        </div>
-        <div>
-          <strong style="color: #FFFFFF;">4. Entrega Imediata dos Arquivos:</strong> Receba o download instantâneo dos arquivos master e Stems separados com seu contrato de licença.
-        </div>
-      </div>
-      <button type="button" class="btn-primary" style="width: 100%; margin-top: 24px;" onclick="closeHowModal()">Entendido</button>
-    </div>
-  </div>
-
-  <!-- JavaScript Modules -->
-  <script src="js/script.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
