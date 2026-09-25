@@ -76,10 +76,23 @@ function lerJson(arquivo, padrao) {
   }
 }
 
+// Salva com segurança. No Windows, o OneDrive ou o antivírus às vezes "seguram"
+// o arquivo por um instante; então tenta de novo e, se precisar, grava direto.
 function salvarJson(arquivo, dados) {
+  const conteudo = JSON.stringify(dados, null, 2);
   const temporario = arquivo + '.tmp';
-  fs.writeFileSync(temporario, JSON.stringify(dados, null, 2), 'utf8');
-  fs.renameSync(temporario, arquivo);
+  fs.writeFileSync(temporario, conteudo, 'utf8');
+  for (let tentativa = 0; tentativa < 10; tentativa++) {
+    try {
+      fs.renameSync(temporario, arquivo);
+      return;
+    } catch (erro) {
+      if (!['EPERM', 'EBUSY', 'EACCES'].includes(erro.code)) throw erro;
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 100); // espera 0,1 s
+    }
+  }
+  fs.writeFileSync(arquivo, conteudo, 'utf8');
+  try { fs.unlinkSync(temporario); } catch (e) { /* ignora */ }
 }
 
 let usuarios = lerJson(ARQUIVO_USUARIOS, []);
