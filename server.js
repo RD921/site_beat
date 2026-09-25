@@ -17,9 +17,11 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
-const PORTA = 3000;
+// A hospedagem define a porta pela variável PORT; no seu computador usa 3000
+const PORTA = parseInt(process.env.PORT, 10) || 3000;
 const PASTA_SITE = __dirname;
-const PASTA_DADOS = path.join(__dirname, 'dados');
+// Pasta dos dados. Na hospedagem, aponte DADOS_DIR para o disco permanente (volume)
+const PASTA_DADOS = process.env.DADOS_DIR ? path.resolve(process.env.DADOS_DIR) : path.join(__dirname, 'dados');
 const PASTA_ARQUIVOS = path.join(PASTA_DADOS, 'arquivos'); // capas e áudios enviados pelo Painel
 const ARQUIVO_USUARIOS = path.join(PASTA_DADOS, 'usuarios.json');
 const ARQUIVO_SESSOES = path.join(PASTA_DADOS, 'sessoes.json');
@@ -117,6 +119,29 @@ function conferirSenha(senha, salvo) {
 }
 
 /* ---------- Comando: criar conta de desenvolvedor ---------- */
+
+// Contas da equipe pela variável WOAH_DEVS (para hospedagens sem terminal).
+// Formato: email|senha|Nome;email2|senha2|Nome2  — configure no painel da hospedagem, nunca no código.
+if (process.env.WOAH_DEVS) {
+  let mudou = false;
+  process.env.WOAH_DEVS.split(';').map(x => x.trim()).filter(Boolean).forEach(item => {
+    const [emailBruto, senha, nome] = item.split('|');
+    const email = String(emailBruto || '').trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !senha || senha.length < 6) return;
+    let conta = usuarios.find(u => u.email === email);
+    if (!conta) {
+      conta = { id: crypto.randomUUID(), name: (nome || email.split('@')[0]).trim(), email, senha: gerarHashSenha(senha), role: 'dev', devCli: true, photo: null, criadoEm: new Date().toISOString() };
+      usuarios.push(conta);
+      mudou = true;
+    } else if (!conta.devCli || conta.role !== 'dev' || !conferirSenha(senha, conta.senha)) {
+      conta.senha = gerarHashSenha(senha);
+      conta.role = 'dev';
+      conta.devCli = true;
+      mudou = true;
+    }
+  });
+  if (mudou) salvarJson(ARQUIVO_USUARIOS, usuarios);
+}
 
 if (process.argv[2] === 'criar-dev') {
   const email = String(process.argv[3] || '').trim().toLowerCase();
@@ -531,7 +556,7 @@ const servidor = http.createServer(async (req, res) => {
 servidor.listen(PORTA, () => {
   const devs = usuarios.filter(u => u.role === 'dev').map(u => u.email);
   console.log('');
-  console.log('  Site rodando em:  http://localhost:' + PORTA);
+  console.log('  Site rodando na porta ' + PORTA + (process.env.PORT ? '' : '  →  http://localhost:' + PORTA));
   console.log('  Dados salvos em:  ' + PASTA_DADOS);
   console.log('  Contas dev:       ' + (devs.length ? devs.join(', ') : 'nenhuma (use: node server.js criar-dev ...)'));
   console.log('  Para desligar:    Ctrl + C');

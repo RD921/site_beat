@@ -60,7 +60,8 @@
   /* ======================================================================
      CONTAS (servidor local — server.js)
      ====================================================================== */
-  const API_URL = location.port === '3000' ? '' : 'http://localhost:3000';
+  // Mesmo endereço do site. Só aponta para localhost:3000 quando aberto pelo Live Server ou direto do arquivo.
+  const API_URL = (location.protocol === 'file:' || location.port === '5500') ? 'http://localhost:3000' : '';
 
   async function api(path, opts = {}) {
     const token = localStorage.getItem('auth_token');

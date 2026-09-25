@@ -1,0 +1,13 @@
+{
+  "name": "woah-collection",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Site de beats Woah Collection (servidor Node.js sem dependências)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

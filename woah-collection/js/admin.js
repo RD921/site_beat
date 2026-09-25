@@ -11,7 +11,8 @@
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
   const { esc, fmt } = W;
-  const API_URL = location.port === '3000' ? '' : 'http://localhost:3000';
+  // Mesmo endereço do site. Só aponta para localhost:3000 quando aberto pelo Live Server ou direto do arquivo.
+  const API_URL = (location.protocol === 'file:' || location.port === '5500') ? 'http://localhost:3000' : '';
   const url = u => W.assetUrl(u);
 
   let data = { beats: [], licencas: [], imagens: {} };   // catálogo "cru" do servidor
