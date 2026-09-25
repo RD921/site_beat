@@ -1,0 +1,4 @@
+# Contas e sessões salvas pelo servidor local (nunca enviar para o GitHub)
+dados/
+
+node_modules/

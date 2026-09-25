@@ -1,58 +1,3 @@
-const barsEl = document.getElementById('bars');
-const heights = [40,55,35,70,50,85,60,90,65,75,80,95];
-const colors = ['#e5e5e5','#e5e5e5','#e5e5e5','#e5e5e5','#e5e5e5','#e5e5e5','#e5e5e5','#e5e5e5','#e5e5e5','#e5e5e5','#e5e5e5','#1d1d1f'];
-heights.forEach((h, i) => {
-  const bar = document.createElement('div');
-  bar.className = 'bar';
-  bar.style.height = '0px';
-  bar.style.background = colors[i];
-  barsEl.appendChild(bar);
-  setTimeout(() => { bar.style.height = h + 'px'; }, 500 + i * 60);
-});
-
-function animCount(el, target, suffix, duration) {
-  let start = 0;
-  const step = target / (duration / 16);
-  const timer = setInterval(() => {
-    start = Math.min(start + step, target);
-    el.textContent = Math.round(start) + suffix;
-    if (start >= target) clearInterval(timer);
-  }, 16);
-}
-
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (!entry.isIntersecting) return;
-    const id = entry.target.id;
-    if (id === 'dashboard') {
-      setTimeout(() => {
-        animCount(document.getElementById('c1'), 47, '', 1000);
-        animCount(document.getElementById('c2'), 128, '', 1200);
-        animCount(document.getElementById('c3'), 89, '', 1000);
-        document.getElementById('c4').textContent = 'R$ 24.8k';
-      }, 400);
-    }
-    observer.unobserve(entry.target);
-  });
-}, { threshold: 0.3 });
-
-observer.observe(document.getElementById('dashboard'));
-
-const msgs = [
-  'Olá! Identifiquei 3 produtos com estoque baixo. Deseja criar uma campanha de reposição?',
-  'Seus pedidos aumentaram 23% esta semana. Veja o relatório completo no Dashboard.',
-  'Dica: seus clientes mais ativos estão no período noturno. Ajuste seus envios!',
-  'Nova integração disponível: conecte seu Bling em menos de 2 minutos.',
-  'Lead scoring concluído: 12 clientes com alta probabilidade de compra identificados!'
-];
-let msgIdx = 0;
-setInterval(() => {
-  msgIdx = (msgIdx + 1) % msgs.length;
-  const el = document.getElementById('aria-msg');
-  el.style.opacity = '0';
-  setTimeout(() => { el.textContent = msgs[msgIdx]; el.style.opacity = '1'; }, 300);
-}, 3000);
-
 function toggleView() {
   const ecomflowView = document.getElementById('ecomflow-view');
   const portfolioView = document.getElementById('portfolio-view');
@@ -89,18 +34,6 @@ function toggleView() {
         <a href="#courses-section" id="nav-link-2">Educação</a>
       `;
     }
-  }
-}
-
-function toggleDashboard() {
-  const dashboard = document.getElementById('dashboard');
-  if (dashboard.classList.contains('hidden')) {
-    dashboard.classList.remove('hidden');
-    setTimeout(() => {
-      dashboard.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
-  } else {
-    dashboard.classList.add('hidden');
   }
 }
 
@@ -193,15 +126,37 @@ function toggleChatBox() {
 }
 
 /* =========================================================
-   SISTEMA DE AUTENTICAÇÃO — LOGIN, CADASTRO E CONTAS DEV
+   SISTEMA DE AUTENTICAÇÃO — LOGIN E CADASTRO
+   As contas ficam salvas no servidor local (server.js),
+   na pasta "dados" do seu computador. Nenhuma senha fica aqui.
    ========================================================= */
 
-// Contas fixas de desenvolvedor
-const DEV_ACCOUNTS = [
-  { email: 'max@criativo.eft.com', password: 'Max_diretor.criativo@EFT', name: 'Max', role: 'dev' },
-  { email: 'carlos@marketing.aluno.com', password: 'Carlos_marketing@aluno', name: 'Carlos', role: 'dev' },
-  { email: 'rodrigo@ceo.com', password: 'Rodrigo_CEO_EFT', name: 'Rodrigo', role: 'dev' }
-];
+// Endereço do servidor. Se o site já estiver aberto pelo servidor (porta 3000),
+// usa o mesmo endereço; se não (Live Server, por exemplo), aponta para ele.
+const API_URL = location.port === '3000' ? '' : 'http://localhost:3000';
+
+async function chamarApi(caminho, opcoes = {}) {
+  const token = localStorage.getItem('auth_token');
+  const cabecalhos = { 'Content-Type': 'application/json' };
+  if (token) cabecalhos['Authorization'] = 'Bearer ' + token;
+  let resposta;
+  try {
+    resposta = await fetch(API_URL + caminho, {
+      method: opcoes.method || 'GET',
+      headers: cabecalhos,
+      body: opcoes.body ? JSON.stringify(opcoes.body) : undefined
+    });
+  } catch (e) {
+    throw new Error('Servidor desligado. Rode "node server.js" na pasta do site.');
+  }
+  const dados = await resposta.json().catch(() => ({}));
+  if (!resposta.ok) {
+    const erro = new Error(dados.erro || 'Algo deu errado. Tente novamente.');
+    erro.status = resposta.status;
+    throw erro;
+  }
+  return dados;
+}
 
 function openAuthModal(tab = 'login') {
   const modal = document.getElementById('auth-modal');
@@ -261,16 +216,12 @@ function clearAuthFeedback() {
   });
 }
 
-function getStoredUsers() {
-  return JSON.parse(localStorage.getItem('registered_users') || '[]');
-}
-
-function saveStoredUsers(users) {
-  localStorage.setItem('registered_users', JSON.stringify(users));
-}
-
 function getCurrentUser() {
-  return JSON.parse(localStorage.getItem('current_user') || 'null');
+  try {
+    return JSON.parse(localStorage.getItem('current_user') || 'null');
+  } catch (e) {
+    return null;
+  }
 }
 
 function setCurrentUser(user) {
@@ -278,11 +229,26 @@ function setCurrentUser(user) {
   updateAuthUI();
 }
 
-function isDevAccount(email) {
-  return DEV_ACCOUNTS.some(d => d.email === email.toLowerCase());
+function limparSessaoLocal() {
+  localStorage.removeItem('auth_token');
+  localStorage.removeItem('current_user');
+  localStorage.removeItem('registered_users'); // contas antigas do sistema anterior
 }
 
-function handleRegister(e) {
+function setSubmitting(formId, ativo, texto) {
+  const botao = document.querySelector('#' + formId + ' button[type="submit"]');
+  if (!botao) return;
+  if (ativo) {
+    botao.dataset.textoOriginal = botao.textContent;
+    botao.textContent = texto;
+    botao.disabled = true;
+  } else {
+    botao.textContent = botao.dataset.textoOriginal || botao.textContent;
+    botao.disabled = false;
+  }
+}
+
+async function handleRegister(e) {
   e.preventDefault();
   const name = document.getElementById('reg-name').value.trim();
   const email = document.getElementById('reg-email').value.trim().toLowerCase();
@@ -296,27 +262,25 @@ function handleRegister(e) {
     showAuthFeedback('auth-register-form', 'A senha deve ter pelo menos 6 caracteres.', 'error');
     return;
   }
-  if (isDevAccount(email)) {
-    showAuthFeedback('auth-register-form', 'Este e-mail e reservado. Faca login diretamente.', 'error');
-    return;
+
+  setSubmitting('auth-register-form', true, 'Criando conta...');
+  try {
+    const dados = await chamarApi('/api/cadastro', { method: 'POST', body: { name, email, password } });
+    localStorage.setItem('auth_token', dados.token);
+    showAuthFeedback('auth-register-form', 'Cadastro realizado! Conectando...', 'success');
+    setTimeout(() => {
+      setCurrentUser(dados.user);
+      closeAuthModal();
+      document.getElementById('auth-register-form').reset();
+    }, 800);
+  } catch (erro) {
+    showAuthFeedback('auth-register-form', erro.message, 'error');
+  } finally {
+    setSubmitting('auth-register-form', false);
   }
-  const users = getStoredUsers();
-  if (users.some(u => u.email === email)) {
-    showAuthFeedback('auth-register-form', 'Este e-mail ja esta cadastrado. Faca login!', 'error');
-    return;
-  }
-  const newUser = { id: Date.now(), name, email, password, role: 'user', photo: null };
-  users.push(newUser);
-  saveStoredUsers(users);
-  showAuthFeedback('auth-register-form', 'Cadastro realizado! Conectando...', 'success');
-  setTimeout(() => {
-    setCurrentUser({ id: newUser.id, name, email, role: 'user', photo: null });
-    closeAuthModal();
-    document.getElementById('auth-register-form').reset();
-  }, 1000);
 }
 
-function handleLogin(e) {
+async function handleLogin(e) {
   e.preventDefault();
   const email = document.getElementById('login-email').value.trim().toLowerCase();
   const password = document.getElementById('login-password').value;
@@ -326,39 +290,51 @@ function handleLogin(e) {
     return;
   }
 
-  // Verifica contas dev
-  const devMatch = DEV_ACCOUNTS.find(d => d.email === email && d.password === password);
-  if (devMatch) {
-    showAuthFeedback('auth-login-form', 'Bem-vindo, ' + devMatch.name + '! (Conta Dev)', 'success');
-    const stored = getStoredUsers();
-    const savedPhoto = (stored.find(u => u.email === email) || {}).photo || null;
+  setSubmitting('auth-login-form', true, 'Entrando...');
+  try {
+    const dados = await chamarApi('/api/login', { method: 'POST', body: { email, password } });
+    localStorage.setItem('auth_token', dados.token);
+    const extra = dados.user.role === 'dev' ? ' (Conta Dev)' : '';
+    showAuthFeedback('auth-login-form', 'Bem-vindo de volta, ' + dados.user.name + '!' + extra, 'success');
     setTimeout(() => {
-      setCurrentUser({ id: 'dev_' + email, name: devMatch.name, email, role: 'dev', photo: savedPhoto });
+      setCurrentUser(dados.user);
       closeAuthModal();
       document.getElementById('auth-login-form').reset();
     }, 800);
-    return;
+  } catch (erro) {
+    showAuthFeedback('auth-login-form', erro.message, 'error');
+  } finally {
+    setSubmitting('auth-login-form', false);
   }
-
-  // Verifica usuarios normais
-  const users = getStoredUsers();
-  const foundUser = users.find(u => u.email === email && u.password === password);
-  if (!foundUser) {
-    showAuthFeedback('auth-login-form', 'E-mail ou senha incorretos.', 'error');
-    return;
-  }
-  showAuthFeedback('auth-login-form', 'Bem-vindo de volta, ' + foundUser.name + '!', 'success');
-  setTimeout(() => {
-    setCurrentUser({ id: foundUser.id, name: foundUser.name, email, role: 'user', photo: foundUser.photo || null });
-    closeAuthModal();
-    document.getElementById('auth-login-form').reset();
-  }, 800);
 }
 
-function handleLogout() {
-  localStorage.removeItem('current_user');
+async function handleLogout() {
+  try {
+    await chamarApi('/api/logout', { method: 'POST' });
+  } catch (e) {
+    // Mesmo com o servidor desligado, sai da conta neste navegador
+  }
+  limparSessaoLocal();
   closeAvatarDropdown();
   updateAuthUI();
+}
+
+// Confere com o servidor se a sessão salva ainda vale
+async function verificarSessao() {
+  if (!localStorage.getItem('auth_token')) {
+    limparSessaoLocal();
+    updateAuthUI();
+    return;
+  }
+  try {
+    const dados = await chamarApi('/api/eu');
+    setCurrentUser(dados.user);
+  } catch (erro) {
+    if (erro.status === 401) {
+      limparSessaoLocal();
+      updateAuthUI();
+    }
+  }
 }
 
 /* ---- Avatar Dropdown ---- */
@@ -447,17 +423,15 @@ function handlePhotoUpload(event) {
   if (!file) return;
   if (file.size > 2 * 1024 * 1024) { alert('Imagem muito grande! Max 2MB.'); return; }
   const reader = new FileReader();
-  reader.onload = function(e) {
+  reader.onload = async function(e) {
     const photoUrl = e.target.result;
-    const preview = document.getElementById('settings-avatar-preview');
-    if (preview) preview.innerHTML = '<img src="' + photoUrl + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
-    const user = getCurrentUser();
-    if (user) {
-      user.photo = photoUrl;
-      setCurrentUser(user);
-      const users = getStoredUsers();
-      const idx = users.findIndex(function(u){ return u.email === user.email; });
-      if (idx !== -1) { users[idx].photo = photoUrl; saveStoredUsers(users); }
+    try {
+      const dados = await chamarApi('/api/eu/foto', { method: 'PUT', body: { photo: photoUrl } });
+      const preview = document.getElementById('settings-avatar-preview');
+      if (preview) preview.innerHTML = '<img src="' + photoUrl + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+      setCurrentUser(dados.user);
+    } catch (erro) {
+      alert(erro.message);
     }
   };
   reader.readAsDataURL(file);
@@ -523,4 +497,5 @@ function updateAuthUI() {
 // Inicializa a UI ao carregar
 document.addEventListener('DOMContentLoaded', function() {
   updateAuthUI();
+  verificarSessao();
 });

@@ -3,12 +3,9 @@
    Design Minimalista, Dark & Cinematográfico
    ========================================================================== */
 
-// Contas fixas de desenvolvedor / staff
-const DEV_ACCOUNTS = [
-  { email: 'max@criativo.eft.com', password: 'Max_diretor.criativo@EFT', name: 'Max', role: 'dev' },
-  { email: 'carlos@marketing.aluno.com', password: 'Carlos_marketing@aluno', name: 'Carlos', role: 'dev' },
-  { email: 'rodrigo@ceo.com', password: 'Rodrigo_CEO_EFT', name: 'Rodrigo Arrezzi', role: 'dev' }
-];
+// Endereço do servidor local (server.js), onde as contas ficam salvas.
+// Se o site já estiver aberto pelo servidor (porta 3000), usa o mesmo endereço.
+const API_URL = location.port === '3000' ? '' : 'http://localhost:3000';
 
 /* ---- Estado Global do Player & Carrinho ---- */
 const appState = {
@@ -391,6 +388,29 @@ function playSelectedTrack(title, producer, genre, price, cover, btn) {
 /* ==========================================================================
    AUTENTICAÇÃO & MODAIS DE USUÁRIO
    ========================================================================== */
+async function chamarApi(caminho, opcoes = {}) {
+  const token = localStorage.getItem('auth_token');
+  const cabecalhos = { 'Content-Type': 'application/json' };
+  if (token) cabecalhos['Authorization'] = 'Bearer ' + token;
+  let resposta;
+  try {
+    resposta = await fetch(API_URL + caminho, {
+      method: opcoes.method || 'GET',
+      headers: cabecalhos,
+      body: opcoes.body ? JSON.stringify(opcoes.body) : undefined
+    });
+  } catch (e) {
+    throw new Error('Servidor desligado. Rode "node server.js" na pasta do site.');
+  }
+  const dados = await resposta.json().catch(() => ({}));
+  if (!resposta.ok) {
+    const erro = new Error(dados.erro || 'Algo deu errado. Tente novamente.');
+    erro.status = resposta.status;
+    throw erro;
+  }
+  return dados;
+}
+
 function getCurrentUser() {
   try {
     const raw = localStorage.getItem('current_user');
@@ -405,17 +425,10 @@ function setCurrentUser(user) {
   updateAuthUI();
 }
 
-function getStoredUsers() {
-  try {
-    const raw = localStorage.getItem('registered_users');
-    return raw ? JSON.parse(raw) : DEV_ACCOUNTS;
-  } catch (e) {
-    return DEV_ACCOUNTS;
-  }
-}
-
-function saveStoredUsers(users) {
-  localStorage.setItem('registered_users', JSON.stringify(users));
+function limparSessaoLocal() {
+  localStorage.removeItem('auth_token');
+  localStorage.removeItem('current_user');
+  localStorage.removeItem('registered_users'); // contas antigas do sistema anterior
 }
 
 function openAuthModal(tab = 'login') {
@@ -454,45 +467,72 @@ function switchAuthTab(tab) {
   }
 }
 
-function handleLogin(e) {
+async function handleLogin(e) {
   e.preventDefault();
-  const email = document.getElementById('login-email').value.trim();
+  const email = document.getElementById('login-email').value.trim().toLowerCase();
   const password = document.getElementById('login-password').value;
-  const users = getStoredUsers();
 
-  const user = users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
-  if (user) {
-    setCurrentUser(user);
+  try {
+    const dados = await chamarApi('/api/login', { method: 'POST', body: { email, password } });
+    localStorage.setItem('auth_token', dados.token);
+    setCurrentUser(dados.user);
     closeAuthModal();
-    alert(`Bem-vindo de volta, ${user.name}!`);
-  } else {
-    alert('E-mail ou senha inválidos.');
+    document.getElementById('auth-login-form').reset();
+    alert(`Bem-vindo de volta, ${dados.user.name}!`);
+  } catch (erro) {
+    alert(erro.message);
   }
 }
 
-function handleRegister(e) {
+async function handleRegister(e) {
   e.preventDefault();
   const name = document.getElementById('reg-name').value.trim();
-  const email = document.getElementById('reg-email').value.trim();
+  const email = document.getElementById('reg-email').value.trim().toLowerCase();
   const password = document.getElementById('reg-password').value;
 
-  const users = getStoredUsers();
-  if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
-    alert('Este e-mail já está cadastrado.');
+  if (password.length < 6) {
+    alert('A senha deve ter pelo menos 6 caracteres.');
     return;
   }
 
-  const newUser = { id: Date.now(), name, email, password, role: 'user' };
-  users.push(newUser);
-  saveStoredUsers(users);
-  setCurrentUser(newUser);
-  closeAuthModal();
-  alert(`Conta criada com sucesso! Bem-vindo, ${name}.`);
+  try {
+    const dados = await chamarApi('/api/cadastro', { method: 'POST', body: { name, email, password } });
+    localStorage.setItem('auth_token', dados.token);
+    setCurrentUser(dados.user);
+    closeAuthModal();
+    document.getElementById('auth-register-form').reset();
+    alert(`Conta criada com sucesso! Bem-vindo, ${dados.user.name}.`);
+  } catch (erro) {
+    alert(erro.message);
+  }
 }
 
-function handleLogout() {
-  localStorage.removeItem('current_user');
+async function handleLogout() {
+  try {
+    await chamarApi('/api/logout', { method: 'POST' });
+  } catch (e) {
+    // Mesmo com o servidor desligado, sai da conta neste navegador
+  }
+  limparSessaoLocal();
   updateAuthUI();
+}
+
+// Confere com o servidor se a sessão salva ainda vale
+async function verificarSessao() {
+  if (!localStorage.getItem('auth_token')) {
+    limparSessaoLocal();
+    updateAuthUI();
+    return;
+  }
+  try {
+    const dados = await chamarApi('/api/eu');
+    setCurrentUser(dados.user);
+  } catch (erro) {
+    if (erro.status === 401) {
+      limparSessaoLocal();
+      updateAuthUI();
+    }
+  }
 }
 
 function updateAuthUI() {
@@ -521,6 +561,7 @@ function updateAuthUI() {
 window.addEventListener('DOMContentLoaded', () => {
   updateCartUI();
   updateAuthUI();
+  verificarSessao();
   drawBottomWaveformBars();
   initAudioEngine();
 
