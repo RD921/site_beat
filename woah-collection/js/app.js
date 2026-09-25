@@ -224,7 +224,8 @@
      HEADER E FOOTER
      ====================================================================== */
   function logoHTML() {
-    return '<a href="index.html" class="logo" aria-label="Woah Collection — início"><span class="logo-word">WOAH</span><span class="logo-sub">COLLECTION</span></a>';
+    const img = WOAH_IMAGES.logo;
+    return `<a href="index.html" class="logo${img ? ' has-img' : ''}" aria-label="Woah Collection — início"><img class="logo-img${img ? '' : ' hidden'}" src="${img ? esc(img) : ''}" alt="Woah Collection" data-site-logo><span class="logo-text"><span class="logo-word">WOAH</span><span class="logo-sub">COLLECTION</span></span></a>`;
   }
 
   function renderHeader() {
@@ -512,7 +513,7 @@
       const h = Math.max(3, amp * rect.height);
       const x = i * (barW + gap);
       const y = (rect.height - h) / 2;
-      ctx.fillStyle = (i / count) <= progress ? '#E91E3F' : '#3A3A3A';
+      ctx.fillStyle = (i / count) <= progress ? '#F21D45' : '#3A3A3A';
       ctx.fillRect(x, y, barW, h);
     });
   }
@@ -720,7 +721,7 @@
       grid.querySelectorAll('.beat-card, .soon-card').forEach(el => el.remove());
       const html = featured.length
         ? featured.map(beatCardHTML).join('')
-        : '<div class="soon-card"><strong>Novos beats em breve</strong><span>Estamos preparando o catálogo. Volte logo para ouvir os lançamentos.</span></div>';
+        : '<div class="soon-card"><div class="soon-wave" aria-hidden="true"><i style="height:10px"></i><i style="height:18px"></i><i style="height:28px"></i><i style="height:16px"></i><i style="height:34px"></i><i style="height:24px"></i><i style="height:40px"></i><i style="height:20px"></i><i style="height:30px"></i><i style="height:14px"></i><i style="height:36px"></i><i style="height:22px"></i><i style="height:12px"></i><i style="height:26px"></i><i style="height:8px"></i></div><strong>Novos beats em breve</strong><span>Estamos preparando novos sons para você. Volte em breve para conferir os próximos lançamentos.</span></div>';
       grid.insertAdjacentHTML('afterbegin', html);
       grid.classList.toggle('is-empty', !featured.length);
       if (promo) grid.appendChild(promo);
@@ -1151,11 +1152,20 @@
     }
     if (data.contato) Object.assign(WOAH_CONTACT, data.contato);
     if (data.imagens) {
-      Object.keys(data.imagens).forEach(k => { if (data.imagens[k]) WOAH_IMAGES[k] = assetUrl(data.imagens[k]); });
+      Object.keys(data.imagens).forEach(k => {
+        if (data.imagens[k]) WOAH_IMAGES[k] = assetUrl(data.imagens[k]);
+        else if (k === 'logo') WOAH_IMAGES.logo = '';
+      });
     }
   }
 
   function applySiteImages() {
+    $$('[data-site-logo]').forEach(img => {
+      const src = WOAH_IMAGES.logo;
+      img.classList.toggle('hidden', !src);
+      img.closest('.logo').classList.toggle('has-img', !!src);
+      if (src && img.getAttribute('src') !== src) img.src = src;
+    });
     $$('[data-site-img]').forEach(img => {
       const src = WOAH_IMAGES[img.dataset.siteImg];
       if (src && img.getAttribute('src') !== src) img.src = src;
@@ -1191,6 +1201,7 @@
   checkSession();
   ready.then(() => {
     renderFooter();
+    applySiteImages();
     if (inits[page]) inits[page]();
     updateCartUI();
     updatePlayerUI();

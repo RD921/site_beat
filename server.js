@@ -49,7 +49,7 @@ const CONTATO_PADRAO = {
 };
 
 // Imagens do site que podem ser trocadas pelo Painel (vazio = imagem padrão)
-const IMAGENS_PADRAO = { hero: '', promo: '', login: '', cadastro: '' };
+const IMAGENS_PADRAO = { hero: '', promo: '', login: '', cadastro: '', logo: '' };
 
 /* ---------- Arquivos de dados ---------- */
 

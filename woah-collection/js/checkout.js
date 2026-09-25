@@ -27,10 +27,10 @@
     
     // Equalizer Band Defaults (Reference Specs)
     bands: [
-      { id: 1, name: 'BAND 1', color: '#E91E3F', type: 'lowshelf', freq: 85, q: 0.7, gain: -1.5, bypass: false },
-      { id: 2, name: 'BAND 2', color: '#E91E3F', type: 'peaking', freq: 750, q: 1.0, gain: -2.4, bypass: false },
-      { id: 3, name: 'BAND 3', color: '#E91E3F', type: 'peaking', freq: 4500, q: 1.0, gain: 3.2, bypass: false },
-      { id: 4, name: 'BAND 4', color: '#E91E3F', type: 'highshelf', freq: 12000, q: 1.0, gain: 0.0, bypass: false }
+      { id: 1, name: 'BAND 1', color: '#F21D45', type: 'lowshelf', freq: 85, q: 0.7, gain: -1.5, bypass: false },
+      { id: 2, name: 'BAND 2', color: '#F21D45', type: 'peaking', freq: 750, q: 1.0, gain: -2.4, bypass: false },
+      { id: 3, name: 'BAND 3', color: '#F21D45', type: 'peaking', freq: 4500, q: 1.0, gain: 3.2, bypass: false },
+      { id: 4, name: 'BAND 4', color: '#F21D45', type: 'highshelf', freq: 12000, q: 1.0, gain: 0.0, bypass: false }
     ]
   };
 
@@ -477,7 +477,7 @@
       const dataArray = new Uint8Array(bufferLength);
       analyser.getByteFrequencyData(dataArray);
 
-      eqCtx.fillStyle = 'rgba(233, 30, 63, 0.12)';
+      eqCtx.fillStyle = 'rgba(242, 29, 69, 0.12)';
       const barWidth = width / 64;
       for (let i = 0; i < 64; i++) {
         const binIndex = Math.floor(Math.pow(i / 64, 1.8) * bufferLength);
@@ -519,9 +519,9 @@
 
     // Gradient Fill Under Curve (Crimson Red)
     const gradient = eqCtx.createLinearGradient(0, 0, 0, height);
-    gradient.addColorStop(0.0, 'rgba(233, 30, 63, 0.22)');
-    gradient.addColorStop(0.7, 'rgba(233, 30, 63, 0.05)');
-    gradient.addColorStop(1.0, 'rgba(233, 30, 63, 0.0)');
+    gradient.addColorStop(0.0, 'rgba(242, 29, 69, 0.22)');
+    gradient.addColorStop(0.7, 'rgba(242, 29, 69, 0.05)');
+    gradient.addColorStop(1.0, 'rgba(242, 29, 69, 0.0)');
 
     eqCtx.beginPath();
     eqCtx.moveTo(curvePoints[0].x, gainToY(0, height));
@@ -537,8 +537,8 @@
     curvePoints.forEach(pt => eqCtx.lineTo(pt.x, pt.y));
     eqCtx.lineWidth = 2.5;
 
-    eqCtx.strokeStyle = '#E91E3F';
-    eqCtx.shadowColor = 'rgba(233, 30, 63, 0.5)';
+    eqCtx.strokeStyle = '#F21D45';
+    eqCtx.shadowColor = 'rgba(242, 29, 69, 0.5)';
     eqCtx.shadowBlur = 8;
     eqCtx.stroke();
     eqCtx.shadowBlur = 0;
@@ -778,7 +778,7 @@
       const x = i * barWidth + 1;
       const y = (h - barH) / 2;
 
-      waveCtx.fillStyle = played ? '#E91E3F' : '#333333';
+      waveCtx.fillStyle = played ? '#F21D45' : '#333333';
       waveCtx.fillRect(x, y, barWidth - 1.5, barH);
     }
   }
