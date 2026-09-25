@@ -317,15 +317,12 @@
     const next = encodeURIComponent(location.pathname.split('/').pop() + location.search);
     const skipNext = ['login', 'criar-conta'].includes(page);
     const loginHref = 'login.html' + (skipNext ? '' : '?next=' + next);
-    const registerHref = 'criar-conta.html' + (skipNext ? '' : '?next=' + next);
 
     if (!user) {
       box.innerHTML = `
-        <a href="${registerHref}" class="btn btn-ghost btn-sm desktop-only hide-lg">Criar conta</a>
         <a href="${loginHref}" class="btn btn-outline-red btn-sm desktop-only">Entrar</a>`;
       mobile.innerHTML = `
-        <a href="${loginHref}" class="btn btn-primary btn-block">Entrar</a>
-        <a href="${registerHref}" class="btn btn-outline btn-block">Criar conta</a>`;
+        <a href="${loginHref}" class="btn btn-primary btn-block">Entrar</a>`;
       return;
     }
 
@@ -371,7 +368,6 @@
       <footer class="site-footer">
         <div class="container footer-inner">
           <div class="footer-brand">${logoHTML()}<p>Beats que inspiram.</p></div>
-          <nav class="footer-links" aria-label="Rodapé">${NAV.map(n => `<a href="${n.href}">${n.label}</a>`).join('')}</nav>
           <div class="footer-social">
             <a href="${WOAH_CONTACT.instagram}" target="_blank" rel="noopener" aria-label="Instagram">${ICON.instagram}</a>
             <a href="${waLink()}" target="_blank" rel="noopener" aria-label="WhatsApp">${ICON.whatsapp}</a>
@@ -911,8 +907,31 @@
     const forgot = $('#forgot-link');
     if (forgot) forgot.href = waLink('Olá! Esqueci a senha da minha conta na Woah Collection.');
     const form = $('#login-form');
+    const step = $('#password-step');
+    const arrow = $('#email-next');
+    const validEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+    const isOpen = () => step.classList.contains('open');
+
+    // Seta ao lado do e-mail: confere o e-mail e desliza o campo de senha
+    function openPasswordStep() {
+      const email = form.email.value.trim();
+      if (!validEmail(email)) {
+        showMsg(form, 'Digite um e-mail válido para continuar.', 'error');
+        form.email.focus();
+        return;
+      }
+      $('.form-msg', form).className = 'form-msg';
+      step.classList.add('open');
+      step.removeAttribute('inert');
+      arrow.classList.add('done');
+      arrow.setAttribute('aria-label', 'E-mail confirmado');
+      setTimeout(() => form.password.focus(), 250);
+    }
+    arrow.addEventListener('click', openPasswordStep);
+
     form.addEventListener('submit', async e => {
       e.preventDefault();
+      if (!isOpen()) { openPasswordStep(); return; }
       const email = form.email.value.trim().toLowerCase();
       const password = form.password.value;
       if (!email || !password) { showMsg(form, 'Informe seu e-mail e senha.', 'error'); return; }

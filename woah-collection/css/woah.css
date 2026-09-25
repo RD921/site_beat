@@ -1018,7 +1018,7 @@ textarea.input { height: 120px; padding: 12px 14px; resize: vertical; }
 .footer-inner {
   padding-block: 40px;
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: 1fr auto;
   align-items: center;
   gap: 32px;
 }
@@ -1074,3 +1074,42 @@ body.has-player .toast-stack { bottom: 100px; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: 0s !important; animation-duration: 0s !important; }
 }
+
+/* ---------- Login em etapas (e-mail → seta → senha) ---------- */
+.input-arrow {
+  position: absolute;
+  right: 5px; top: 50%;
+  width: 36px; height: 36px;
+  transform: translateY(-50%);
+  border-radius: var(--radius-sm);
+  background: var(--red);
+  color: #fff;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: background .2s var(--ease), transform .2s var(--ease);
+}
+.input-arrow:hover { background: var(--red-2); }
+.input-arrow svg { width: 18px; height: 18px; transition: transform .25s var(--ease); }
+.input-arrow.done { background: #1A1A1A; color: var(--text-2); border: 1px solid var(--border-strong); }
+.input-arrow.done svg { transform: rotate(90deg); }
+
+.step-reveal {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows .35s var(--ease), opacity .3s var(--ease);
+}
+.step-reveal.open { grid-template-rows: 1fr; opacity: 1; }
+.step-reveal > div { overflow: hidden; min-height: 0; }
+.step-reveal .field { margin-top: 16px; }
+
+.auth-links {
+  margin-top: 18px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 14px;
+}
+.auth-links a { color: var(--text-2); }
+.auth-links a:hover { color: var(--text); }
+.auth-links a.strong { color: var(--red); font-weight: 600; }
+.auth-links a.strong:hover { color: var(--red-2); }

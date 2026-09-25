@@ -27,20 +27,33 @@
           <div class="form-msg" role="alert"></div>
           <div class="field">
             <label for="login-email">E-mail</label>
-            <input class="input" id="login-email" name="email" type="email" placeholder="seu@email.com" autocomplete="email" required>
-          </div>
-          <div class="field">
-            <label for="login-password">Senha</label>
             <div class="input-wrap">
-              <input class="input" id="login-password" name="password" type="password" placeholder="Sua senha" autocomplete="current-password" required>
-              <button type="button" class="toggle-pass" aria-label="Mostrar senha"></button>
+              <input class="input" id="login-email" name="email" type="email" placeholder="seu@email.com" autocomplete="email" required>
+              <button type="button" class="input-arrow" id="email-next" aria-label="Continuar para a senha">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </button>
             </div>
           </div>
-          <div class="auth-row"><a href="#" id="forgot-link" target="_blank" rel="noopener">Esqueceu sua senha?</a></div>
-          <button type="submit" class="btn btn-primary btn-lg btn-block auth-submit">Entrar</button>
+
+          <!-- Desliza para baixo quando a pessoa clica na seta -->
+          <div class="step-reveal" id="password-step" inert>
+            <div>
+              <div class="field">
+                <label for="login-password">Senha</label>
+                <div class="input-wrap">
+                  <input class="input" id="login-password" name="password" type="password" placeholder="Sua senha" autocomplete="current-password" required>
+                  <button type="button" class="toggle-pass" aria-label="Mostrar senha"></button>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary btn-lg btn-block auth-submit">Entrar</button>
+            </div>
+          </div>
         </form>
 
-        <p class="auth-switch">Não tem uma conta? <a href="criar-conta.html" data-keep-next>Criar conta</a></p>
+        <div class="auth-links">
+          <a href="#" id="forgot-link" target="_blank" rel="noopener">Esqueceu sua senha?</a>
+          <a href="criar-conta.html" class="strong" data-keep-next>Criar conta</a>
+        </div>
       </div>
     </div>
   </main>
