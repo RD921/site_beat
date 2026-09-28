@@ -1155,7 +1155,6 @@
     if (data.imagens) {
       Object.keys(data.imagens).forEach(k => {
         if (data.imagens[k]) WOAH_IMAGES[k] = assetUrl(data.imagens[k]);
-        else if (k === 'logo') WOAH_IMAGES.logo = '';
       });
     }
   }

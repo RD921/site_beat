@@ -161,7 +161,8 @@ h1, h2, h3, h4 { font-family: var(--font-title); line-height: 1.12; letter-spaci
   flex-shrink: 0;
 }
 .logo-text { display: inline-flex; flex-direction: column; line-height: 1; }
-.logo-img { display: block; height: 44px; width: auto; max-width: 180px; object-fit: contain; }
+.logo-img { display: block; height: 62px; width: auto; max-width: 200px; object-fit: contain; }
+@media (max-width: 767px) { .logo-img { height: 50px; } }
 .logo.has-img .logo-text { display: none; }
 .logo-word {
   font-family: var(--font-title);

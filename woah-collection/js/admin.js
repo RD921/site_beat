@@ -24,7 +24,7 @@
     { key: 'promo', label: 'Card "Transforme sua ideia em realidade"', fallback: WOAH_IMAGES.promo },
     { key: 'login', label: 'Banner da tela de login', fallback: WOAH_IMAGES.login },
     { key: 'cadastro', label: 'Banner da tela de criar conta', fallback: WOAH_IMAGES.cadastro },
-    { key: 'logo', label: 'Logo (header e rodapé) — prefira PNG com fundo transparente', fallback: '' }
+    { key: 'logo', label: 'Logo (header e rodapé) — prefira PNG com fundo transparente', fallback: WOAH_IMAGES.logo }
   ];
   const DEFAULT_IMAGES = Object.fromEntries(IMAGE_SLOTS.map(s => [s.key, s.fallback]));
 
@@ -248,7 +248,7 @@
             : '<span class="logo"><span class="logo-text"><span class="logo-word">WOAH</span><span class="logo-sub">COLLECTION</span></span></span>'}</div>
           <div class="image-slot-body">
             <strong>${esc(slot.label)}</strong>
-            <small>${custom ? 'Imagem personalizada' : (slot.key === 'logo' ? 'Usando o logo em texto' : 'Imagem padrão')}</small>
+            <small>${custom ? 'Imagem personalizada' : (slot.key === 'logo' && !DEFAULT_IMAGES.logo ? 'Usando o logo em texto' : 'Imagem padrão')}</small>
             <div class="media-actions">
               <label class="btn btn-outline btn-sm">Trocar imagem<input type="file" accept="image/*" data-image-slot="${slot.key}" hidden></label>
               ${custom ? `<button type="button" class="btn btn-ghost btn-sm" data-image-reset="${slot.key}">Voltar ao padrão</button>` : ''}

@@ -18,7 +18,7 @@ const WOAH_IMAGES = {
   promo: 'images/artists/hero-producer.jpg',
   login: 'images/artists/hero-producer.jpg',
   cadastro: 'images/artists/promo-studio.jpg',
-  logo: '' // vazio = logo em texto
+  logo: 'images/logo-woah.png' // o Painel pode trocar
 };
 
 // Capa usada quando o beat ainda não tem imagem
