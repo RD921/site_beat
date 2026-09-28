@@ -107,7 +107,7 @@
     try { await api('/api/logout', { method: 'POST' }); } catch (e) { /* servidor desligado: sai assim mesmo */ }
     clearSession();
     toast('Você saiu da sua conta.');
-    if (['carrinho', 'checkout'].includes(page)) location.href = 'index.html';
+    if (['carrinho', 'checkout', 'compras'].includes(page)) location.href = 'index.html';
   }
 
   async function checkSession() {
@@ -345,6 +345,7 @@
         <div class="account-menu" role="menu">
           <div class="account-menu-head"><strong>${esc(user.name)}</strong><span>${esc(user.email)}</span>${devBadge}</div>
           ${user.role === 'dev' ? '<a href="admin.html" role="menuitem"><strong style="color:var(--red)">Painel</strong></a>' : ''}
+          <a href="minhas-compras.html" role="menuitem">Minhas compras</a>
           <a href="carrinho.html" role="menuitem">Meu carrinho</a>
           <a href="beats.html" role="menuitem">Explorar beats</a>
           <button type="button" role="menuitem" data-logout>Sair da conta</button>
@@ -1089,6 +1090,86 @@
   }
 
   /* ======================================================================
+     PÁGINA: MINHAS COMPRAS (pedidos e downloads)
+     ====================================================================== */
+  const STATUS_COMPRA = {
+    pago: ['Pago', 'ok'],
+    pendente: ['Aguardando pagamento', 'warn'],
+    recusado: ['Recusado', 'bad'],
+    cancelado: ['Cancelado', 'bad'],
+    reembolsado: ['Reembolsado', 'bad']
+  };
+
+  async function initCompras() {
+    if (!requireLogin('minhas-compras.html')) return;
+    const wrap = $('#orders-content');
+    if (!wrap) return;
+    let pedidos = [];
+    try {
+      pedidos = (await api('/api/meus-pedidos')).pedidos;
+    } catch (err) {
+      wrap.innerHTML = `<div class="empty-state" style="margin-top:32px"><h3>Não foi possível carregar</h3><p>${esc(err.message)}</p></div>`;
+      return;
+    }
+    if (!pedidos.length) {
+      wrap.innerHTML = `
+        <div class="empty-state" style="margin-top:32px">
+          <h3>Você ainda não comprou nenhum beat</h3>
+          <p>Quando comprar, os arquivos ficam guardados aqui para baixar quando quiser.</p>
+          <a href="beats.html" class="btn btn-primary">Explorar beats</a>
+        </div>`;
+      return;
+    }
+    wrap.innerHTML = pedidos.map(p => {
+      const [label, cls] = STATUS_COMPRA[p.status] || [p.status, ''];
+      const data = new Date(p.criadoEm).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
+      const pend = p.status === 'pendente'
+        ? (p.pix ? `<div class="order-pending"><span>Pix aguardando pagamento.</span><button type="button" class="btn btn-outline btn-sm" data-copy-pix="${esc(p.pix.copiaECola)}">Copiar código Pix</button></div>`
+          : p.boleto ? `<div class="order-pending"><span>Boleto aguardando compensação.</span><a class="btn btn-outline btn-sm" href="${esc(p.boleto.link)}" target="_blank" rel="noopener">Abrir boleto</a></div>` : '')
+        : '';
+      return `
+        <article class="order-card">
+          <header class="order-card-head">
+            <div><strong>Pedido ${esc(p.numero)}</strong><small>${esc(data)}</small></div>
+            <span class="order-status ${cls}">${esc(label)}</span>
+            <span class="order-total">${fmt(p.total)}</span>
+          </header>
+          ${pend}
+          <div class="order-items">
+            ${p.itens.map((it, i) => `
+              <div class="cart-item">
+                <img src="${esc(assetUrl(it.capa) || WOAH_DEFAULT_COVER)}" alt="">
+                <div class="cart-item-info"><strong>${esc(it.titulo)}</strong><small>Licença ${esc(it.licencaNome)} • ${fmt(it.preco)}</small></div>
+                ${p.status === 'pago' ? `<button type="button" class="btn btn-primary btn-sm" data-order="${esc(p.id)}" data-item="${i}">⬇ Baixar</button>` : ''}
+              </div>`).join('')}
+          </div>
+        </article>`;
+    }).join('');
+
+    wrap.addEventListener('click', async e => {
+      const copy = e.target.closest('[data-copy-pix]');
+      if (copy) {
+        if (navigator.clipboard) navigator.clipboard.writeText(copy.dataset.copyPix).catch(() => {});
+        toast('Código Pix copiado.');
+        return;
+      }
+      const btn = e.target.closest('[data-order]');
+      if (!btn) return;
+      const label = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = 'Preparando...';
+      try {
+        const res = await api('/api/pedidos/' + btn.dataset.order + '/itens/' + btn.dataset.item + '/download', { method: 'POST' });
+        location.href = API_URL + res.url;
+      } catch (err) {
+        toast(err.message);
+      } finally {
+        setTimeout(() => { btn.disabled = false; btn.textContent = label; }, 1500);
+      }
+    });
+  }
+
+  /* ======================================================================
      PÁGINA: CONTATO
      ====================================================================== */
   function initContato() {
@@ -1196,6 +1277,7 @@
     login: initLogin,
     'criar-conta': initRegister,
     carrinho: initCarrinho,
+    compras: initCompras,
     contato: initContato
   };
   checkSession();

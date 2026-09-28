@@ -956,141 +956,178 @@
   // =========================================================================
   // 8. PAYMENT & CHECKOUT LOGIC
   // =========================================================================
-  function initPaymentSystem() {
-    const pixChoice = document.getElementById('method-pix');
-    const cardChoice = document.getElementById('method-card');
-    const cardFields = document.getElementById('card-fields-box');
-    const finalizeBtn = document.getElementById('btn-finalize-purchase');
-    const couponInput = document.getElementById('coupon-code-input');
-    const couponBtn = document.getElementById('btn-apply-coupon');
-    const couponFeedback = document.getElementById('coupon-feedback');
+  // Pagamento pelo Mercado Pago, dentro da própria página (Payment Brick).
+  // O formulário do cartão é do Mercado Pago: os dados do cartão não passam pela loja.
+  // O preço é calculado de novo no servidor — o valor mostrado aqui é só para exibir.
+  let pollTimer = null;
+  let timerInterval = null;
+  let modalBound = false;
+  let currentOrder = null;
 
-    // Payment method selector
-    if (pixChoice && cardChoice) {
-      pixChoice.addEventListener('click', () => {
-        state.selectedPaymentMethod = 'pix';
-        pixChoice.classList.add('selected');
-        cardChoice.classList.remove('selected');
-        pixChoice.setAttribute('aria-checked', 'true');
-        cardChoice.setAttribute('aria-checked', 'false');
-        if (cardFields) cardFields.classList.remove('active');
-      });
+  function setPayFeedback(msg, type) {
+    const box = document.getElementById('pay-feedback');
+    if (!box) return;
+    box.textContent = msg || '';
+    box.className = 'pay-feedback' + (type ? ' ' + type : '');
+  }
 
-      cardChoice.addEventListener('click', () => {
-        state.selectedPaymentMethod = 'card';
-        cardChoice.classList.add('selected');
-        pixChoice.classList.remove('selected');
-        cardChoice.setAttribute('aria-checked', 'true');
-        pixChoice.setAttribute('aria-checked', 'false');
-        if (cardFields) cardFields.classList.add('active');
-      });
+  function orderPayload() {
+    return order.items.map(b => ({ beatId: b.id, licencaId: order.license ? order.license.id : '' }));
+  }
+
+  async function initPaymentSystem() {
+    const box = document.getElementById('mp-payment-brick');
+    if (!box) return;
+    const W = window.WOAH;
+    let cfg;
+    try {
+      cfg = await W.api('/api/pagamento/config');
+    } catch (e) {
+      box.innerHTML = '<p class="muted">Não foi possível carregar o pagamento. Atualize a página.</p>';
+      return;
     }
-
-    // Coupon discount logic
-    if (couponBtn && couponInput) {
-      couponBtn.addEventListener('click', () => {
-        const code = couponInput.value.trim().toUpperCase();
-        if (code === 'WOAH20') {
-          state.discount = 20.00;
-          showCouponFeedback('Cupom WOAH20 aplicado! Desconto de R$ 20,00', true);
-        } else if (code === 'PROD10' || code === 'BEAT10') {
-          state.discount = state.basePrice * 0.10;
-          showCouponFeedback(`Cupom ${code} aplicado! 10% de desconto`, true);
-        } else if (code === '') {
-          state.discount = 0;
-          showCouponFeedback('Digite um código de cupom.', false);
-        } else {
-          state.discount = 0;
-          showCouponFeedback('Cupom inválido ou expirado.', false);
-        }
-        updatePriceSummary();
-      });
+    if (!cfg.ativo) {
+      box.innerHTML = '<p class="muted">Os pagamentos online ainda estão sendo configurados. Fale com o suporte pelo botão abaixo para comprar agora.</p>';
+      return;
     }
-
-    function showCouponFeedback(msg, isSuccess) {
-      if (!couponFeedback) return;
-      couponFeedback.textContent = msg;
-      couponFeedback.className = 'coupon-feedback-msg ' + (isSuccess ? 'success' : 'error');
+    if (typeof window.MercadoPago !== 'function') {
+      box.innerHTML = '<p class="muted">Não foi possível carregar o Mercado Pago. Desative bloqueadores de anúncio e atualize a página.</p>';
+      return;
     }
+    if (cfg.teste) setPayFeedback('Modo de teste: nenhuma cobrança real é feita.', 'info');
 
-    updatePriceSummary();
-
-    function updatePriceSummary() {
-      const discountRow = document.getElementById('summary-discount-row');
-      const discountVal = document.getElementById('summary-discount-val');
-      const totalVal = document.getElementById('summary-total-val');
-      const finalPrice = Math.max(0, state.basePrice - state.discount);
-
-      if (discountRow) discountRow.classList.toggle('has-discount', state.discount > 0);
-      if (discountVal) discountVal.textContent = state.discount > 0 ? '-' + money(state.discount) : money(0);
-      if (totalVal) totalVal.textContent = money(finalPrice);
-      fillInstallments(finalPrice);
-    }
-
-    // Card Input Masking
-    const cardNumInput = document.getElementById('card-number-input');
-    if (cardNumInput) {
-      cardNumInput.addEventListener('input', e => {
-        let v = e.target.value.replace(/\D/g, '').substring(0, 16);
-        v = v.replace(/(\d{4})(?=\d)/g, '$1 ');
-        e.target.value = v;
-      });
-    }
-
-    const cardExpiryInput = document.getElementById('card-expiry-input');
-    if (cardExpiryInput) {
-      cardExpiryInput.addEventListener('input', e => {
-        let v = e.target.value.replace(/\D/g, '').substring(0, 4);
-        if (v.length >= 2) v = v.substring(0, 2) + '/' + v.substring(2);
-        e.target.value = v;
-      });
-    }
-
-    // Finalize purchase button action
-    if (finalizeBtn) {
-      const originalLabel = finalizeBtn.innerHTML;
-      finalizeBtn.addEventListener('click', () => {
-        if (state.selectedPaymentMethod === 'card') {
-          const num = (document.getElementById('card-number-input').value || '').replace(/\D/g, '');
-          const name = (document.getElementById('card-name-input').value || '').trim();
-          const exp = document.getElementById('card-expiry-input').value || '';
-          const cvv = document.getElementById('card-cvv-input').value || '';
-          if (num.length < 13 || !name || !/^\d{2}\/\d{2}$/.test(exp) || cvv.length < 3) {
-            alert('Preencha os dados do cartão para continuar.');
-            return;
+    const user = W.getUser() || {};
+    const mp = new window.MercadoPago(cfg.publicKey, { locale: 'pt-BR' });
+    box.innerHTML = '';
+    try {
+      await mp.bricks().create('payment', 'mp-payment-brick', {
+        initialization: {
+          amount: Math.round(state.basePrice * 100) / 100,
+          payer: { email: user.email || '' }
+        },
+        customization: {
+          paymentMethods: { creditCard: 'all', debitCard: 'all', bankTransfer: 'all', ticket: 'all', maxInstallments: 12 },
+          visual: {
+            style: {
+              theme: 'dark',
+              customVariables: { baseColor: '#F21D45', formBackgroundColor: '#0B0B0B', borderRadiusMedium: '10px' }
+            }
           }
+        },
+        callbacks: {
+          onReady: () => {},
+          onError: err => { console.error('Mercado Pago:', err); },
+          onSubmit: ({ formData }) => new Promise((resolve, reject) => {
+            setPayFeedback('');
+            W.api('/api/pagamentos', { method: 'POST', body: { itens: orderPayload(), formData } })
+              .then(res => { resolve(); handleOrderResult(res.pedido); })
+              .catch(err => { reject(); setPayFeedback(err.message, 'error'); });
+          })
         }
-        finalizeBtn.classList.add('loading');
-        finalizeBtn.textContent = 'Processando...';
-
-        setTimeout(() => {
-          finalizeBtn.classList.remove('loading');
-          finalizeBtn.innerHTML = originalLabel;
-          openCheckoutModal();
-        }, 600);
       });
+    } catch (e) {
+      console.error(e);
+      box.innerHTML = '<p class="muted">Não foi possível abrir o formulário de pagamento. Atualize a página.</p>';
     }
   }
 
-  // Checkout Modal (PIX QR Code & Confirmation)
-  let pixInterval = null;
-  let modalBound = false;
+  function handleOrderResult(pedido) {
+    currentOrder = pedido;
+    if (pedido.status === 'pago') { openCheckoutModal(); showPaymentSuccess(pedido); return; }
+    if (pedido.status === 'pendente') { openCheckoutModal(); showPending(pedido); startPolling(pedido.id); return; }
+    setPayFeedback(pedido.detalhe || 'Pagamento recusado. Tente outra forma de pagamento.', 'error');
+  }
 
-  function showPaymentSuccess() {
+  function startPolling(id) {
+    clearInterval(pollTimer);
+    pollTimer = setInterval(async () => {
+      try {
+        const res = await window.WOAH.api('/api/pedidos/' + id);
+        const p = res.pedido;
+        if (p.status === 'pago') { stopTimers(); showPaymentSuccess(p); }
+        else if (p.status !== 'pendente') {
+          stopTimers();
+          closeModal();
+          setPayFeedback(p.detalhe || 'O pagamento não foi concluído. Tente de novo.', 'error');
+        }
+      } catch (e) { /* tenta de novo no próximo ciclo */ }
+    }, 5000);
+  }
+
+  function stopTimers() { clearInterval(pollTimer); clearInterval(timerInterval); }
+
+  function showPending(p) {
+    const $id = id => document.getElementById(id);
+    $id('pix-modal-initial-block').style.display = 'flex';
+    $id('pix-modal-success-block').style.display = 'none';
+    const isPix = !!p.pix;
+    $id('pending-title').textContent = isPix ? 'Pagamento via Pix' : 'Boleto gerado';
+    $id('pending-sub').textContent = isPix
+      ? 'Escaneie o QR Code no app do seu banco ou copie o código abaixo.'
+      : 'Pague o boleto até o vencimento. O download é liberado assim que o banco confirmar (até 3 dias úteis).';
+    $id('pix-qr-box').classList.toggle('hidden', !(isPix && p.pix.qrBase64));
+    if (isPix && p.pix.qrBase64) $id('pix-qr-img').src = 'data:image/png;base64,' + p.pix.qrBase64;
+    $id('pix-copy-row').classList.toggle('hidden', !isPix);
+    $id('pix-copia-cola-input').value = isPix ? p.pix.copiaECola : '';
+    const boleto = $id('btn-open-boleto');
+    boleto.classList.toggle('hidden', !(p.boleto && p.boleto.link));
+    if (p.boleto && p.boleto.link) boleto.href = p.boleto.link;
+    $id('pending-wait-text').textContent = isPix ? 'Aguardando o pagamento... esta tela atualiza sozinha.' : 'Você pode fechar esta tela. O pedido fica em Minhas compras.';
+
+    const expira = (p.pix && p.pix.expira) || (p.boleto && p.boleto.expira);
+    const timerRow = $id('pix-timer-row');
+    clearInterval(timerInterval);
+    if (!expira) { timerRow.classList.add('hidden'); return; }
+    timerRow.classList.remove('hidden');
+    const fim = Date.parse(expira);
+    const tick = () => {
+      const s = Math.max(0, Math.round((fim - Date.now()) / 1000));
+      if (s > 86400) { $id('pix-timer-num').textContent = new Date(fim).toLocaleDateString('pt-BR'); return; }
+      const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
+      $id('pix-timer-num').textContent = (h ? h + ':' : '') + String(m).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
+    };
+    tick();
+    timerInterval = setInterval(tick, 1000);
+  }
+
+  function showPaymentSuccess(p) {
     const initialBlock = document.getElementById('pix-modal-initial-block');
     const successBlock = document.getElementById('pix-modal-success-block');
     if (initialBlock) initialBlock.style.display = 'none';
     if (successBlock) successBlock.style.display = 'flex';
-    clearInterval(pixInterval);
+    const num = document.getElementById('success-order-number');
+    if (num) num.textContent = p.numero;
+    const list = document.getElementById('success-downloads');
+    if (list) {
+      list.innerHTML = p.itens.map((it, i) => `
+        <button type="button" class="btn btn-primary btn-block" data-download="${i}">⬇ Baixar ${escapeHtml(it.titulo)}</button>`).join('');
+    }
     if (order.fromCart && window.WOAH) window.WOAH.clearCart();
+  }
+
+  async function downloadItem(btn) {
+    if (!currentOrder) return;
+    const label = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Preparando download...';
+    try {
+      const res = await window.WOAH.api('/api/pedidos/' + currentOrder.id + '/itens/' + btn.dataset.download + '/download', { method: 'POST' });
+      window.location.href = res.url;
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setTimeout(() => { btn.disabled = false; btn.textContent = label; }, 1500);
+    }
+  }
+
+  function closeModal() {
+    const modalBackdrop = document.getElementById('checkout-modal');
+    if (modalBackdrop) modalBackdrop.classList.remove('active');
   }
 
   function openCheckoutModal() {
     const modalBackdrop = document.getElementById('checkout-modal');
     if (!modalBackdrop) return;
-    const initialBlock = document.getElementById('pix-modal-initial-block');
-    const successBlock = document.getElementById('pix-modal-success-block');
-
     if (!modalBound) {
       modalBound = true;
       const copyBtn = document.getElementById('btn-copy-pix');
@@ -1103,43 +1140,18 @@
           setTimeout(() => { copyBtn.textContent = 'Copiar'; }, 2000);
         });
       }
-      const simBtn = document.getElementById('btn-simulate-confirm');
-      if (simBtn) simBtn.addEventListener('click', showPaymentSuccess);
-
-      const close = () => { modalBackdrop.classList.remove('active'); clearInterval(pixInterval); };
+      // Fechar não cancela o pedido: o Pix continua valendo e o pedido fica em "Minhas compras"
       const closeBtn = document.getElementById('btn-close-modal');
-      if (closeBtn) closeBtn.addEventListener('click', close);
-      modalBackdrop.addEventListener('click', e => { if (e.target === modalBackdrop) close(); });
-      document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
-
-      const dl = document.getElementById('btn-download');
-      if (dl) dl.addEventListener('click', e => {
-        e.preventDefault();
-        alert('Download liberado! O link dos arquivos também foi enviado para o seu e-mail.');
+      if (closeBtn) closeBtn.addEventListener('click', closeModal);
+      modalBackdrop.addEventListener('click', e => { if (e.target === modalBackdrop) closeModal(); });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+      const list = document.getElementById('success-downloads');
+      if (list) list.addEventListener('click', e => {
+        const btn = e.target.closest('[data-download]');
+        if (btn) downloadItem(btn);
       });
     }
-
     modalBackdrop.classList.add('active');
-
-    // Cartão: aprovação direta • Pix: QR Code com contagem regressiva
-    if (state.selectedPaymentMethod === 'card') {
-      showPaymentSuccess();
-      return;
-    }
-    if (initialBlock) initialBlock.style.display = 'flex';
-    if (successBlock) successBlock.style.display = 'none';
-
-    let timerSeconds = 15 * 60;
-    const timerDisplay = document.getElementById('pix-timer-num');
-    clearInterval(pixInterval);
-    const tick = () => {
-      const m = Math.floor(timerSeconds / 60);
-      const sec = timerSeconds % 60;
-      if (timerDisplay) timerDisplay.textContent = `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
-      if (timerSeconds-- <= 0) clearInterval(pixInterval);
-    };
-    tick();
-    pixInterval = setInterval(tick, 1000);
   }
 
   // =========================================================================

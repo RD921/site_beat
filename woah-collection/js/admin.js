@@ -17,7 +17,7 @@
 
   let data = { beats: [], licencas: [], imagens: {} };   // catálogo "cru" do servidor
   let editing = null;                                    // beat sendo editado
-  let form = { cover: '', audio: '' };                   // arquivos do formulário
+  let form = { cover: '', audio: '', entrega: '', entregaNome: '' }; // arquivos do formulário
 
   const IMAGE_SLOTS = [
     { key: 'hero', label: 'Imagem principal (topo da página inicial)', fallback: WOAH_IMAGES.hero },
@@ -29,12 +29,13 @@
   const DEFAULT_IMAGES = Object.fromEntries(IMAGE_SLOTS.map(s => [s.key, s.fallback]));
 
   /* ---------- Envio de arquivos ---------- */
-  function upload(file, onProgress) {
+  function upload(file, onProgress, tipo) {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.open('POST', API_URL + '/api/admin/upload');
       xhr.setRequestHeader('Authorization', 'Bearer ' + (localStorage.getItem('auth_token') || ''));
       xhr.setRequestHeader('X-Nome-Arquivo', encodeURIComponent(file.name));
+      if (tipo) xhr.setRequestHeader('X-Tipo-Arquivo', tipo);
       xhr.upload.onprogress = e => { if (e.lengthComputable && onProgress) onProgress(Math.round((e.loaded / e.total) * 100)); };
       xhr.onload = () => {
         let res = {};
@@ -82,6 +83,7 @@
           <small>${[b.genre, b.duration !== '0:00' ? b.duration : '', b.bpm ? b.bpm + ' BPM' : ''].filter(Boolean).map(esc).join(' • ') || '—'}</small>
           <div class="admin-badges">
             ${b.audio ? '<span class="badge ok">Áudio</span>' : '<span class="badge warn">Sem áudio</span>'}
+            ${b.entrega ? '<span class="badge ok">Arquivo de entrega</span>' : '<span class="badge warn">Sem arquivo de entrega</span>'}
             ${b.highlight ? '<span class="badge red">Beat em destaque</span>' : ''}
             ${b.featured ? '<span class="badge">Destaques</span>' : ''}
           </div>
@@ -120,6 +122,10 @@
       audioBox.textContent = 'Nenhum áudio enviado';
     }
     $('#audio-remove').classList.toggle('hidden', !form.audio);
+    $('#entrega-preview').textContent = form.entrega
+      ? '✓ ' + (form.entregaNome || 'Arquivo enviado') + ' (' + form.entrega.split('.').pop().toUpperCase() + ')'
+      : 'Nenhum arquivo enviado';
+    $('#entrega-remove').classList.toggle('hidden', !form.entrega);
   }
 
   function openBeatForm(beat) {
@@ -129,7 +135,9 @@
     $('#cover-status').textContent = '';
     $('#audio-status').textContent = 'MP3, WAV, M4A ou OGG • até 80 MB';
     $('#beat-modal-title').textContent = beat ? 'Editar beat' : 'Novo beat';
-    form = { cover: beat ? beat.cover : '', audio: beat ? beat.audio : '' };
+    form = { cover: beat ? beat.cover : '', audio: beat ? beat.audio : '', entrega: beat ? (beat.entrega || '') : '', entregaNome: '' };
+    $('#entrega-status').dataset.default = $('#entrega-status').dataset.default || $('#entrega-status').textContent;
+    $('#entrega-status').textContent = $('#entrega-status').dataset.default;
     if (beat) {
       beatForm.title.value = beat.title;
       beatForm.price.value = Number(beat.price).toFixed(2).replace('.', ',');
@@ -182,7 +190,8 @@
     btn.disabled = true;
     status.textContent = 'Enviando...';
     try {
-      form[kind] = await upload(file, p => { status.textContent = 'Enviando... ' + p + '%'; });
+      form[kind] = await upload(file, p => { status.textContent = 'Enviando... ' + p + '%'; }, kind === 'entrega' ? 'entrega' : '');
+      if (kind === 'entrega') form.entregaNome = file.name;
       status.textContent = 'Enviado: ' + file.name;
       renderMediaPreviews();
     } catch (err) {
@@ -196,6 +205,8 @@
   $('#audio-input').addEventListener('change', e => handleUpload(e.target, 'audio'));
   $('#cover-remove').addEventListener('click', () => { form.cover = ''; $('#cover-status').textContent = ''; renderMediaPreviews(); });
   $('#audio-remove').addEventListener('click', () => { form.audio = ''; $('#audio-status').textContent = ''; renderMediaPreviews(); });
+  $('#entrega-input').addEventListener('change', e => handleUpload(e.target, 'entrega'));
+  $('#entrega-remove').addEventListener('click', () => { form.entrega = ''; form.entregaNome = ''; renderMediaPreviews(); });
 
   beatForm.addEventListener('submit', async e => {
     e.preventDefault();
@@ -211,7 +222,8 @@
       featured: beatForm.featured.checked,
       highlight: beatForm.highlight.checked,
       cover: form.cover,
-      audio: form.audio
+      audio: form.audio,
+      entrega: form.entrega
     };
     if (!payload.title) { showFormMsg('Dê um nome para o beat.', 'error'); beatForm.title.focus(); return; }
     const price = parseFloat(payload.price.replace(/\./g, '').replace(',', '.'));
@@ -437,6 +449,46 @@
     }
   });
 
+  /* ---------- Vendas ---------- */
+  const SALE_STATUS = { pago: ['Pago', 'ok'], pendente: ['Aguardando', 'warn'], recusado: ['Recusado', 'bad'], cancelado: ['Cancelado', 'bad'], reembolsado: ['Reembolsado', 'bad'], aguardando: ['Não concluído', ''] };
+  const METODOS = { pix: 'Pix', credit_card: 'Cartão de crédito', debit_card: 'Cartão de débito', ticket: 'Boleto' };
+
+  async function loadSales() {
+    const list = $('#sales-list');
+    list.innerHTML = '<p class="muted">Carregando vendas...</p>';
+    try {
+      const res = await W.api('/api/admin/pedidos');
+      const mode = $('#sales-mode');
+      mode.textContent = !res.pagamentoAtivo
+        ? 'Mercado Pago desligado: configure MP_PUBLIC_KEY e MP_ACCESS_TOKEN no Render.'
+        : (res.modoTeste ? 'Mercado Pago em MODO TESTE: as vendas abaixo não são cobranças reais.' : 'Mercado Pago ativo (produção).');
+      const pagos = res.pedidos.filter(p => p.status === 'pago');
+      const soma = pagos.reduce((s, p) => s + p.total, 0);
+      $('#sales-count').innerHTML = `<strong>${pagos.length}</strong> ${pagos.length === 1 ? 'venda paga' : 'vendas pagas'} • ${fmt(soma)}`;
+      if (!res.pedidos.length) {
+        list.innerHTML = '<div class="empty-state"><h3>Nenhuma venda ainda</h3><p>Os pedidos aparecem aqui assim que alguém tentar pagar.</p></div>';
+        return;
+      }
+      list.innerHTML = res.pedidos.map(p => {
+        const [label, cls] = SALE_STATUS[p.status] || [p.status, ''];
+        const quando = new Date(p.criadoEm).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' });
+        return `
+          <div class="admin-row">
+            <div class="admin-row-info">
+              <strong>${esc(p.itens.map(i => i.titulo + ' (' + i.licencaNome + ')').join(', '))}</strong>
+              <small>Pedido ${esc(p.numero)} • ${esc(p.cliente)} • ${esc(quando)}${p.metodo ? ' • ' + esc(METODOS[p.metodo] || p.metodo) : ''}</small>
+              <div class="admin-badges"><span class="order-status ${cls}">${esc(label)}</span></div>
+            </div>
+            <span class="admin-price">${fmt(p.total)}</span>
+          </div>`;
+      }).join('');
+    } catch (err) {
+      list.innerHTML = `<p class="muted">${esc(err.message)}</p>`;
+    }
+  }
+  $('#reload-sales').addEventListener('click', loadSales);
+  $$('.admin-tab[data-tab="vendas"]').forEach(t => t.addEventListener('click', loadSales));
+
   /* ---------- Início ---------- */
   async function start() {
     await W.ready;
@@ -452,8 +504,7 @@
       return;
     }
     try {
-      const res = await fetch(API_URL + '/api/catalogo', { cache: 'no-store' });
-      data = await res.json();
+      data = await W.api('/api/admin/catalogo');
     } catch (e) {
       alert('Servidor desligado. Rode "node server.js" na pasta do site.');
       return;

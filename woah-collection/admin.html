@@ -38,6 +38,7 @@
             <button type="button" class="admin-tab" role="tab" data-tab="imagens">Imagens do site</button>
             <button type="button" class="admin-tab" role="tab" data-tab="licencas">Licenças</button>
             <button type="button" class="admin-tab" role="tab" data-tab="contato">Contato e redes</button>
+            <button type="button" class="admin-tab" role="tab" data-tab="vendas">Vendas</button>
           </div>
 
           <!-- ABA: BEATS -->
@@ -102,6 +103,16 @@
               </div>
             </form>
           </section>
+
+          <!-- ABA: VENDAS -->
+          <section class="admin-panel hidden" data-panel="vendas">
+            <div class="admin-toolbar">
+              <span class="result-count" id="sales-count"></span>
+              <button type="button" class="btn btn-outline btn-sm" id="reload-sales">↻ Atualizar</button>
+            </div>
+            <div class="pay-feedback info" id="sales-mode" style="margin-bottom:16px"></div>
+            <div class="admin-list" id="sales-list"></div>
+          </section>
         </div>
       </div>
     </section>
@@ -139,6 +150,16 @@
             </div>
             <small class="upload-status" id="audio-status">MP3, WAV, M4A ou OGG • até 80 MB</small>
           </div>
+        </div>
+
+        <div class="media-box delivery-box">
+          <span class="filter-label">Arquivo de entrega (o que o cliente baixa depois de pagar)</span>
+          <div class="audio-preview" id="entrega-preview">Nenhum arquivo enviado</div>
+          <div class="media-actions">
+            <label class="btn btn-outline btn-sm">Escolher arquivo<input type="file" accept=".zip,.rar,.wav,.mp3,.flac,.aiff,.m4a" id="entrega-input" hidden></label>
+            <button type="button" class="btn btn-ghost btn-sm" id="entrega-remove">Remover</button>
+          </div>
+          <small class="upload-status" id="entrega-status">ZIP (stems), WAV ou MP3 sem tag • até 150 MB. Fica privado: só quem pagou consegue baixar. Sem ele, o cliente recebe o áudio da prévia.</small>
         </div>
 
         <div class="form-grid">

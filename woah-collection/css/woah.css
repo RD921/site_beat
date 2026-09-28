@@ -1266,3 +1266,26 @@ body.has-player .toast-stack { bottom: 100px; }
 
 .image-slot-preview.is-logo { display: flex; align-items: center; justify-content: center; padding: 24px; }
 .image-slot-preview.is-logo img { width: auto; height: auto; max-width: 70%; max-height: 70%; object-fit: contain; }
+
+/* ---------- Minhas compras ---------- */
+.orders-list { display: flex; flex-direction: column; gap: 16px; margin-top: 32px; }
+.order-card { background: var(--card, #0B0B0B); border: 1px solid var(--border); border-radius: var(--radius-lg, 16px); padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+.order-card-head { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.order-card-head > div { flex: 1; min-width: 160px; }
+.order-card-head strong { display: block; font-size: 16px; }
+.order-card-head small { color: var(--text-2); font-size: 13px; }
+.order-total { font-weight: 700; font-size: 16px; }
+.order-status { font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border-strong); color: var(--text-2); }
+.order-status.ok { color: #3DDC97; border-color: rgba(61,220,151,.4); background: rgba(61,220,151,.08); }
+.order-status.warn { color: #F5B83D; border-color: rgba(245,184,61,.4); background: rgba(245,184,61,.08); }
+.order-status.bad { color: #FF6B81; border-color: rgba(255,107,129,.4); background: rgba(255,107,129,.08); }
+.order-items { display: flex; flex-direction: column; gap: 10px; }
+.order-items .cart-item { padding: 10px; }
+.order-items .cart-item img { width: 56px; height: 56px; }
+.order-pending { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 14px; color: var(--text-2); padding: 10px 14px; border: 1px dashed var(--border-strong); border-radius: 10px; }
+.mp-brick-loading { display: flex; align-items: center; gap: 10px; color: var(--text-2); font-size: 14px; }
+@media (max-width: 767px) {
+  .order-items .cart-item { flex-wrap: wrap; }
+  .order-items .cart-item .btn { width: 100%; }
+}
+.delivery-box { margin-bottom: 20px; padding: 14px; border: 1px dashed var(--border-strong); border-radius: var(--radius); }
